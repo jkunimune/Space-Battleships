@@ -6,4 +6,11 @@ package mechanics;
  */
 public class Bomb extends Ship {
 
+	public Bomb(double newX, double newY) {
+		super(newX, newY, 5);
+		// TODO Auto-generated constructor stub
+	}
+
+	
+
 }

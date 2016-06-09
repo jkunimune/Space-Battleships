@@ -6,4 +6,9 @@ package mechanics;
  */
 public class Battleship extends Ship {
 
+	public Battleship(double newX, double newY) {
+		super(newX, newY, 1);
+		// TODO Auto-generated constructor stub
+	}
+
 }

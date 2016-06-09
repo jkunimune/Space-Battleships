@@ -6,4 +6,12 @@ package mechanics;
  */
 public class Ship extends Body {
 
+	private double x,y;
+	private int type;
+	
+	public Ship(double newX, double newY, int newType) {
+		super(newX, newY, 0, 0);
+		type = newType;
+	}
+
 }

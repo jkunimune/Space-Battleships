@@ -6,4 +6,9 @@ package mechanics;
  */
 public class Radar extends Ship {
 
+	public Radar(double newX, double newY) {
+		super(newX, newY, 3);
+		// TODO Auto-generated constructor stub
+	}
+
 }

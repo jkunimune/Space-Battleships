@@ -6,4 +6,9 @@ package mechanics;
  */
 public class Steamship extends Ship {
 
+	public Steamship(double newX, double newY) {
+		super(newX, newY, 4);
+		// TODO Auto-generated constructor stub
+	}
+
 }
