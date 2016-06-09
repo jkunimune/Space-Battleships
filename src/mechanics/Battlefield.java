@@ -13,8 +13,14 @@ public class Battlefield {
 	
 	public Battlefield() {
 		bodies = new ArrayList<Body>();
-		bodies.add(new Planet(0,0,"Earth"));
-		bodies.add(new Planet(0,384400000,"Moon"));
+		bodies.add(new Planet(0,0,6378100,"Earth"));
+		bodies.add(new Planet(0,384400000,1737400,"Moon"));
+	}
+	
+	
+	
+	public ArrayList<Body> getBodies() {
+		return bodies;
 	}
 
 }

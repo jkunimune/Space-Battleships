@@ -7,12 +7,21 @@ package mechanics;
 public class Planet extends Body {
 
 	private String name;
+	private double radius;
 	
 	
-	Planet(double x0, double y0, String newName) {
+	Planet(double x0, double y0, double r, String newName) {
 		super(x0, y0, 0, 0);
 		name = newName;
+		radius = r;
 		// TODO Auto-generated constructor stub
+	}
+	
+	
+	
+	@Override
+	public String spriteName() {
+		return name;
 	}
 
 }

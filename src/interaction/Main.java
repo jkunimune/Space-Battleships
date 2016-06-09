@@ -1,5 +1,7 @@
 package interaction;
 
+import mechanics.Battlefield;
+
 /**
  * @author jkunimune
  * The driver class that runs the whole application.
@@ -7,8 +9,10 @@ package interaction;
 public class Main {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		Screen mainWindow = new Screen(1280, 800);
+		Battlefield field = new Battlefield();
+		mainWindow.lookAt(field);
+		mainWindow.display();
 	}
 
 }

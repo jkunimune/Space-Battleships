@@ -16,5 +16,21 @@ public class Body {
 		vx = vx0;
 		vy = vy0;
 	}
+	
+	
+	
+	public String spriteName() {	// gives the name of the current sprite for the GameScreen to reference
+		return "_";
+	}
+	
+	
+	public double xValAt(double t) {	// returns x in meters at time t
+		return x;
+	}
+	
+	
+	public double yValAt(double t) {	// returns y in meters at time t
+		return y;
+	}
 
 }

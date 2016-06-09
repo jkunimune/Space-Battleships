@@ -6,11 +6,16 @@ package mechanics;
  */
 public class Bomb extends Ship {
 
-	public Bomb(double newX, double newY) {
-		super(newX, newY, 5);
+	public Bomb(double newX, double newY, boolean blue) {
+		super(newX, newY, 1, blue);
 		// TODO Auto-generated constructor stub
 	}
-
 	
+	
+	
+	@Override
+	public String spriteName() {
+		return "bomb"+super.spriteName();
+	}
 
 }

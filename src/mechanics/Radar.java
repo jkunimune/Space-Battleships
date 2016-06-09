@@ -6,9 +6,16 @@ package mechanics;
  */
 public class Radar extends Ship {
 
-	public Radar(double newX, double newY) {
-		super(newX, newY, 3);
+	public Radar(double newX, double newY, boolean blue) {
+		super(newX, newY, 1, blue);
 		// TODO Auto-generated constructor stub
+	}
+	
+	
+	
+	@Override
+	public String spriteName() {
+		return "radar"+super.spriteName();
 	}
 
 }

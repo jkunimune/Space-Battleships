@@ -6,9 +6,16 @@ package mechanics;
  */
 public class Scout extends Ship {
 
-	public Scout(double newX, double newY) {
-		super(newX, newY, 2);
+	public Scout(double newX, double newY, boolean blue) {
+		super(newX, newY, 1, blue);
 		// TODO Auto-generated constructor stub
+	}
+	
+	
+	
+	@Override
+	public String spriteName() {
+		return "scout"+super.spriteName();
 	}
 
 }

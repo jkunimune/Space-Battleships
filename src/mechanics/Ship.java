@@ -6,12 +6,21 @@ package mechanics;
  */
 public class Ship extends Body {
 
-	private double x,y;
-	private int type;
+	private int type;		// the id for this particular kind of ship
+	private boolean isBlue;	// whether it is blue or red
 	
-	public Ship(double newX, double newY, int newType) {
+	public Ship(double newX, double newY, int newType, boolean blue) {
 		super(newX, newY, 0, 0);
 		type = newType;
+		isBlue = blue;
+	}
+	
+	
+	
+	@Override
+	public String spriteName() {
+		if (isBlue)	return "_b";
+		else		return "_r";
 	}
 
 }

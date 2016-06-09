@@ -6,9 +6,16 @@ package mechanics;
  */
 public class Battleship extends Ship {
 
-	public Battleship(double newX, double newY) {
-		super(newX, newY, 1);
+	public Battleship(double newX, double newY, boolean blue) {
+		super(newX, newY, 1, blue);
 		// TODO Auto-generated constructor stub
+	}
+	
+	
+	
+	@Override
+	public String spriteName() {
+		return "battleship"+super.spriteName();
 	}
 
 }
