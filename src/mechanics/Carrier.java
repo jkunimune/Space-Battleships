@@ -6,8 +6,8 @@ package mechanics;
  */
 public class Carrier extends Ship {
 
-	public Carrier(double newX, double newY, boolean blue) {
-		super(newX, newY, 1, blue);
+	public Carrier(double newX, double newY, boolean blue, double time) {
+		super(newX, newY, blue, time);
 		// TODO Auto-generated constructor stub
 	}
 	

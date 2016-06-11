@@ -71,12 +71,13 @@ public class GameScreen extends JPanel {
 	@Override
 	public void setVisible(boolean v) {	// draws all things and displays itself
 		final Graphics2D g = (Graphics2D)strat.getDrawGraphics();
+		final double t = (double)System.currentTimeMillis();
 		
 		g.setColor(new Color(0,0,0));	// start by blackening everything
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
 		for (Body b: space.getBodies())
-			draw(b,g);
+			draw(b,g,t);
 		
 		g.dispose();
 		strat.show();
@@ -84,15 +85,15 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	private void draw(Body b, Graphics2D g) {
+	private void draw(Body b, Graphics2D g, double t) {	// put a picture of b on g at time t
 		BufferedImage img;
 		try {
 			img = sprites.get(b.spriteName());	// finds the correct sprite
 		} catch (java.lang.NullPointerException e) {
 			throw new NullPointerException("Image "+b.spriteName()+".png not found!");
 		}
-		double screenX = b.xValAt(0)*Univ.m/Univ.pix + getWidth()/2;	// gets coordinates of b, converts to pixels,
-		double screenY = b.yValAt(0)*Univ.m/Univ.pix + getHeight()/2;	// and offsets appropriately
+		double screenX = b.xValAt(t) + getWidth()/2;	// gets coordinates of b, 
+		double screenY = b.yValAt(t) + getHeight()/2;	// and offsets appropriately
 		g.drawImage(img, (int)screenX-img.getWidth()/2, (int)screenY-img.getHeight()/2, null);
 	}
 	

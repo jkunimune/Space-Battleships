@@ -6,8 +6,8 @@ package mechanics;
  */
 public class Battleship extends Ship {
 
-	public Battleship(double newX, double newY, boolean blue) {
-		super(newX, newY, 1, blue);
+	public Battleship(double newX, double newY, boolean blue, double time) {
+		super(newX, newY, blue, time);
 		// TODO Auto-generated constructor stub
 	}
 	

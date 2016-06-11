@@ -6,13 +6,14 @@ package mechanics;
  */
 public class Ship extends Body {
 
-	private int type;		// the id for this particular kind of ship
 	private boolean isBlue;	// whether it is blue or red
+	private double health, energy;	// HP and PP (in pokemon terms)
 	
-	public Ship(double newX, double newY, int newType, boolean blue) {
-		super(newX, newY, 0, 0);
-		type = newType;
+	public Ship(double newX, double newY, boolean blue, double time) {
+		super(newX, newY, Univ.c, 0, time);
 		isBlue = blue;
+		health = 1.0;
+		energy = 1.0;
 	}
 	
 	

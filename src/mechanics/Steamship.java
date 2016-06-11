@@ -6,14 +6,8 @@ package mechanics;
  */
 public class Steamship extends Ship {
 
-	private double energy, health;
-	
-	
-	
-	public Steamship(double newX, double newY, boolean blue) {
-		super(newX, newY, 1, blue);
-		energy = 1.0;
-		health = 1.0;
+	public Steamship(double newX, double newY, boolean blue, double time) {
+		super(newX, newY, blue, time);
 	}
 	
 	

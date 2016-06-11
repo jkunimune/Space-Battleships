@@ -13,6 +13,11 @@ public class Main {
 		Battlefield field = new Battlefield();
 		mainWindow.lookAt(field);
 		mainWindow.display();
+		
+		while (true) {
+			field.update();
+			mainWindow.display();
+		}
 	}
 
 }

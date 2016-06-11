@@ -6,8 +6,8 @@ package mechanics;
  */
 public class Bomb extends Ship {
 
-	public Bomb(double newX, double newY, boolean blue) {
-		super(newX, newY, 1, blue);
+	public Bomb(double newX, double newY, boolean blue, double time) {
+		super(newX, newY, blue, time);
 		// TODO Auto-generated constructor stub
 	}
 	

@@ -10,8 +10,8 @@ public class Planet extends Body {
 	private double radius;
 	
 	
-	Planet(double x0, double y0, double r, String newName) {
-		super(x0, y0, 0, 0);
+	Planet(double x0, double y0, double r, String newName, double time) {
+		super(x0, y0, 0, 0, time);
 		name = newName;
 		radius = r;
 		// TODO Auto-generated constructor stub
