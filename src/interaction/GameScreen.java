@@ -4,6 +4,8 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -15,7 +17,6 @@ import javax.swing.JPanel;
 
 import mechanics.Battlefield;
 import mechanics.Body;
-import mechanics.Univ;
 
 /**
  * @author jkunimune
@@ -92,13 +93,31 @@ public class GameScreen extends JPanel {
 		} catch (java.lang.NullPointerException e) {
 			throw new NullPointerException("Image "+b.spriteName()+".png not found!");
 		}
+		img = executeTransformation(img, b.spriteTransform());	// does any necessary transformations
+		
 		double screenX = b.xValAt(t) + getWidth()/2;	// gets coordinates of b, 
 		double screenY = b.yValAt(t) + getHeight()/2;	// and offsets appropriately
 		g.drawImage(img, (int)screenX-img.getWidth()/2, (int)screenY-img.getHeight()/2, null);
 	}
 	
 	
-	public void developStrategy() {
+	private BufferedImage executeTransformation(BufferedImage img, double[] params) {	// rotozooms img based on params
+		if (params[0] == 0.0 && params[1] == 1.0 && params[2] == 1.0)	// if there is no transformation
+			return img;	// return the raw image
+		
+		AffineTransform at = new AffineTransform();
+		if (params[0] != 0.0)
+			at.rotate(params[0], img.getWidth()/2, img.getHeight()/2);	// rotate (if necessary)
+		if (params[1] != 1.0 || params[2] != 1.0)
+			at.scale(params[1], params[2]);				// scales (if necessary
+		
+		AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
+		return op.filter(img, null);	// executes affine transformation and returns
+	}
+
+
+
+	public void developStrategy() {	// some required stuff for graphics to not fail
 		canvs.createBufferStrategy(2);
 		strat = canvs.getBufferStrategy();
 	}

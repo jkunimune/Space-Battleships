@@ -8,11 +8,14 @@ import java.util.ArrayList;
  */
 public class Body {
 
-	ArrayList<double[]> pos;	// the set of positions that define the movement of this body over the course of the map
+	public static final double[] DEFAULT_TRANSFORM = {0.0, 1.0, 1.0};	// the default transformation (zero rotation and scale of 1)
+	
+	private ArrayList<double[]> pos;	// the set of positions that define the movement of this body over the course of the map
+	public Battlefield space;
 	
 	
 	
-	Body(double x0, double y0, double vx0, double vy0, double t0) {
+	Body(double x0, double y0, double vx0, double vy0, double t0, Battlefield field) {
 		double[] init = new double[5];	// each entry in pos must have five entries:
 		init[0] = x0;	// x position
 		init[1] = y0;	// y position
@@ -21,12 +24,18 @@ public class Body {
 		init[4] = t0;	// time
 		pos = new ArrayList<double[]>(1);
 		pos.add(init);
+		space = field;
 	}
 	
 	
 	
 	public String spriteName() {	// gives the name of the current sprite for the GameScreen to reference
 		return "_";
+	}
+	
+	
+	public double[] spriteTransform() {	// gives the rotation and scale factors for this object's sprite
+		return DEFAULT_TRANSFORM;
 	}
 	
 	

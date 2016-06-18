@@ -6,8 +6,8 @@ package mechanics;
  */
 public class Scout extends Ship {
 
-	public Scout(double newX, double newY, boolean blue, double time) {
-		super(newX, newY, blue, time);
+	public Scout(double newX, double newY, boolean blue, double time, Battlefield space) {
+		super(newX, newY, blue, time, space);
 		// TODO Auto-generated constructor stub
 	}
 	
