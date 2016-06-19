@@ -17,5 +17,9 @@ public class Carrier extends Ship {
 	public String spriteName() {
 		return "carrier"+super.spriteName();
 	}
+	
+	
+	@Override
+	public void special(double x, double y, double t) {}
 
 }

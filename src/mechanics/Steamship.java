@@ -16,5 +16,11 @@ public class Steamship extends Ship {
 	public String spriteName() {
 		return "steamship"+super.spriteName();
 	}
+	
+	
+	@Override
+	public void special(double x, double y, double t) {
+		space.spawn(new GasCloud(xValAt(t), yValAt(t), vxValAt(t), vyValAt(t), t, space));
+	}
 
 }

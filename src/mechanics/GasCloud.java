@@ -11,7 +11,6 @@ public class GasCloud extends Body {
 
 	GasCloud(double x0, double y0, double vx0, double vy0, double time, Battlefield space) {
 		super(x0, y0, vx0, vy0, time, space);
-		// TODO Auto-generated constructor stub
 	}
 	
 	
@@ -23,9 +22,15 @@ public class GasCloud extends Body {
 	
 	
 	@Override
-	public double[] spriteTransform() {
-		final double[] res = {0,5,5};
+	public double[] spriteTransform(double t) {
+		final double r = rValAt(t);
+		final double[] res = {0,r/100.0,r/100.0};	// 100 is the sprite radius, so dividing by 100 yields the scale factor
 		return res;
+	}
+	
+	
+	public double rValAt(double t) {
+		return Math.sqrt(age(t)*1*Univ.s)*Univ.c/100;
 	}
 
 }

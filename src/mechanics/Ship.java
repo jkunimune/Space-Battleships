@@ -4,7 +4,7 @@ package mechanics;
  * @author jkunimune
  * An object that can move around and produce lasers on command from the player or the client.
  */
-public class Ship extends Body {
+public abstract class Ship extends Body {
 
 	private boolean isBlue;	// whether it is blue or red
 	private double health, energy;	// HP and PP (in pokemon terms)
@@ -16,7 +16,8 @@ public class Ship extends Body {
 		isBlue = blue;
 		health = 1.0;
 		energy = 1.0;
-		shoot(time);
+		//shoot(time);
+		special(0,0,time);
 	}
 	
 	
@@ -28,8 +29,11 @@ public class Ship extends Body {
 	}
 	
 	
-	public void shoot(double t) {
-		space.spawn(new Laser(xValAt(t), yValAt(t), Math.random()*2*Math.PI, t, space));
+	public void shoot(double t, double e) {	// shoot a laser of energy e at time t
+		space.spawn(new Laser(xValAt(t), yValAt(t), Math.random()*2*Math.PI, t, space, e));
 	}
+	
+	
+	public abstract void special(double x, double y, double t);
 
 }

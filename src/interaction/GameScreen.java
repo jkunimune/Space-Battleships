@@ -93,7 +93,7 @@ public class GameScreen extends JPanel {
 		} catch (java.lang.NullPointerException e) {
 			throw new NullPointerException("Image "+b.spriteName()+".png not found!");
 		}
-		img = executeTransformation(img, b.spriteTransform());	// does any necessary transformations
+		img = executeTransformation(img, b.spriteTransform(t));	// does any necessary transformations
 		
 		double screenX = b.xValAt(t) + getWidth()/2;	// gets coordinates of b, 
 		double screenY = b.yValAt(t) + getHeight()/2;	// and offsets appropriately
@@ -111,12 +111,11 @@ public class GameScreen extends JPanel {
 		if (params[1] != 1.0 || params[2] != 1.0)
 			at.scale(params[1], params[2]);				// scales (if necessary
 		
-		AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
+		AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 		return op.filter(img, null);	// executes affine transformation and returns
 	}
-
-
-
+	
+	
 	public void developStrategy() {	// some required stuff for graphics to not fail
 		canvs.createBufferStrategy(2);
 		strat = canvs.getBufferStrategy();

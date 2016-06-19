@@ -20,5 +20,10 @@ public class Univ {
 	public static final double s = 1000.0;			// second
 	/*speed*/
 	public static final double c = 299792458*m/s;	// speed of light
+	/*mass*/
+	public static final double kg = Math.pow(2,55);	// kilogram
+	/*energy*/
+	public static final double J = kg*m*m/(s*s);	// Joule
+	public static final double MJ = 1000000*J;		// Megajoule
 
 }

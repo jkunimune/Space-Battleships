@@ -6,3 +6,6 @@ png
 pokemon
 jupiter
 saturn
+affine
+joule
+megajoule

@@ -17,5 +17,11 @@ public class Battleship extends Ship {
 	public String spriteName() {
 		return "battleship"+super.spriteName();
 	}
+	
+	
+	@Override
+	public void special(double y, double x, double t) {
+		space.spawn(new UVLaser(xValAt(t), yValAt(t), Math.random()*2*Math.PI, t, space));
+	}
 
 }

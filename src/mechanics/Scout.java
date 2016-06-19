@@ -17,5 +17,11 @@ public class Scout extends Ship {
 	public String spriteName() {
 		return "scout"+super.spriteName();
 	}
+	
+	
+	@Override
+	public void special(double x, double y, double t) {
+		shoot(t, 0.5*Univ.MJ);
+	}
 
 }

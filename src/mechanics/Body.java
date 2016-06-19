@@ -34,7 +34,7 @@ public class Body {
 	}
 	
 	
-	public double[] spriteTransform() {	// gives the rotation and scale factors for this object's sprite
+	public double[] spriteTransform(double t) {	// gives the rotation and scale factors for this object's sprite
 		return DEFAULT_TRANSFORM;
 	}
 	
@@ -58,6 +58,33 @@ public class Body {
 			}
 		}
 		return pos.get(0)[1];	// if it didn't find anything, just use the initial position
+	}
+	
+	
+	public double vxValAt(double t) {	// returns x in pixels at time t
+		for (int i = pos.size()-1; i >= 0; i --) {	// iterate through pos to find the correct motion segment
+			final double[] position = pos.get(i);
+			if (position[4] <= t) {	// they should be sorted chronologically
+				return position[2];	// calculate position based on this
+			}
+		}
+		return pos.get(0)[0];	// if it didn't find anything, just use the initial position
+	}
+	
+	
+	public double vyValAt(double t) {	// returns y in pixels at time t
+		for (int i = pos.size()-1; i >= 0; i --) {	// iterate through pos to find the correct motion segment
+			final double[] position = pos.get(i);
+			if (position[4] <= t) {	// they should be sorted chronologically
+				return position[3];	// calculate position based on this
+			}
+		}
+		return pos.get(0)[1];	// if it didn't find anything, just use the initial position
+	}
+	
+	
+	public double age(double t) {	// returns the number of milliseconds since this has been created
+		return t-pos.get(0)[4];
 	}
 
 }

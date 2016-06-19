@@ -4,21 +4,21 @@ package mechanics;
  * @author jkunimune
  * A body with no control that travels with constant velocity at the speed of light and interacts with ships.
  */
-public class Laser extends Body {
+public class UVLaser extends Body {
 
 	private double heading;	// the direction
 	private double E;		// the energy
 	
 	
 	
-	Laser(double x0, double y0, double tht, double time, Battlefield space) {
+	UVLaser(double x0, double y0, double tht, double time, Battlefield space) {
 		super(x0, y0, Univ.c*Math.cos(tht), Univ.c*Math.sin(tht), time, space);
 		heading = tht;
 		E = 1*Univ.MJ;
 	}
 	
 	
-	Laser(double x0, double y0, double tht, double time, Battlefield space, double energy) {
+	UVLaser(double x0, double y0, double tht, double time, Battlefield space, double energy) {
 		super(x0, y0, Univ.c*Math.cos(tht), Univ.c*Math.sin(tht), time, space);
 		heading = tht;
 		E = energy;
@@ -28,7 +28,7 @@ public class Laser extends Body {
 	
 	@Override
 	public String spriteName() {
-		return "laser";
+		return "laserUV";
 	}
 	
 	
