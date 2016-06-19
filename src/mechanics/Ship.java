@@ -16,7 +16,6 @@ public abstract class Ship extends Body {
 		isBlue = blue;
 		health = 1.0;
 		energy = 1.0;
-		//shoot(time);
 		special(0,0,time);
 	}
 	
@@ -31,6 +30,7 @@ public abstract class Ship extends Body {
 	
 	public void shoot(double t, double e) {	// shoot a laser of energy e at time t
 		space.spawn(new Laser(xValAt(t), yValAt(t), Math.random()*2*Math.PI, t, space, e));
+		sound = "pew";	// play the pew pew sound
 	}
 	
 	

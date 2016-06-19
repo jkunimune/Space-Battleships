@@ -1,5 +1,7 @@
 package interaction;
 
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -10,6 +12,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
@@ -26,7 +29,10 @@ public class GameScreen extends JPanel {
 
 	private static final long serialVersionUID = -4461350953048532763L;
 	
+	
 	private HashMap<String, BufferedImage> sprites;
+	private HashMap<String, AudioClip> sounds;
+	
 	private Battlefield space;
 	
 	private Canvas canvs;
@@ -49,6 +55,7 @@ public class GameScreen extends JPanel {
 		canvs.setFocusable(true);
 		
 		loadImages();
+		loadSounds();
 	}
 	
 	
@@ -69,15 +76,31 @@ public class GameScreen extends JPanel {
 	}
 	
 	
+	private void loadSounds() {
+		sounds = new HashMap<String, AudioClip>();
+		
+		File[] files = new File("assets/sounds").listFiles();
+		for (File f: files) {	// for every file in that folder
+			try {
+				int i = f.getName().lastIndexOf('.');	// find the extension
+				if (i != -1 && f.getName().endsWith(".wav"))	// if it is a wav file
+					sounds.put(f.getName().substring(0,i), Applet.newAudioClip(f.toURI().toURL()));	// put it in the HashMap
+			} catch (IOException e) {
+				System.err.println("Something went wrong with "+f);	// I see no reason this error would ever throw
+			}
+		}
+	}
+	
+	
 	@Override
-	public void setVisible(boolean v) {	// draws all things and displays itself
+	public void setVisible(boolean v) {	// draws all things and plays sounds and displays itself
 		final Graphics2D g = (Graphics2D)strat.getDrawGraphics();
 		final double t = (double)System.currentTimeMillis();
 		
 		g.setColor(new Color(0,0,0));	// start by blackening everything
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
-		for (Body b: space.getBodies())
+		for (Body b: space.getBodies())	// draw the bodies
 			draw(b,g,t);
 		
 		g.dispose();
@@ -98,6 +121,10 @@ public class GameScreen extends JPanel {
 		double screenX = b.xValAt(t) + getWidth()/2;	// gets coordinates of b, 
 		double screenY = b.yValAt(t) + getHeight()/2;	// and offsets appropriately
 		g.drawImage(img, (int)screenX-img.getWidth()/2, (int)screenY-img.getHeight()/2, null);
+		
+		String sfx = b.soundName();
+		if (!sfx.isEmpty())
+			sounds.get(sfx).play();
 	}
 	
 	

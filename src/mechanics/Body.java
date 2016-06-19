@@ -11,7 +11,8 @@ public class Body {
 	public static final double[] DEFAULT_TRANSFORM = {0.0, 1.0, 1.0};	// the default transformation (zero rotation and scale of 1)
 	
 	private ArrayList<double[]> pos;	// the set of positions that define the movement of this body over the course of the map
-	public Battlefield space;
+	protected Battlefield space;
+	protected String sound;	// the sound that it wants to play
 	
 	
 	
@@ -25,6 +26,7 @@ public class Body {
 		pos = new ArrayList<double[]>(1);
 		pos.add(init);
 		space = field;
+		sound = "";
 	}
 	
 	
@@ -36,6 +38,13 @@ public class Body {
 	
 	public double[] spriteTransform(double t) {	// gives the rotation and scale factors for this object's sprite
 		return DEFAULT_TRANSFORM;
+	}
+	
+	
+	public String soundName() {
+		final String s = sound;
+		sound = "";
+		return s;
 	}
 	
 	
