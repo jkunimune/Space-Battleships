@@ -8,11 +8,13 @@ import java.util.ArrayList;
  */
 public class Body {
 
-	public static final double[] DEFAULT_TRANSFORM = {0.0, 1.0, 1.0};	// the default transformation (zero rotation and scale of 1)
+	protected static final double[] DEFAULT_TRANSFORM = {0.0, 1.0, 1.0};	// the default transformation (zero rotation and scale of 1)
 	
-	private ArrayList<double[]> pos;	// the set of positions that define the movement of this body over the course of the map
+	protected ArrayList<double[]> pos;	// the set of positions that define the movement of this body over the course of the map
+	
+	private ArrayList<Double> sfxt;	// when it want to play sounds
+	private ArrayList<String> sound;	// the sounds it wants to play
 	protected Battlefield space;
-	protected String sound;	// the sound that it wants to play
 	
 	
 	
@@ -26,7 +28,8 @@ public class Body {
 		pos = new ArrayList<double[]>(1);
 		pos.add(init);
 		space = field;
-		sound = "";
+		sfxt = new ArrayList<Double>();
+		sound = new ArrayList<String>();
 	}
 	
 	
@@ -41,10 +44,25 @@ public class Body {
 	}
 	
 	
-	public String soundName() {
-		final String s = sound;
-		sound = "";
-		return s;
+	public void playSound(String sfx, double t) {	// play sound at time t
+		for (int i = sound.size()-1; i >= 0; i --) {	// find the correct index
+			if (sfxt.get(i) < t) {
+				sfxt.add(i+1, new Double(t));		// and insert the sound into sound and soundt
+				sound.add(i+1, sfx);
+				return;
+			}
+		}
+		sfxt.add(0, new Double(t));	// insert it at slot zero if you haven't found a spot by now
+		sound.add(0, sfx);
+	}
+	
+	
+	public String soundName(double t) {
+		if (!sfxt.isEmpty() && sfxt.get(0) <= t) {	// if there is a sound that needs to be played
+			sfxt.remove(0);			// take it off the list
+			return sound.remove(0);	// and play it
+		}
+		return "";	// otherwise, stay silent
 	}
 	
 	

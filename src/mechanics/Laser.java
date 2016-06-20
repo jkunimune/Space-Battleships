@@ -7,7 +7,7 @@ package mechanics;
 public class Laser extends Body {
 
 	private double heading;	// the direction
-	private double E;		// the energy
+	protected double E;		// the energy
 	
 	
 	

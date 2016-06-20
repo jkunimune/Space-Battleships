@@ -21,7 +21,7 @@ public class Scout extends Ship {
 	
 	@Override
 	public void special(double x, double y, double t) {
-		shoot(t, 0.5*Univ.MJ);
+		shoot(x, y, t);
 	}
 
 }

@@ -97,7 +97,7 @@ public class GameScreen extends JPanel {
 		final Graphics2D g = (Graphics2D)strat.getDrawGraphics();
 		final double t = (double)System.currentTimeMillis();
 		
-		g.setColor(new Color(0,0,0));	// start by blackening everything
+		g.setColor(Color.BLACK);	// start by blackening everything
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
 		for (Body b: space.getBodies())	// draw the bodies
@@ -122,7 +122,7 @@ public class GameScreen extends JPanel {
 		double screenY = b.yValAt(t) + getHeight()/2;	// and offsets appropriately
 		g.drawImage(img, (int)screenX-img.getWidth()/2, (int)screenY-img.getHeight()/2, null);
 		
-		String sfx = b.soundName();
+		String sfx = b.soundName(t);
 		if (!sfx.isEmpty())
 			sounds.get(sfx).play();
 	}

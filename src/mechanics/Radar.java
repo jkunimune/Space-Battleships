@@ -21,7 +21,7 @@ public class Radar extends Ship {
 	
 	@Override
 	public void special(double x, double y, double t) {
-		shoot(t, 1*Univ.MJ);
+		shoot(x, y, t);
 	}
 
 }

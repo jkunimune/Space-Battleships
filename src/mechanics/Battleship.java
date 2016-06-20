@@ -21,7 +21,8 @@ public class Battleship extends Ship {
 	
 	@Override
 	public void special(double y, double x, double t) {
-		space.spawn(new UVLaser(xValAt(t), yValAt(t), Math.random()*2*Math.PI, t, space));
+		space.spawn(new UVLaser(xValAt(t), yValAt(t), Math.atan2(y-yValAt(t),x-xValAt(t)), t, space, 1*Univ.MJ));
+		playSound("pew", t);	// play the pew pew sound
 	}
 
 }
