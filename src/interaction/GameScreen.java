@@ -3,16 +3,16 @@ package interaction;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
@@ -31,6 +31,7 @@ public class GameScreen extends JPanel {
 	
 	
 	private HashMap<String, BufferedImage> sprites;
+	private HashMap<String, BufferedImage> hudPics;
 	private HashMap<String, AudioClip> sounds;
 	
 	private Battlefield space;
@@ -42,6 +43,7 @@ public class GameScreen extends JPanel {
 	
 	public GameScreen(int w, int h, Battlefield field) {
 		super();
+		System.out.println(w+" "+h);
 		canvs = new Canvas();
 		space = field;
 		
@@ -62,13 +64,25 @@ public class GameScreen extends JPanel {
 	
 	private void loadImages() {	// reads all images in the assets directory and saves them in a HashMap
 		sprites = new HashMap<String, BufferedImage>();
+		hudPics = new HashMap<String, BufferedImage>();
 		
-		File[] files = new File("assets/images").listFiles();
+		File[] files = new File("assets/images/game").listFiles();
 		for (File f: files) {	// for every file in that folder
 			try {
 				int i = f.getName().lastIndexOf('.');	// find the extension
 				if (i != -1 && f.getName().endsWith(".png"))	// if it is a png file
 					sprites.put(f.getName().substring(0,i), ImageIO.read(f));	// put it in the HashMap
+			} catch (IOException e) {
+				System.err.println("Something went wrong with "+f);	// I see no reason this error would ever throw
+			}
+		}
+		
+		files = new File("assets/images/interface").listFiles();	// do the same for HUD pics now
+		for (File f: files) {	// for every file in that folder
+			try {
+				int i = f.getName().lastIndexOf('.');	// find the extension
+				if (i != -1 && f.getName().endsWith(".png"))	// if it is a png file
+					hudPics.put(f.getName().substring(0,i), ImageIO.read(f));	// put it in the HashMap
 			} catch (IOException e) {
 				System.err.println("Something went wrong with "+f);	// I see no reason this error would ever throw
 			}
@@ -97,11 +111,12 @@ public class GameScreen extends JPanel {
 		final Graphics2D g = (Graphics2D)strat.getDrawGraphics();
 		final double t = (double)System.currentTimeMillis();
 		
-		g.setColor(Color.BLACK);	// start by blackening everything
-		g.fillRect(0, 0, getWidth(), getHeight());
+		g.drawImage(hudPics.get("space"), 0, 0, null);
 		
 		for (Body b: space.getBodies())	// draw the bodies
 			draw(b,g,t);
+		
+		drawHUD(g);		// and the heads-up display
 		
 		g.dispose();
 		strat.show();
@@ -125,6 +140,25 @@ public class GameScreen extends JPanel {
 		String sfx = b.soundName(t);
 		if (!sfx.isEmpty())
 			sounds.get(sfx).play();
+	}
+	
+	
+	private void drawHUD(Graphics2D g) {	// draw the heads up display
+		Point mCoords = MouseInfo.getPointerInfo().getLocation();
+		if (mCoords.x*mCoords.x*3 + mCoords.y*mCoords.y < 190000)
+			g.drawImage(hudPics.get("button0_on"), 0, 0, null);
+		else
+			g.drawImage(hudPics.get("button0_of"), 0, 0, null);
+		
+		if (mCoords.x*mCoords.x*3 + (mCoords.y-800)*(mCoords.y-800) < 190000)
+			g.drawImage(hudPics.get("button1_on"), 0, 400, null);
+		else
+			g.drawImage(hudPics.get("button1_of"), 0, 400, null);
+		
+		if ((mCoords.x-1280)*(mCoords.x-1280)*3 + (mCoords.y-800)*(mCoords.y-800) < 190000)
+			g.drawImage(hudPics.get("button2_on"), 880, 400, null);
+		else
+			g.drawImage(hudPics.get("button2_of"), 880, 400, null);
 	}
 	
 	

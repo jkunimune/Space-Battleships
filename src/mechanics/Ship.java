@@ -34,16 +34,16 @@ public abstract class Ship extends Body {
 	
 	public void move(double x, double y, double t) {	// move to the point x,y at a speed of c/10
 		for (int i = pos.size()-1; i >= 0; i --) {	// first, clear any movement after this order
-			if (pos.get(i)[4] >= t)	pos.remove(i);
+			if (pos.get(i)[0] >= t)	pos.remove(i);
 			else					break;
 		}
 		final double x0 = xValAt(t);	// calculate the initial coordinates
 		final double y0 = yValAt(t);
 		final double delT = Math.hypot(x-x0, y-y0)/(Univ.c/10);	// the duration of the trip
 		
-		double[] newPos = {x0, y0, (x-x0)/delT, (y-y0)/delT, t};	// add a segment for the motion
+		double[] newPos = {t, x0, y0, (x-x0)/delT, (y-y0)/delT};	// add a segment for the motion
 		pos.add(newPos);
-		double[] newnewPos = {x, y, 0, 0, t+delT};	// and have it stop afterward
+		double[] newnewPos = {t+delT, x, y, 0, 0};	// and have it stop afterward
 		pos.add(newnewPos);
 		
 		playSound("blast", t);			// then make it play the blast sound at the beginning and end

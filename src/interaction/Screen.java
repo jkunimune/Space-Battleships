@@ -14,10 +14,11 @@ public class Screen {
 	private JFrame frame;
 	private JPanel panel;
 	
+	private int width, height;
+	
 	
 	
 	public Screen(int w, int h) {
-		
 		frame = new JFrame("Space Battleships!");
 		panel = new Menu(w,h);
 		
@@ -28,13 +29,16 @@ public class Screen {
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		frame.pack();
+		
+		width = w;
+		height = h;
 	}
 	
 	
 	
 	public void lookAt(Battlefield field) {	// sets the panel to a GameScreen focused on field
 		frame.remove(panel);
-		panel = new GameScreen(frame.getWidth(), frame.getHeight(), field);
+		panel = new GameScreen(width, height, field);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		frame.pack();
