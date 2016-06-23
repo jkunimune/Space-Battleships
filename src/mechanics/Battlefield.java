@@ -54,5 +54,10 @@ public class Battlefield {
 	public void spawn(Body b) {	// adds a new body to the battlefield
 		bodies.add(b);
 	}
+	
+	
+	public Carrier getBlueCarrier() {
+		return (Carrier) bodies.get(2);
+	}
 
 }

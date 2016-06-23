@@ -4,6 +4,7 @@ import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -43,7 +44,6 @@ public class GameScreen extends JPanel {
 	
 	public GameScreen(int w, int h, Battlefield field) {
 		super();
-		System.out.println(w+" "+h);
 		canvs = new Canvas();
 		space = field;
 		
@@ -51,6 +51,7 @@ public class GameScreen extends JPanel {
 		super.setPreferredSize(new Dimension(w,h));
 		super.setLayout(null);
 		super.setOpaque(true);
+		super.setFocusable(true);
 		
 		canvs.setBounds(0,0,w,h);
 		canvs.setIgnoreRepaint(true);
@@ -106,6 +107,12 @@ public class GameScreen extends JPanel {
 	}
 	
 	
+	public void addListener(Controller c) {
+		canvs.addMouseListener(c);
+		canvs.addKeyListener(c);
+	}
+	
+	
 	@Override
 	public void setVisible(boolean v) {	// draws all things and plays sounds and displays itself
 		final Graphics2D g = (Graphics2D)strat.getDrawGraphics();
@@ -144,18 +151,19 @@ public class GameScreen extends JPanel {
 	
 	
 	private void drawHUD(Graphics2D g) {	// draw the heads up display
-		Point mCoords = MouseInfo.getPointerInfo().getLocation();
-		if (mCoords.x*mCoords.x*3 + mCoords.y*mCoords.y < 190000)
+		final int pos = getMousePos(MouseInfo.getPointerInfo().getLocation());
+		
+		if (pos == -2)
 			g.drawImage(hudPics.get("button0_on"), 0, 0, null);
 		else
 			g.drawImage(hudPics.get("button0_of"), 0, 0, null);
 		
-		if (mCoords.x*mCoords.x*3 + (mCoords.y-800)*(mCoords.y-800) < 190000)
+		if (pos == -3)
 			g.drawImage(hudPics.get("button1_on"), 0, 400, null);
 		else
 			g.drawImage(hudPics.get("button1_of"), 0, 400, null);
 		
-		if ((mCoords.x-1280)*(mCoords.x-1280)*3 + (mCoords.y-800)*(mCoords.y-800) < 190000)
+		if (pos == -4)
 			g.drawImage(hudPics.get("button2_on"), 880, 400, null);
 		else
 			g.drawImage(hudPics.get("button2_of"), 880, 400, null);
@@ -181,4 +189,19 @@ public class GameScreen extends JPanel {
 		canvs.createBufferStrategy(2);
 		strat = canvs.getBufferStrategy();
 	}
+	
+	
+	public int getMousePos(Point mCoords) {	// decides which, if any, button the mouse is currently on
+		final int r2 = 190000;
+		if (Math.pow(mCoords.x, 2)*3 + Math.pow(mCoords.y, 2) < r2)				return -2;	// move button
+		if (Math.pow(mCoords.x, 2)*3 + Math.pow(mCoords.y-800, 2) < r2)			return -3;	// shoot button
+		if (Math.pow(mCoords.x-1280, 2)*3 + Math.pow(mCoords.y-800, 2) < r2)	return -4;	// special button
+		return -1;	// N/A
+	}
+	
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+	}
+
 }

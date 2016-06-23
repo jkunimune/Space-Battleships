@@ -25,6 +25,7 @@ public class Screen {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(w,h);
 		frame.setResizable(true);
+		frame.setFocusable(true);
 		
 		frame.setContentPane(panel);
 		frame.setVisible(true);
@@ -39,6 +40,8 @@ public class Screen {
 	public void lookAt(Battlefield field) {	// sets the panel to a GameScreen focused on field
 		frame.remove(panel);
 		panel = new GameScreen(width, height, field);
+		Controller listener = new Controller((GameScreen) panel, field);
+		((GameScreen) panel).addListener(listener);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		frame.pack();

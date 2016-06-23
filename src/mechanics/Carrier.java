@@ -21,5 +21,10 @@ public class Carrier extends Ship {
 	
 	@Override
 	public void special(double x, double y, double t) {}
+	
+	
+	public void issueOrder(byte[] orderArr) {	// a Carrier-unique order
+		System.out.println(orderArr[0]);
+	}
 
 }
