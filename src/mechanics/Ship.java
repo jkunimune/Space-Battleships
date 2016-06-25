@@ -8,13 +8,14 @@ public abstract class Ship extends Body {
 
 	private boolean isBlue;	// whether it is blue or red
 	
+	protected byte id;		// an identifier for this particular ship
 	
 	
-	public Ship(double newX, double newY, boolean blue, double time, Battlefield space) {
+	
+	public Ship(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
 		super(newX, newY, 0, 0, time, space);
+		id = pin;
 		isBlue = blue;
-		move((Math.random()-.5)*400000*Univ.km, (Math.random()-.5)*400000*Univ.km, time+1*Univ.s);
-		special(0,0,time);
 	}
 	
 	
@@ -47,10 +48,16 @@ public abstract class Ship extends Body {
 		pos.add(newnewPos);
 		
 		playSound("blast", t);			// then make it play the blast sound at the beginning and end
+		clearSoundsAfter(t);
 		playSound("blast", t+delT);
 	}
 	
 	
 	public abstract void special(double x, double y, double t);
+	
+	
+	public byte getID() {
+		return id;
+	}
 
 }

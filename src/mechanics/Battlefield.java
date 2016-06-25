@@ -27,15 +27,15 @@ public class Battlefield {
 		bodies.add(new Planet(-170000*Univ.km,110000*Univ.km,58232*Univ.km,"Saturn",time,this));
 		
 		bodies.add(new Carrier(		bluRC*Math.cos(bluTC),
-									bluRC*Math.sin(bluTC), true, time, this));
+									bluRC*Math.sin(bluTC), time, (byte)0, true, this));
 		bodies.add(new Battleship(	bluRC*Math.cos(bluTC)+bluR[0]*Math.cos(bluT[0]),
-									bluRC*Math.sin(bluTC)+bluR[0]*Math.sin(bluT[0]), true, time, this));
+									bluRC*Math.sin(bluTC)+bluR[0]*Math.sin(bluT[0]), time, (byte)1, true, this));
 		bodies.add(new Scout(		bluRC*Math.cos(bluTC)+bluR[1]*Math.cos(bluT[1]),
-									bluRC*Math.sin(bluTC)+bluR[1]*Math.sin(bluT[1]), true, time, this));
+									bluRC*Math.sin(bluTC)+bluR[1]*Math.sin(bluT[1]), time, (byte)2, true, this));
 		bodies.add(new Radar(		bluRC*Math.cos(bluTC)+bluR[2]*Math.cos(bluT[2]),
-									bluRC*Math.sin(bluTC)+bluR[2]*Math.sin(bluT[2]), true, time, this));
+									bluRC*Math.sin(bluTC)+bluR[2]*Math.sin(bluT[2]), time, (byte)3, true, this));
 		bodies.add(new Steamship(	bluRC*Math.cos(bluTC)+bluR[3]*Math.cos(bluT[3]),
-									bluRC*Math.sin(bluTC)+bluR[3]*Math.sin(bluT[3]), true, time, this));
+									bluRC*Math.sin(bluTC)+bluR[3]*Math.sin(bluT[3]), time, (byte)4, true, this));
 	}
 	
 	
@@ -46,8 +46,15 @@ public class Battlefield {
 	
 	
 	public void update() {
-		// TODO Auto-generated method stub
-		
+		double t = (double)System.currentTimeMillis();
+		for (int i = 1; i < bodies.size(); i ++) {
+			for (int j = 0; j < i; j ++) {
+				final Body b1 = bodies.get(i);
+				final Body b2 = bodies.get(j);
+				b1.interactWith(b2, t);
+				b2.interactWith(b1, t);
+			}
+		}
 	}
 	
 	

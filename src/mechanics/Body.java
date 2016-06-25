@@ -6,9 +6,9 @@ import java.util.ArrayList;
  * @author jkunimune
  * An object with mass, position, velocity, appearance, and ability to collide with things.
  */
-public class Body {
+public abstract class Body {
 
-	protected static final double[] DEFAULT_TRANSFORM = {0.0, 1.0, 1.0};	// the default transformation (zero rotation and scale of 1)
+	private static final double[] DEFAULT_TRANSFORM = {0.0, 1.0, 1.0};	// the default transformation (zero rotation and scale of 1)
 	
 	protected ArrayList<double[]> pos;	// the set of positions that define the movement of this body over the course of the map
 	
@@ -34,9 +34,10 @@ public class Body {
 	
 	
 	
-	public String spriteName() {	// gives the name of the current sprite for the GameScreen to reference
-		return "_";
-	}
+	public void interactWith(Body that, double t) {}	// the most important (unimplemented) method of Body:
+	
+	
+	public abstract String spriteName();	// gives the name of the current sprite for the GameScreen to reference
 	
 	
 	public double[] spriteTransform(double t) {	// gives the rotation and scale factors for this object's sprite
@@ -44,8 +45,8 @@ public class Body {
 	}
 	
 	
-	public void playSound(String sfx, double t) {	// play sound at time t
-		for (int i = sound.size()-1; i >= 0; i --) {	// find the correct index
+	protected final void playSound(String sfx, double t) {	// play sound at time t
+		for (int i = soundt.size()-1; i >= 0; i --) {	// find the correct index
 			if (soundt.get(i) < t) {
 				soundt.add(i+1, new Double(t));		// and insert the sound into sound and soundt
 				sound.add(i+1, sfx);
@@ -57,12 +58,29 @@ public class Body {
 	}
 	
 	
+	protected final void clearSoundsAfter(double t) {	// deletes all planned sounds after a certain time
+		for (int i = soundt.size()-1; i >= 0; i --) {
+			if (soundt.get(i) > t) {
+				soundt.remove(i);
+				sound.remove(i);
+			}
+			else
+				return;
+		}
+	}
+	
+	
 	public final String soundName(double t) {
 		if (!soundt.isEmpty() && soundt.get(0) <= t) {	// if there is a sound that needs to be played
 			soundt.remove(0);			// take it off the list
 			return sound.remove(0);	// and play it
 		}
 		return "";	// otherwise, stay silent
+	}
+	
+	
+	public final double dist(Body that, double t) {	// calculates the distance to another body at a certain time
+		return Math.hypot(this.xValAt(t)-that.xValAt(t), this.yValAt(t)-that.yValAt(t));
 	}
 	
 	

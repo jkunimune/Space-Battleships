@@ -6,8 +6,8 @@ package mechanics;
  */
 public class Radar extends Ship {
 
-	public Radar(double newX, double newY, boolean blue, double time, Battlefield space) {
-		super(newX, newY, blue, time, space);
+	public Radar(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
+		super(newX, newY, time, pin, blue, space);
 		// TODO Auto-generated constructor stub
 	}
 	

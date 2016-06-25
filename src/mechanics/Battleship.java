@@ -6,8 +6,8 @@ package mechanics;
  */
 public class Battleship extends Ship {
 
-	public Battleship(double newX, double newY, boolean blue, double time, Battlefield space) {
-		super(newX, newY, blue, time, space);
+	public Battleship(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
+		super(newX, newY, time, pin, blue, space);
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -20,7 +20,7 @@ public class Battleship extends Ship {
 	
 	
 	@Override
-	public void special(double y, double x, double t) {
+	public void special(double x, double y, double t) {
 		space.spawn(new UVLaser(xValAt(t), yValAt(t), Math.atan2(y-yValAt(t),x-xValAt(t)), t, space, 1*Univ.MJ));
 		playSound("pew", t);	// play the pew pew sound
 	}

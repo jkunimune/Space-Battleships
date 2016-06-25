@@ -19,7 +19,7 @@ public class Controller implements MouseListener, KeyListener {
 	private Carrier ship;		// the ship that this interacts through
 	
 	byte orderMode;				// the type of order being given (-1 for none, -2 for move, -3 for shoot, -4 for special)
-	byte activeShip;				// the ship id being ordered (-1 for none, 0-4 for respective indicies)
+	byte activeShip;				// the ship id being ordered (-1 for none, 0-4 for respective indices)
 	
 	
 	
@@ -33,20 +33,22 @@ public class Controller implements MouseListener, KeyListener {
 	
 	
 	
-	private byte[] composeOrder(byte order, byte ship, long t) {	// composes a byte[] that includes critical information about an order
-		ByteBuffer output = ByteBuffer.wrap(new byte[10]);
+	private byte[] composeOrder(byte order, byte ship, int mx, int my, long t) {	// composes a byte[] that includes critical information about an order
+		ByteBuffer output = ByteBuffer.wrap(new byte[26]);
 		output.put(0, order);
 		output.put(1, ship);
-		output.putLong(2, t);
+		output.putDouble(2, view.spaceXFscreenX(mx));
+		output.putDouble(10, view.spaceYFscreenY(my));
+		output.putDouble(18, (double)t);
 		return output.array();
 	}
 	
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {	// when the mouse is released...
-		byte mPos = view.getMousePos(e.getPoint());
+		byte mPos = view.getMousePos(e.getLocationOnScreen());
 		if (orderMode < -1 && activeShip >= 0) {		// if an order and a ship were active
-			ship.issueOrder(composeOrder(orderMode, activeShip, System.currentTimeMillis()));
+			ship.issueOrder(composeOrder(orderMode, activeShip, e.getXOnScreen(), e.getYOnScreen(), System.currentTimeMillis()));
 			orderMode = -1;
 			activeShip = 1;
 		}
@@ -56,8 +58,8 @@ public class Controller implements MouseListener, KeyListener {
 			activeShip = mPos;
 		else if (orderMode < -1)	// if there is an active order
 			orderMode = mPos;
-		else if (activeShip >= 0)	// if there is an active ship
-			activeShip = mPos;
+		//else if (activeShip >= 0)	// if there is an active ship
+		//	activeShip = mPos;
 	}
 	
 	

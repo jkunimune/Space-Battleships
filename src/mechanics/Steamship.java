@@ -6,8 +6,8 @@ package mechanics;
  */
 public class Steamship extends Ship {
 
-	public Steamship(double newX, double newY, boolean blue, double time, Battlefield space) {
-		super(newX, newY, blue, time, space);
+	public Steamship(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
+		super(newX, newY, time, pin, blue, space);
 	}
 	
 	

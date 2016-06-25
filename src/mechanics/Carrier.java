@@ -8,9 +8,8 @@ import java.nio.ByteBuffer;
  */
 public class Carrier extends Ship {
 
-	public Carrier(double newX, double newY, boolean blue, double time, Battlefield space) {
-		super(newX, newY, blue, time, space);
-		// TODO Auto-generated constructor stub
+	public Carrier(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
+		super(newX, newY, time, pin, blue, space);
 	}
 	
 	
@@ -26,11 +25,13 @@ public class Carrier extends Ship {
 	
 	
 	public void issueOrder(byte[] orderArr) {	// a Carrier-unique method
-		ByteBuffer bb = ByteBuffer.wrap(orderArr);
-		byte order = bb.get();
-		byte ship = bb.get();
-		long t = bb.getLong();
-		space.spawn(new Order(xValAt(t), yValAt(t), t, order, ship, space));	// and does it
+		ByteBuffer bb = ByteBuffer.wrap(orderArr);	// parses an array of bytes
+		byte order = bb.get();						// for the important information about
+		byte ship = bb.get();						// the order
+		double x = bb.getDouble();
+		double y = bb.getDouble();
+		double t = bb.getDouble();
+		space.spawn(new Order(xValAt(t), yValAt(t), t, order, ship, x, y, space));	// send the order!
 	}
 
 }

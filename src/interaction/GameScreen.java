@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 
 import mechanics.Battlefield;
 import mechanics.Body;
+import mechanics.Univ;
 
 /**
  * @author jkunimune
@@ -31,14 +32,18 @@ public class GameScreen extends JPanel {
 	private static final long serialVersionUID = -4461350953048532763L;
 	
 	
-	private HashMap<String, BufferedImage> sprites;
+	private HashMap<String, BufferedImage> sprites;	// the images it uses to display objects
 	private HashMap<String, BufferedImage> hudPics;
 	private HashMap<String, AudioClip> sounds;
 	
 	private Battlefield space;
 	
-	private Canvas canvs;
+	private Canvas canvs;			// some necessary java.awt stuff
 	private BufferStrategy strat;
+	
+	private double origX;	// the variables that define the screen's position and zoom-level
+	private double origY;
+	private double scale;
 	
 	
 	
@@ -59,6 +64,10 @@ public class GameScreen extends JPanel {
 		
 		loadImages();
 		loadSounds();
+		
+		origX = -640;
+		origY = -400;
+		scale = 1.0;
 	}
 	
 	
@@ -144,7 +153,7 @@ public class GameScreen extends JPanel {
 			return;	// I don't know the difference between these two exceptions
 		}
 		double screenX = b.xValAt(t) + getWidth()/2;	// gets coordinates of b, 
-		double screenY = b.yValAt(t) + getHeight()/2;	// and offsets appropriately
+		double screenY = screenYFspaceY(b.yValAt(t));	// and offsets appropriately
 		g.drawImage(img, (int)screenX-img.getWidth()/2, (int)screenY-img.getHeight()/2, null);
 		
 		String sfx = b.soundName(t);
@@ -205,6 +214,26 @@ public class GameScreen extends JPanel {
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+	}
+	
+	
+	public double spaceXFscreenX(int sx) {	// converts an x on screen to an x in space
+		return sx*scale + origX;
+	}
+	
+	
+	public double spaceYFscreenY(int sy) {	// converts a y on screen to a y in space
+		return sy*scale + origY;
+	}
+	
+	
+	public int screenXFspaceX(double sx) {	// converts an x in space to an x on screen
+		return (int)((sx-origX)/scale);
+	}
+	
+	
+	public int screenYFspaceY(double sy) {	// converts a y in space to a y on screen
+		return (int)((sy-origY)/scale);
 	}
 
 }
