@@ -1,8 +1,10 @@
 package mechanics;
 
+import java.nio.ByteBuffer;
+
 /**
- * @author jkunimune
  * The command ship, most important of any fleet, which can't do much but give orders and move.
+ * @author jkunimune
  */
 public class Carrier extends Ship {
 
@@ -23,8 +25,12 @@ public class Carrier extends Ship {
 	public void special(double x, double y, double t) {}
 	
 	
-	public void issueOrder(byte[] orderArr) {	// a Carrier-unique order
-		System.out.println(orderArr[0]);
+	public void issueOrder(byte[] orderArr) {	// a Carrier-unique method
+		ByteBuffer bb = ByteBuffer.wrap(orderArr);
+		byte order = bb.get();
+		byte ship = bb.get();
+		long t = bb.getLong();
+		space.spawn(new Order(xValAt(t), yValAt(t), t, order, ship, space));	// and does it
 	}
 
 }

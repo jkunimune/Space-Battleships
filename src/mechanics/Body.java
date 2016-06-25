@@ -57,7 +57,7 @@ public class Body {
 	}
 	
 	
-	public String soundName(double t) {
+	public final String soundName(double t) {
 		if (!soundt.isEmpty() && soundt.get(0) <= t) {	// if there is a sound that needs to be played
 			soundt.remove(0);			// take it off the list
 			return sound.remove(0);	// and play it
@@ -66,7 +66,7 @@ public class Body {
 	}
 	
 	
-	public double xValAt(double t) {	// returns x in pixels at time t
+	public final double xValAt(double t) {	// returns x in pixels at time t
 		for (int i = pos.size()-1; i >= 0; i --) {	// iterate through pos to find the correct motion segment
 			final double[] position = pos.get(i);
 			if (position[0] <= t) {	// they should be sorted chronologically
@@ -77,7 +77,7 @@ public class Body {
 	}
 	
 	
-	public double yValAt(double t) {	// returns y in pixels at time t
+	public final double yValAt(double t) {	// returns y in pixels at time t
 		for (int i = pos.size()-1; i >= 0; i --) {	// iterate through pos to find the correct motion segment
 			final double[] position = pos.get(i);
 			if (position[0] <= t) {	// they should be sorted chronologically
@@ -88,7 +88,7 @@ public class Body {
 	}
 	
 	
-	public double vxValAt(double t) {	// returns x in pixels at time t
+	public final double vxValAt(double t) {	// returns x in pixels at time t
 		for (int i = pos.size()-1; i >= 0; i --) {	// iterate through pos to find the correct motion segment
 			final double[] position = pos.get(i);
 			if (position[0] <= t) {	// they should be sorted chronologically
@@ -99,7 +99,7 @@ public class Body {
 	}
 	
 	
-	public double vyValAt(double t) {	// returns y in pixels at time t
+	public final double vyValAt(double t) {	// returns y in pixels at time t
 		for (int i = pos.size()-1; i >= 0; i --) {	// iterate through pos to find the correct motion segment
 			final double[] position = pos.get(i);
 			if (position[0] <= t) {	// they should be sorted chronologically
@@ -110,7 +110,7 @@ public class Body {
 	}
 	
 	
-	public double age(double t) {	// returns the number of milliseconds since this has been created
+	public final double age(double t) {	// returns the number of milliseconds since this has been created
 		return t-pos.get(0)[0];
 	}
 

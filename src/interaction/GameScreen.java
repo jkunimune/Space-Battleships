@@ -120,8 +120,8 @@ public class GameScreen extends JPanel {
 		
 		g.drawImage(hudPics.get("space"), 0, 0, null);
 		
-		for (Body b: space.getBodies())	// draw the bodies
-			draw(b,g,t);
+		for (int i = 0; i < space.getBodies().size(); i ++)	// draw the bodies
+			draw(space.getBodies().get(i),g,t);
 		
 		drawHUD(g);		// and the heads-up display
 		
@@ -133,13 +133,16 @@ public class GameScreen extends JPanel {
 	
 	private void draw(Body b, Graphics2D g, double t) {	// put a picture of b on g at time t
 		BufferedImage img;
-		try {
-			img = sprites.get(b.spriteName());	// finds the correct sprite
-		} catch (java.lang.NullPointerException e) {
+		img = sprites.get(b.spriteName());	// finds the correct sprite
+		if (img == null)
 			throw new NullPointerException("Image "+b.spriteName()+".png not found!");
+		try {
+			img = executeTransformation(img, b.spriteTransform(t));	// does any necessary transformations
+		} catch (java.awt.image.RasterFormatException e) {
+			return;	// if there's a problem with the transformation (probably roundoff), just skip it
+		} catch (java.awt.image.ImagingOpException e) {
+			return;	// I don't know the difference between these two exceptions
 		}
-		img = executeTransformation(img, b.spriteTransform(t));	// does any necessary transformations
-		
 		double screenX = b.xValAt(t) + getWidth()/2;	// gets coordinates of b, 
 		double screenY = b.yValAt(t) + getHeight()/2;	// and offsets appropriately
 		g.drawImage(img, (int)screenX-img.getWidth()/2, (int)screenY-img.getHeight()/2, null);
@@ -191,12 +194,12 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	public int getMousePos(Point mCoords) {	// decides which, if any, button the mouse is currently on
+	public byte getMousePos(Point mCoords) {	// decides which, if any, button the mouse is currently on
 		final int r2 = 190000;
 		if (Math.pow(mCoords.x, 2)*3 + Math.pow(mCoords.y, 2) < r2)				return -2;	// move button
 		if (Math.pow(mCoords.x, 2)*3 + Math.pow(mCoords.y-800, 2) < r2)			return -3;	// shoot button
 		if (Math.pow(mCoords.x-1280, 2)*3 + Math.pow(mCoords.y-800, 2) < r2)	return -4;	// special button
-		return -1;	// N/A
+		return -1;	// empty space
 	}
 	
 	

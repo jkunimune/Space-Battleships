@@ -24,13 +24,13 @@ public class GasCloud extends Body {
 	@Override
 	public double[] spriteTransform(double t) {
 		final double r = rValAt(t);
-		final double[] res = {0,r/100.0,r/100.0};	// 100 is the sprite radius, so dividing by 100 yields the scale factor
+		final double[] res = {0,r/150.0,r/150.0};	// 100 is the sprite radius, so dividing by 100 yields the scale factor
 		return res;
 	}
 	
 	
 	public double rValAt(double t) {
-		return Math.sqrt(age(t)*1*Univ.s)*Univ.c/100;
+		return Math.sqrt(age(t)*1*Univ.s)*Univ.c/8;
 	}
 
 }
