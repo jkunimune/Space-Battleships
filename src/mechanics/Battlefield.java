@@ -51,8 +51,10 @@ public class Battlefield {
 			for (int j = 0; j < i; j ++) {
 				final Body b1 = bodies.get(i);
 				final Body b2 = bodies.get(j);
-				b1.interactWith(b2, t);
-				b2.interactWith(b1, t);
+				if (b1.existsAt(t) && b2.existsAt(t)) {
+					b1.interactWith(b2, t);
+					b2.interactWith(b1, t);
+				}
 			}
 		}
 	}

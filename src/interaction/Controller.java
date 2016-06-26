@@ -28,7 +28,7 @@ public class Controller implements MouseListener, KeyListener {
 		ship = bf.getBlueCarrier();
 		
 		orderMode = -1;
-		activeShip = 1;
+		activeShip = 4;
 	}
 	
 	
@@ -50,7 +50,7 @@ public class Controller implements MouseListener, KeyListener {
 		if (orderMode < -1 && activeShip >= 0) {		// if an order and a ship were active
 			ship.issueOrder(composeOrder(orderMode, activeShip, e.getXOnScreen(), e.getYOnScreen(), System.currentTimeMillis()));
 			orderMode = -1;
-			activeShip = 1;
+			activeShip = 4;
 		}
 		else if (mPos < -1)			// if a button was clicked on
 			orderMode = mPos;

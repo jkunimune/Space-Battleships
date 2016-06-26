@@ -34,7 +34,7 @@ public abstract class Body {
 	
 	
 	
-	public void interactWith(Body that, double t) {}	// the most important (unimplemented) method of Body:
+	public void interactWith(Body that, double t) {}	// the most important (unimplemented) method of Body
 	
 	
 	public abstract String spriteName();	// gives the name of the current sprite for the GameScreen to reference
@@ -42,6 +42,11 @@ public abstract class Body {
 	
 	public double[] spriteTransform(double t) {	// gives the rotation and scale factors for this object's sprite
 		return DEFAULT_TRANSFORM;
+	}
+	
+	
+	public boolean existsAt(double t) {	// determines whether this sprite should be drawn
+		return age(t) >= 0;
 	}
 	
 	

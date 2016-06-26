@@ -1,5 +1,7 @@
 package mechanics;
 
+import java.util.ArrayList;
+
 /**
  * @author jkunimune
  * An object that can move around and produce lasers on command from the player or the client.
@@ -10,12 +12,22 @@ public abstract class Ship extends Body {
 	
 	protected byte id;		// an identifier for this particular ship
 	
+	protected ArrayList<double[]> health;
+	protected ArrayList<double[]> energy;
+	
 	
 	
 	public Ship(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
 		super(newX, newY, 0, 0, time, space);
 		id = pin;
 		isBlue = blue;
+		
+		double[] hInit = {time, 1.5*Univ.MJ};
+		double[] eInit = {time, 5*Univ.MJ};
+		health = new ArrayList<double[]>(1);
+		energy = new ArrayList<double[]>(1);
+		health.add(hInit);
+		energy.add(eInit);
 	}
 	
 	
@@ -27,8 +39,24 @@ public abstract class Ship extends Body {
 	}
 	
 	
+	@Override
+	public boolean existsAt(double t) {
+		return super.existsAt(t) && hValAt(t) > 0;
+	}
+	
+	
+	public void damaged(double amount, double t) {	// take some out of your health
+		double[] newHVal = {t, hValAt(t)-amount};
+		health.add(newHVal);
+	}
+	
+	
 	public void shoot(double x, double y, double t) {	// shoot a 1 megajoule laser at time t
-		space.spawn(new Laser(xValAt(t), yValAt(t), Math.atan2(y-yValAt(t),x-xValAt(t)), t, space, 1*Univ.MJ));
+		final double theta = Math.atan2(y-yValAt(t),x-xValAt(t));
+		final double spawnDist = 40000*Univ.km;	// make sure you spawn it in front of the ship so it doesn't shoot itself
+		space.spawn(new Laser(xValAt(t) + spawnDist*Math.cos(theta),
+							  yValAt(t) + spawnDist*Math.sin(theta),
+							  theta, t, space, 1*Univ.MJ));
 		playSound("pew", t);	// play the pew pew sound
 	}
 	
@@ -54,6 +82,17 @@ public abstract class Ship extends Body {
 	
 	
 	public abstract void special(double x, double y, double t);
+	
+	
+	public double hValAt(double t) {	// the health at time t
+		for (int i = health.size()-1; i >= 0; i --) {	// iterate through health to find the correct motion segment
+			final double[] timehealth = health.get(i);
+			if (timehealth[0] <= t) {	// they should be sorted chronologically
+				return timehealth[1];	// calculate health based on this
+			}
+		}
+		return health.get(0)[1];	// if it didn't find anything, just use the first one
+	}
 	
 	
 	public byte getID() {

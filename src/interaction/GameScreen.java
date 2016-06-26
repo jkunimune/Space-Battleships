@@ -130,7 +130,8 @@ public class GameScreen extends JPanel {
 		g.drawImage(hudPics.get("space"), 0, 0, null);
 		
 		for (int i = 0; i < space.getBodies().size(); i ++)	// draw the bodies
-			draw(space.getBodies().get(i),g,t);
+			if (space.getBodies().get(i).existsAt(t))
+				draw(space.getBodies().get(i),g,t);
 		
 		drawHUD(g);		// and the heads-up display
 		
