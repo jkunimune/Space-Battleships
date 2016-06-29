@@ -1,3 +1,6 @@
+/**
+ * A class to take mouse input and interact with the game
+ */
 package interaction;
 
 import java.awt.event.KeyEvent;
@@ -10,8 +13,8 @@ import mechanics.Battlefield;
 import mechanics.Carrier;
 
 /**
- * A class to take mouse input and interact with the game
  * @author jkunimune
+ * @version 1.0
  */
 public class Controller implements MouseListener, KeyListener {
 
@@ -79,7 +82,7 @@ public class Controller implements MouseListener, KeyListener {
 	public void mouseExited(MouseEvent arg0) {}
 
 	@Override
-	public void keyPressed(KeyEvent arg0) {System.out.println("B");}
+	public void keyPressed(KeyEvent arg0) {}
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {}

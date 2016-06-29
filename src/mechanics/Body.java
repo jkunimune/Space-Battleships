@@ -1,10 +1,13 @@
+/**
+ * An object with mass, position, velocity, appearance, and ability to collide with things.
+ */
 package mechanics;
 
 import java.util.ArrayList;
 
 /**
  * @author jkunimune
- * An object with mass, position, velocity, appearance, and ability to collide with things.
+ * @version 1.0
  */
 public abstract class Body {
 
@@ -34,7 +37,10 @@ public abstract class Body {
 	
 	
 	
-	public void interactWith(Body that, double t) {}	// the most important (unimplemented) method of Body
+	public void update(double t) {}	// carry out actions that need to be handled continuously
+	
+	
+	public void interactWith(Body that, double t) {}	// determine if this should interact with that, and do it
 	
 	
 	public abstract String spriteName();	// gives the name of the current sprite for the GameScreen to reference

@@ -1,10 +1,13 @@
+/**
+ * The class that handles the game and physics-engine, keeping track of all bodies, and updating things.
+ */
 package mechanics;
 
 import java.util.ArrayList;
 
 /**
  * @author jkunimune
- * The class that handles the game and physics-engine, keeping track of all bodies, and updating things.
+ * @version 1.0
  */
 public class Battlefield {
 
@@ -45,18 +48,24 @@ public class Battlefield {
 	}
 	
 	
-	public void update() {
+	public void update() {	// updates all bodies that need to be updated and collides anything close enough to collide
 		double t = (double)System.currentTimeMillis();
-		for (int i = 1; i < bodies.size(); i ++) {
-			for (int j = 0; j < i; j ++) {
-				final Body b1 = bodies.get(i);
-				final Body b2 = bodies.get(j);
-				if (b1.existsAt(t) && b2.existsAt(t)) {
-					b1.interactWith(b2, t);
-					b2.interactWith(b1, t);
+		
+		for (int i = bodies.size()-1; i > 0; i --) {
+			final Body b1 = bodies.get(i);
+			if (b1.existsAt(t)) {
+				for (int j = 0; j < i; j ++) {
+					final Body b2 = bodies.get(j);
+					if (b2.existsAt(t)) {
+						b1.interactWith(b2, t);
+						b2.interactWith(b1, t);
+					}
 				}
 			}
 		}
+		
+		for (int i = bodies.size()-1; i >= 0; i --)
+			bodies.get(i).update(t);
 	}
 	
 	

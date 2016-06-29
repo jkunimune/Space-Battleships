@@ -5,7 +5,7 @@ package mechanics;
 
 /**
  * @author jkunimune
- * 
+ * @version 1.0
  */
 public class Laser extends Body {
 
@@ -23,7 +23,7 @@ public class Laser extends Body {
 		super(x0, y0, Univ.c*Math.cos(tht), Univ.c*Math.sin(tht), time, space);
 		heading = tht;
 		E = 1*Univ.MJ;
-		r = Math.pow(E/energyDens*0.75/Math.PI, 1/3.0);	// approximate laser as a sphere
+		r = rValFor(E);	// approximate laser as a sphere
 		collidedTime = Double.MAX_VALUE;
 	}
 	
@@ -42,7 +42,7 @@ public class Laser extends Body {
 	public void interactWith(Body that, double t) {
 		if (t < collidedTime && that instanceof Ship && this.dist(that,t) < r) {
 			((Ship) that).damaged(E, t);
-			this.collidedTime = t;
+			this.collide(t);
 			if (!that.existsAt(t))
 				playSound("boom", t);
 		}
@@ -57,7 +57,8 @@ public class Laser extends Body {
 	
 	@Override
 	public double[] spriteTransform(double t) {
-		final double[] res = {heading, E/(1*Univ.MJ), E/(1*Univ.MJ)};
+		final double scale = Math.pow(E/(1*Univ.MJ), 1/3.0);
+		final double[] res = {heading, scale, scale};
 		return res;
 	}
 	
@@ -65,6 +66,21 @@ public class Laser extends Body {
 	@Override
 	public boolean existsAt(double t) {
 		return super.existsAt(t) && t <= collidedTime;
+	}
+	
+	
+	public double EValAt(double t) {	// the energy
+		return E;
+	}
+	
+	
+	public void collide(double t) {	// tells the game that this laser no longer exists
+		collidedTime = t;
+	}
+	
+	
+	public static double rValFor(double E) {
+		return Math.pow(E/energyDens*0.75/Math.PI, 1/3.0);	// gives the radius of a laser of energy E
 	}
 
 }

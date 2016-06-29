@@ -1,10 +1,13 @@
+/**
+ * An object that can move around and produce lasers on command from the player or the client.
+ */
 package mechanics;
 
 import java.util.ArrayList;
 
 /**
  * @author jkunimune
- * An object that can move around and produce lasers on command from the player or the client.
+ * @version 1.0
  */
 public abstract class Ship extends Body {
 
@@ -53,10 +56,11 @@ public abstract class Ship extends Body {
 	
 	public void shoot(double x, double y, double t) {	// shoot a 1 megajoule laser at time t
 		final double theta = Math.atan2(y-yValAt(t),x-xValAt(t));
-		final double spawnDist = 40000*Univ.km;	// make sure you spawn it in front of the ship so it doesn't shoot itself
+		final double nrg = 1*Univ.MJ;
+		final double spawnDist = Laser.rValFor(nrg) + 1*Univ.m;	// make sure you spawn it in front of the ship so it doesn't shoot itself
 		space.spawn(new Laser(xValAt(t) + spawnDist*Math.cos(theta),
 							  yValAt(t) + spawnDist*Math.sin(theta),
-							  theta, t, space, 1*Univ.MJ));
+							  theta, t, space, nrg));
 		playSound("pew", t);	// play the pew pew sound
 	}
 	
