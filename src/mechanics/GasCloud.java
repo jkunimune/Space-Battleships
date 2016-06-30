@@ -30,7 +30,7 @@ public class GasCloud extends Body {
 	
 	@Override
 	public void update(double t) {	// a GasCloud with energy will gradually release lasers
-		if (EsValAt(t) >= laserEnergy) {
+		while (EsValAt(t) >= laserEnergy) {
 			double tht = 2*Math.PI*Math.random();	// pick a random direction
 			double r = this.rValAt(t) + Laser.rValFor(laserEnergy);	// pick a safe distance
 			space.spawn(new Laser(xValAt(t) + r*Math.cos(tht),		// fire it
@@ -69,7 +69,7 @@ public class GasCloud extends Body {
 	
 	
 	public double rValAt(double t) {
-		return Math.sqrt(age(t)*1*Univ.s)*Univ.c/10;
+		return Math.sqrt(age(t)*1*Univ.s)*Univ.c/20;
 	}
 	
 	
@@ -89,17 +89,6 @@ public class GasCloud extends Body {
 				return state[2] + state[1]*(t-state[0])/halfLife;
 		}
 		return 0;
-	}
-	
-	
-	private void addEnergy(double E, double t) {	// increases the energy at time t by E
-		final double[] newE = {t, EValAt(t)+E, EsValAt(t)};
-		
-		/*for (int i = energy.size()-1; i >= 0; i --)
-			if (energy.get(i)[0] >= t)		// start by removing anything that was about to happen before this
-				energy.remove(i);*/
-		
-		
 	}
 
 }

@@ -51,7 +51,7 @@ public class Controller implements MouseListener, KeyListener {
 	public void mouseReleased(MouseEvent e) {	// when the mouse is released...
 		byte mPos = view.getMousePos(e.getLocationOnScreen());
 		if (orderMode < -1 && activeShip >= 0) {		// if an order and a ship were active
-			ship.issueOrder(composeOrder(orderMode, activeShip, e.getXOnScreen(), e.getYOnScreen(), System.currentTimeMillis()));
+			ship.issueOrder(composeOrder(orderMode, activeShip, e.getX(), e.getY(), System.currentTimeMillis()));
 			orderMode = -1;
 			activeShip = 4;
 		}

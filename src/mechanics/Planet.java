@@ -1,8 +1,11 @@
+/**
+ * An inert sphere that destroys other bodies that get too close.
+ */
 package mechanics;
 
 /**
  * @author jkunimune
- * An inert sphere that destroys other bodies that get too close.
+ * @version 1.0
  */
 public class Planet extends Body {
 

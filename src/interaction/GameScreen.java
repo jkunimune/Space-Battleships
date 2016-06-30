@@ -1,3 +1,6 @@
+/**
+ * The JPanel that displays the gameplay objects and HUD during a match.
+ */
 package interaction;
 
 import java.applet.Applet;
@@ -21,11 +24,10 @@ import javax.swing.JPanel;
 
 import mechanics.Battlefield;
 import mechanics.Body;
-import mechanics.Univ;
 
 /**
  * @author jkunimune
- * The JPanel that displays the gameplay objects and HUD during a match.
+ * @version
  */
 public class GameScreen extends JPanel {
 
@@ -164,7 +166,7 @@ public class GameScreen extends JPanel {
 	
 	
 	private void drawHUD(Graphics2D g) {	// draw the heads up display
-		final int pos = getMousePos(MouseInfo.getPointerInfo().getLocation());
+		final int pos = getMousePos(MouseInfo.getPointerInfo().getLocation(), this.getLocationOnScreen());
 		
 		if (pos == -2)
 			g.drawImage(hudPics.get("button0_on"), 0, 0, null);
@@ -186,15 +188,17 @@ public class GameScreen extends JPanel {
 	private BufferedImage executeTransformation(BufferedImage img, double[] params) {	// rotozooms img based on params
 		if (params[0] == 0.0 && params[1] == 1.0 && params[2] == 1.0)	// if there is no transformation
 			return img;	// return the raw image
-		
 		AffineTransform at = new AffineTransform();
-		if (params[0] != 0.0)
-			at.rotate(params[0], img.getWidth()/2, img.getHeight()/2);	// rotate (if necessary)
+		
 		if (params[1] != 1.0 || params[2] != 1.0)
-			at.scale(params[1], params[2]);				// scales (if necessary
+			at.scale(params[1], params[2]);				// scales (if necessary)
+		
+		if (params[0] != 0.0)
+			at.rotate(params[0], img.getWidth()/2, img.getHeight()/2);
 		
 		AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-		return op.filter(img, null);	// executes affine transformation and returns
+		Point size = new Point((int) (img.getWidth()*params[1]), (int) (img.getHeight()*params[2]));
+		return op.filter(img, null).getSubimage(0, 0, size.x, size.y);	// executes affine transformation, crops, and returns
 	}
 	
 	
@@ -204,11 +208,21 @@ public class GameScreen extends JPanel {
 	}
 	
 	
+	public byte getMousePos(Point mCoordsOnScreen, Point screenCoords) {	// decides which, if any, button the mouse is currently on
+		return getMousePos(mCoordsOnScreen.x-screenCoords.x, mCoordsOnScreen.y-screenCoords.y);
+	}
+	
+	
 	public byte getMousePos(Point mCoords) {	// decides which, if any, button the mouse is currently on
+		return getMousePos(mCoords.x, mCoords.y);
+	}
+	
+	
+	public byte getMousePos(int x, int y) {	// decides which, if any, button the mouse is currently on
 		final int r2 = 190000;
-		if (Math.pow(mCoords.x, 2)*3 + Math.pow(mCoords.y, 2) < r2)				return -2;	// move button
-		if (Math.pow(mCoords.x, 2)*3 + Math.pow(mCoords.y-800, 2) < r2)			return -3;	// shoot button
-		if (Math.pow(mCoords.x-1280, 2)*3 + Math.pow(mCoords.y-800, 2) < r2)	return -4;	// special button
+		if (Math.pow(x, 2)*3 + Math.pow(y, 2) < r2)				return -2;	// move button
+		if (Math.pow(x, 2)*3 + Math.pow(y-800, 2) < r2)			return -3;	// shoot button
+		if (Math.pow(x-1280, 2)*3 + Math.pow(y-800, 2) < r2)	return -4;	// special button
 		return -1;	// empty space
 	}
 	
