@@ -86,7 +86,7 @@ public abstract class Body {
 			soundt.remove(0);			// take it off the list
 			return sound.remove(0);	// and play it
 		}
-		return "";	// otherwise, stay silent
+		return null;	// otherwise, stay silent
 	}
 	
 	

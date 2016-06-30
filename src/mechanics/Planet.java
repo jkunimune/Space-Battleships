@@ -24,6 +24,17 @@ public class Planet extends Body {
 	
 	
 	@Override
+	public void interactWith(Body that, double t) {
+		if (this.dist(that, t) < radius) {
+			if (that instanceof Ship)
+				((Ship) that).damaged(((Ship) that).hValAt(t), t);
+			else if (that instanceof Laser)
+				((Laser) that).collide(t);
+		}
+	}
+	
+	
+	@Override
 	public String spriteName() {
 		return name;
 	}

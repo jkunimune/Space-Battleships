@@ -131,9 +131,15 @@ public class GameScreen extends JPanel {
 		
 		g.drawImage(hudPics.get("space"), 0, 0, null);
 		
-		for (int i = 0; i < space.getBodies().size(); i ++)	// draw the bodies
-			if (space.getBodies().get(i).existsAt(t))
-				draw(space.getBodies().get(i),g,t);
+		for (int i = space.getBodies().size()-1; i >= 0; i --) {	// then draw the bodies
+			final Body b = space.getBodies().get(i);
+			
+			if (b.existsAt(t))
+				draw(b, g, t);
+			try {
+				sounds.get(b.soundName(t)).play();
+			} catch (NullPointerException e) {}
+		}
 		
 		drawHUD(g);		// and the heads-up display
 		
@@ -158,10 +164,6 @@ public class GameScreen extends JPanel {
 		double screenX = b.xValAt(t) + getWidth()/2;	// gets coordinates of b, 
 		double screenY = screenYFspaceY(b.yValAt(t));	// and offsets appropriately
 		g.drawImage(img, (int)screenX-img.getWidth()/2, (int)screenY-img.getHeight()/2, null);
-		
-		String sfx = b.soundName(t);
-		if (!sfx.isEmpty())
-			sounds.get(sfx).play();
 	}
 	
 	

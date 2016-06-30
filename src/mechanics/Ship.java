@@ -51,6 +51,10 @@ public abstract class Ship extends Body {
 	public void damaged(double amount, double t) {	// take some out of your health
 		double[] newHVal = {t, hValAt(t)-amount};
 		health.add(newHVal);
+		if (newHVal[1] <= 0) {
+			clearSoundsAfter(t);	// if the ship just died
+			playSound("boom"+(int)(Math.random()*2), t);	// cancel any later sounds with a boom
+		}
 	}
 	
 	

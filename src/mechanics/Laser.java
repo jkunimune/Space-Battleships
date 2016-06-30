@@ -43,8 +43,6 @@ public class Laser extends Body {
 		if (t < collidedTime && that instanceof Ship && this.dist(that,t) < r) {
 			((Ship) that).damaged(E, t);
 			this.collide(t);
-			if (!that.existsAt(t))
-				playSound("boom", t);
 		}
 	}
 	

@@ -26,8 +26,6 @@ public class Battlefield {
 		
 		double time = (double)System.currentTimeMillis();	// the current time
 		bodies = new ArrayList<Body>();
-		bodies.add(new Planet(70000*Univ.km,-200000*Univ.km,43441*Univ.mi,"Jupiter",time,this));
-		bodies.add(new Planet(-170000*Univ.km,110000*Univ.km,58232*Univ.km,"Saturn",time,this));
 		
 		bodies.add(new Carrier(		bluRC*Math.cos(bluTC),
 									bluRC*Math.sin(bluTC), time, (byte)0, true, this));
@@ -39,6 +37,8 @@ public class Battlefield {
 									bluRC*Math.sin(bluTC)+bluR[2]*Math.sin(bluT[2]), time, (byte)3, true, this));
 		bodies.add(new Steamship(	bluRC*Math.cos(bluTC)+bluR[3]*Math.cos(bluT[3]),
 									bluRC*Math.sin(bluTC)+bluR[3]*Math.sin(bluT[3]), time, (byte)4, true, this));
+		
+		bodies.add(new Planet(0*Univ.km,0*Univ.km,43441*Univ.mi,"Jupiter",time,this));
 	}
 	
 	
@@ -75,7 +75,7 @@ public class Battlefield {
 	
 	
 	public Carrier getBlueCarrier() {
-		return (Carrier) bodies.get(2);
+		return (Carrier) bodies.get(0);
 	}
 
 }
