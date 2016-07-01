@@ -13,6 +13,7 @@ public class GasCloud extends Body {
 
 	public static final double halfLife = 5*Univ.s;	// the half-life of energy in this cloud
 	public static final double laserEnergy = 0.1*Univ.MJ;	// the energy required to form a laser
+	/* WARNING: laserEnergy must always be an even factor of ship-fired laser energies lest there be bugs */
 	
 	protected ArrayList<double[]> energy;	// an ArrayList that keeps track of the ever-changing energy value
 	
@@ -38,7 +39,7 @@ public class GasCloud extends Body {
 								  tht, t, space, laserEnergy));
 			
 			final double[] newE = {t, EValAt(t)-laserEnergy, EsValAt(t)-laserEnergy};
-			energy.add(newE);
+			energy.add(newE);	// WARNING: 
 		}
 	}
 	

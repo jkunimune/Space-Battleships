@@ -1,3 +1,6 @@
+/**
+ * The class to handle all mouse input, JFrames, JPanels, and other high-level display stuff.
+ */
 package interaction;
 
 import javax.swing.JFrame;
@@ -7,7 +10,7 @@ import mechanics.Battlefield;
 
 /**
  * @author jkunimune
- * The class to handle all mouse input, JFrames, JPanels, and other high-level display stuff.
+ * @version 1.0
  */
 public class Screen {
 

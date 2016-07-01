@@ -7,6 +7,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.nio.ByteBuffer;
 
 import mechanics.Battlefield;
@@ -16,7 +19,7 @@ import mechanics.Carrier;
  * @author jkunimune
  * @version 1.0
  */
-public class Controller implements MouseListener, KeyListener {
+public class Controller implements MouseWheelListener, MouseMotionListener, MouseListener, KeyListener {
 
 	private GameScreen view;	// the GameScreen this listens to
 	private Carrier ship;		// the ship that this interacts through
@@ -44,6 +47,12 @@ public class Controller implements MouseListener, KeyListener {
 		output.putDouble(10, view.spaceYFscreenY(my));
 		output.putDouble(18, (double)t);
 		return output.array();
+	}
+	
+	
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		view.zoom(e.getWheelRotation());
 	}
 	
 	
@@ -76,18 +85,24 @@ public class Controller implements MouseListener, KeyListener {
 	public void mouseClicked(MouseEvent e) {}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {}
+	public void mouseEntered(MouseEvent e) {}
 
 	@Override
-	public void mouseExited(MouseEvent arg0) {}
+	public void mouseExited(MouseEvent e) {}
 
 	@Override
-	public void keyPressed(KeyEvent arg0) {}
+	public void keyPressed(KeyEvent e) {}
 
 	@Override
-	public void keyReleased(KeyEvent arg0) {}
+	public void keyReleased(KeyEvent e) {}
 
 	@Override
-	public void keyTyped(KeyEvent arg0) {}
+	public void keyTyped(KeyEvent e) {}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {}
 
 }

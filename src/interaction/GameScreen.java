@@ -33,6 +33,9 @@ public class GameScreen extends JPanel {
 
 	private static final long serialVersionUID = -4461350953048532763L;
 	
+	private static final double MIN_SCALE = Math.exp(1);	// the limits of the zooming
+	private static final double MAX_SCALE = Math.exp(-1);
+	
 	
 	private HashMap<String, BufferedImage> sprites;	// the images it uses to display objects
 	private HashMap<String, BufferedImage> hudPics;
@@ -43,9 +46,7 @@ public class GameScreen extends JPanel {
 	private Canvas canvs;			// some necessary java.awt stuff
 	private BufferStrategy strat;
 	
-	private double origX;	// the variables that define the screen's position and zoom-level
-	private double origY;
-	private double scale;
+	private double origX, origY, scale;	// the variables that define the screen's position and zoom-level
 	
 	
 	
@@ -67,8 +68,8 @@ public class GameScreen extends JPanel {
 		loadImages();
 		loadSounds();
 		
-		origX = -640;
-		origY = -400;
+		origX = 0;
+		origY = 0;
 		scale = 1.0;
 	}
 	
@@ -120,6 +121,8 @@ public class GameScreen extends JPanel {
 	
 	public void addListener(Controller c) {
 		canvs.addMouseListener(c);
+		canvs.addMouseWheelListener(c);
+		canvs.addMouseMotionListener(c);
 		canvs.addKeyListener(c);
 	}
 	
@@ -155,13 +158,13 @@ public class GameScreen extends JPanel {
 		if (img == null)
 			throw new NullPointerException("Image "+b.spriteName()+".png not found!");
 		try {
-			img = executeTransformation(img, b.spriteTransform(t));	// does any necessary transformations
+			img = executeTransformation(img, b.spriteTransform(t), b.doesScale());	// does any necessary transformations
 		} catch (java.awt.image.RasterFormatException e) {
 			return;	// if there's a problem with the transformation (probably roundoff), just skip it
 		} catch (java.awt.image.ImagingOpException e) {
 			return;	// I don't know the difference between these two exceptions
 		}
-		double screenX = b.xValAt(t) + getWidth()/2;	// gets coordinates of b, 
+		double screenX = screenXFspaceX(b.xValAt(t));	// gets coordinates of b, 
 		double screenY = screenYFspaceY(b.yValAt(t));	// and offsets appropriately
 		g.drawImage(img, (int)screenX-img.getWidth()/2, (int)screenY-img.getHeight()/2, null);
 	}
@@ -187,20 +190,28 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	private BufferedImage executeTransformation(BufferedImage img, double[] params) {	// rotozooms img based on params
-		if (params[0] == 0.0 && params[1] == 1.0 && params[2] == 1.0)	// if there is no transformation
-			return img;	// return the raw image
+	private BufferedImage executeTransformation(BufferedImage img, double[] params, boolean zoomScale) {	// rotozooms img based on params
+		double zoominess;
+		if (zoomScale)		zoominess = scale;	// the scale might affect the AffineTransform
+		else				zoominess = 1.0;
+		
 		AffineTransform at = new AffineTransform();
 		
-		if (params[1] != 1.0 || params[2] != 1.0)
-			at.scale(params[1], params[2]);				// scales (if necessary)
+		at.scale(params[1]/zoominess, params[2]/zoominess);						// scales (if necessary)
 		
 		if (params[0] != 0.0)
-			at.rotate(params[0], img.getWidth()/2, img.getHeight()/2);
+			at.rotate(params[0], img.getWidth()/2, img.getHeight()/2);	// rotates (if necessary)
 		
 		AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-		Point size = new Point((int) (img.getWidth()*params[1]), (int) (img.getHeight()*params[2]));
+		Point size = new Point((int) (img.getWidth()*params[1]/zoominess),
+				(int) (img.getHeight()*params[2]/zoominess));
 		return op.filter(img, null).getSubimage(0, 0, size.x, size.y);	// executes affine transformation, crops, and returns
+	}
+	
+	
+	public void zoom(int amount) {
+		scale *= Math.exp(amount/5.0);
+		scale = Math.min(Math.max(scale, MAX_SCALE), MIN_SCALE);
 	}
 	
 	
@@ -235,22 +246,23 @@ public class GameScreen extends JPanel {
 	
 	
 	public double spaceXFscreenX(int sx) {	// converts an x on screen to an x in space
-		return sx*scale + origX;
+		return (sx-getWidth()/2)*scale + origX;
+		
 	}
 	
 	
 	public double spaceYFscreenY(int sy) {	// converts a y on screen to a y in space
-		return sy*scale + origY;
+		return (sy-getHeight()/2)*scale + origY;
 	}
 	
 	
 	public int screenXFspaceX(double sx) {	// converts an x in space to an x on screen
-		return (int)((sx-origX)/scale);
+		return (int)((sx-origX)/scale) + getWidth()/2;
 	}
 	
 	
 	public int screenYFspaceY(double sy) {	// converts a y in space to a y on screen
-		return (int)((sy-origY)/scale);
+		return (int)((sy-origY)/scale) + getHeight()/2;
 	}
 
 }

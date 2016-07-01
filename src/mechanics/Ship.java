@@ -31,6 +31,8 @@ public abstract class Ship extends Body {
 		energy = new ArrayList<double[]>(1);
 		health.add(hInit);
 		energy.add(eInit);
+		
+		scales = false;	// ships don't scale because they're sprites are icons
 	}
 	
 	
@@ -53,7 +55,7 @@ public abstract class Ship extends Body {
 		health.add(newHVal);
 		if (newHVal[1] <= 0) {
 			clearSoundsAfter(t);	// if the ship just died
-			playSound("boom"+(int)(Math.random()*2), t);	// cancel any later sounds with a boom
+			playSound("boom"+(int)(Math.random()*2.001), t);	// cancel any later sounds with a boom
 		}
 	}
 	
