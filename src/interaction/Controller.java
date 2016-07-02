@@ -27,6 +27,8 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	byte orderMode;				// the type of order being given (-1 for none, -2 for move, -3 for shoot, -4 for special)
 	byte activeShip;				// the ship id being ordered (-1 for none, 0-4 for respective indices)
 	
+	int x, y;	// mouse location
+	
 	
 	
 	public Controller(GameScreen gs, Battlefield bf) {
@@ -52,7 +54,15 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		view.zoom(e.getWheelRotation());
+		view.zoom(e.getWheelRotation(), e.getX(), e.getY());
+	}
+	
+	
+	@Override
+	public void mouseDragged(MouseEvent e) {	// shift the view accordingly
+		view.pan(e.getX()-x, e.getY()-y);
+		x = e.getX();
+		y = e.getY();
 	}
 	
 	
@@ -76,8 +86,9 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	
 	
 	@Override
-	public void mousePressed(MouseEvent arg0) {	// when the mouse is pressed...
-		
+	public void mousePressed(MouseEvent e) {	// when the mouse is pressed...
+		x = e.getX();
+		y = e.getY();
 	}
 	
 	
@@ -98,9 +109,6 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 
 	@Override
 	public void keyTyped(KeyEvent e) {}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {}

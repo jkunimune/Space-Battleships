@@ -209,9 +209,17 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	public void zoom(int amount) {
-		scale *= Math.exp(amount/5.0);
+	public void zoom(int amount, int mx, int my) {	// changes scale based on a multiplicative amount
+		final double expAmount = Math.exp(amount/5.0);
+		scale *= expAmount;
 		scale = Math.min(Math.max(scale, MAX_SCALE), MIN_SCALE);
+		
+	}
+	
+	
+	public void pan(int delX, int delY) {	// changes offsetX and offsetY based on a mouse drag
+		origX -= delX*scale;
+		origY -= delY*scale;
 	}
 	
 	
