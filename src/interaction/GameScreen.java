@@ -33,8 +33,8 @@ public class GameScreen extends JPanel {
 
 	private static final long serialVersionUID = -4461350953048532763L;
 	
-	private static final double MIN_SCALE = Math.exp(1);	// the limits of the zooming
-	private static final double MAX_SCALE = Math.exp(-1);
+	private static final double MIN_SCALE = Math.exp(-1);	// the limits of the zooming
+	private static final double MAX_SCALE = Math.exp(1);
 	
 	
 	private HashMap<String, BufferedImage> sprites;	// the images it uses to display objects
@@ -210,10 +210,18 @@ public class GameScreen extends JPanel {
 	
 	
 	public void zoom(int amount, int mx, int my) {	// changes scale based on a multiplicative amount
+		if (amount > 0 && scale >= MAX_SCALE)
+			return;
+		if (amount < 0 && scale <= MIN_SCALE)
+			return;
+		
+		final double sx = spaceXFscreenX(mx);
+		final double sy = spaceYFscreenY(my);
 		final double expAmount = Math.exp(amount/5.0);
 		scale *= expAmount;
-		scale = Math.min(Math.max(scale, MAX_SCALE), MIN_SCALE);
 		
+		origX = (origX-sx)*expAmount + sx;
+		origY = (origY-sy)*expAmount + sy;
 	}
 	
 	
