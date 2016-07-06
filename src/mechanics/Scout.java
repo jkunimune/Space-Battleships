@@ -15,7 +15,7 @@ public class Scout extends Ship {
 	
 	@Override
 	public String spriteName() {
-		return "scout"+super.spriteName();
+		return "ship_scout"+super.spriteName();
 	}
 	
 	

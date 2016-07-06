@@ -14,7 +14,7 @@ public class Steamship extends Ship {
 	
 	@Override
 	public String spriteName() {
-		return "steamship"+super.spriteName();
+		return "ship_steamship"+super.spriteName();
 	}
 	
 	

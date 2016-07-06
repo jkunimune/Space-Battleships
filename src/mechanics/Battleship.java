@@ -18,7 +18,7 @@ public class Battleship extends Ship {
 	
 	@Override
 	public String spriteName() {
-		return "battleship"+super.spriteName();
+		return "ship_battleship"+super.spriteName();
 	}
 	
 	

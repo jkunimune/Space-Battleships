@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 
 import mechanics.Battlefield;
 import mechanics.Body;
+import mechanics.Ship;
 
 /**
  * @author jkunimune
@@ -42,11 +43,13 @@ public class GameScreen extends JPanel {
 	private HashMap<String, AudioClip> sounds;
 	
 	private Battlefield space;
+	private Controller listener;
 	
 	private Canvas canvs;			// some necessary java.awt stuff
 	private BufferStrategy strat;
 	
-	private double origX, origY, scale;	// the variables that define the screen's position and zoom-level
+	private int origX, origY;
+	private double scale;	// the variables that define the screen's position and zoom-level
 	
 	
 	
@@ -68,8 +71,8 @@ public class GameScreen extends JPanel {
 		loadImages();
 		loadSounds();
 		
-		origX = 0;
-		origY = 0;
+		origX = w/2;
+		origY = h/2;
 		scale = 1.0;
 	}
 	
@@ -124,6 +127,8 @@ public class GameScreen extends JPanel {
 		canvs.addMouseWheelListener(c);
 		canvs.addMouseMotionListener(c);
 		canvs.addKeyListener(c);
+		
+		listener = c;
 	}
 	
 	
@@ -144,7 +149,7 @@ public class GameScreen extends JPanel {
 			} catch (NullPointerException e) {}
 		}
 		
-		drawHUD(g);		// and the heads-up display
+		drawHUD(g, t);		// and the heads-up display
 		
 		g.dispose();
 		strat.show();
@@ -154,7 +159,10 @@ public class GameScreen extends JPanel {
 	
 	private void draw(Body b, Graphics2D g, double t) {	// put a picture of b on g at time t
 		BufferedImage img;
-		img = sprites.get(b.spriteName());	// finds the correct sprite
+		if (b instanceof Ship && ((Ship) b).getID() == listener.getShip())
+			img = sprites.get(b.spriteName()+"i");	// active ships have a special sprite
+		else
+			img = sprites.get(b.spriteName());	// finds the correct sprite
 		if (img == null)
 			throw new NullPointerException("Image "+b.spriteName()+".png not found!");
 		try {
@@ -170,20 +178,27 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	private void drawHUD(Graphics2D g) {	// draw the heads up display
-		final int pos = getMousePos(MouseInfo.getPointerInfo().getLocation(), this.getLocationOnScreen());
+	private void drawHUD(Graphics2D g, double t) {	// draw the heads up display
+		final int pos = getMousePos(MouseInfo.getPointerInfo().getLocation(), this.getLocationOnScreen(), t);
+		final int active = listener.getOrder();
 		
-		if (pos == -2)
+		if (active == -2)
+			g.drawImage(hudPics.get("button0_lt"), 0, 0, null);
+		else if (pos == -2)
 			g.drawImage(hudPics.get("button0_on"), 0, 0, null);
 		else
 			g.drawImage(hudPics.get("button0_of"), 0, 0, null);
 		
-		if (pos == -3)
+		if (active == -3)
+			g.drawImage(hudPics.get("button1_lt"), 0, 400, null);
+		else if (pos == -3)
 			g.drawImage(hudPics.get("button1_on"), 0, 400, null);
 		else
 			g.drawImage(hudPics.get("button1_of"), 0, 400, null);
 		
-		if (pos == -4)
+		if (active == -4)
+			g.drawImage(hudPics.get("button2_lt"), 880, 400, null);
+		else if (pos == -4)
 			g.drawImage(hudPics.get("button2_on"), 880, 400, null);
 		else
 			g.drawImage(hudPics.get("button2_of"), 880, 400, null);
@@ -210,24 +225,22 @@ public class GameScreen extends JPanel {
 	
 	
 	public void zoom(int amount, int mx, int my) {	// changes scale based on a multiplicative amount
-		if (amount > 0 && scale >= MAX_SCALE)
-			return;
-		if (amount < 0 && scale <= MIN_SCALE)
-			return;
-		
-		final double sx = spaceXFscreenX(mx);
-		final double sy = spaceYFscreenY(my);
 		final double expAmount = Math.exp(amount/5.0);
-		scale *= expAmount;
+		if (amount > 0 && scale*expAmount >= MAX_SCALE)	// first check that you aren't out of bounds
+			return;
+		if (amount < 0 && scale*expAmount <= MIN_SCALE)
+			return;
 		
-		origX = (origX-sx)*expAmount + sx;
-		origY = (origY-sy)*expAmount + sy;
+		scale *= expAmount;		// then reset scale
+		
+		origX = (int) Math.round((origX-mx)/expAmount) + mx;	// then alter origX and origY
+		origY = (int) Math.round((origY-my)/expAmount) + my;
 	}
 	
 	
 	public void pan(int delX, int delY) {	// changes offsetX and offsetY based on a mouse drag
-		origX -= delX*scale;
-		origY -= delY*scale;
+		origX += delX;
+		origY += delY;
 	}
 	
 	
@@ -237,21 +250,27 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	public byte getMousePos(Point mCoordsOnScreen, Point screenCoords) {	// decides which, if any, button the mouse is currently on
-		return getMousePos(mCoordsOnScreen.x-screenCoords.x, mCoordsOnScreen.y-screenCoords.y);
+	public byte getMousePos(Point mCoordsOnScreen, Point screenCoords, double t) {	// decides which, if any, button the mouse is currently on
+		return getMousePos(mCoordsOnScreen.x-screenCoords.x, mCoordsOnScreen.y-screenCoords.y, t);
 	}
 	
 	
-	public byte getMousePos(Point mCoords) {	// decides which, if any, button the mouse is currently on
-		return getMousePos(mCoords.x, mCoords.y);
+	public byte getMousePos(Point mCoords, double t) {	// decides which, if any, button the mouse is currently on
+		return getMousePos(mCoords.x, mCoords.y, t);
 	}
 	
 	
-	public byte getMousePos(int x, int y) {	// decides which, if any, button the mouse is currently on
+	public byte getMousePos(int x, int y, double t) {	// decides which, if any, button the mouse is currently on
 		final int r2 = 190000;
 		if (Math.pow(x, 2)*3 + Math.pow(y, 2) < r2)				return -2;	// move button
 		if (Math.pow(x, 2)*3 + Math.pow(y-800, 2) < r2)			return -3;	// shoot button
 		if (Math.pow(x-1280, 2)*3 + Math.pow(y-800, 2) < r2)	return -4;	// special button
+		for (int i = 0; i < 5; i ++) {
+			final Body ship = space.getBodies().get(i);
+			if (Math.hypot(x-screenXFspaceX(ship.xValAt(t)),
+				           y-screenYFspaceY(ship.yValAt(t))) < 15)
+				return ((Ship) ship).getID();	// a ship
+		}
 		return -1;	// empty space
 	}
 	
@@ -262,23 +281,28 @@ public class GameScreen extends JPanel {
 	
 	
 	public double spaceXFscreenX(int sx) {	// converts an x on screen to an x in space
-		return (sx-getWidth()/2)*scale + origX;
+		return (sx-origX)*scale;
 		
 	}
 	
 	
 	public double spaceYFscreenY(int sy) {	// converts a y on screen to a y in space
-		return (sy-getHeight()/2)*scale + origY;
+		return (sy-origY)*scale;
 	}
 	
 	
 	public int screenXFspaceX(double sx) {	// converts an x in space to an x on screen
-		return (int)((sx-origX)/scale) + getWidth()/2;
+		return (int)(sx/scale) + origX;
 	}
 	
 	
 	public int screenYFspaceY(double sy) {	// converts a y in space to a y on screen
-		return (int)((sy-origY)/scale) + getHeight()/2;
+		return (int)(sy/scale) + origY;
+	}
+	
+	
+	public Battlefield getField() {			// getter method for space
+		return space;
 	}
 
 }

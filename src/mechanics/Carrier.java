@@ -16,7 +16,7 @@ public class Carrier extends Ship {
 	
 	@Override
 	public String spriteName() {
-		return "carrier"+super.spriteName();
+		return "ship_carrier"+super.spriteName();
 	}
 	
 	

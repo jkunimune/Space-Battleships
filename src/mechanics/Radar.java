@@ -15,7 +15,7 @@ public class Radar extends Ship {
 	
 	@Override
 	public String spriteName() {
-		return "radar"+super.spriteName();
+		return "ship_radar"+super.spriteName();
 	}
 	
 	
