@@ -14,3 +14,12 @@ woosh
 behaviour
 int
 sprites
+equidistant
+conformal
+azimuthal
+conical
+sinusoid
+sublicense
+kunimune
+interwebs
+multiplayer
