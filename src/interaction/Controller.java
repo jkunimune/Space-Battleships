@@ -113,8 +113,7 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 		byte mPos = view.getMousePos(e.getX(), e.getY(), e.getWhen());
 		if (orderMode < -1 && activeShip >= 0) {		// if an order and a ship were active
 			ship.issueOrder(composeOrder(orderMode, activeShip, e.getX(), e.getY(), System.currentTimeMillis()));
-			orderMode = -1;
-			activeShip = -1;
+			setOrder((byte) -1);
 		}
 		else if (mPos < -1)			// if a button was clicked on
 			setOrder(mPos);
@@ -130,21 +129,21 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_1)	// number keys select ships
-			activeShip = ((Ship) view.getField().getBodies().get(0)).getID();
+			setShip(((Ship) view.getField().getBodies().get(0)).getID());
 		else if (e.getKeyCode() == KeyEvent.VK_2)
-			activeShip = ((Ship) view.getField().getBodies().get(1)).getID();
+			setShip(((Ship) view.getField().getBodies().get(1)).getID());
 		else if (e.getKeyCode() == KeyEvent.VK_3)
-			activeShip = ((Ship) view.getField().getBodies().get(2)).getID();
+			setShip(((Ship) view.getField().getBodies().get(2)).getID());
 		else if (e.getKeyCode() == KeyEvent.VK_4)
-			activeShip = ((Ship) view.getField().getBodies().get(3)).getID();
+			setShip(((Ship) view.getField().getBodies().get(3)).getID());
 		else if (e.getKeyCode() == KeyEvent.VK_5)
-			activeShip = ((Ship) view.getField().getBodies().get(4)).getID();
+			setShip(((Ship) view.getField().getBodies().get(4)).getID());
 		else if (e.getKeyCode() == KeyEvent.VK_X)	// X is special
-			orderMode = -4;
+			setOrder((byte) -4);
 		else if (e.getKeyCode() == KeyEvent.VK_B)	// B is bombard
-			orderMode = -3;
+			setOrder((byte) -3);
 		else if (e.getKeyCode() == KeyEvent.VK_M)	// M is move
-			orderMode = -2;
+			setOrder((byte) -2);
 	}
 	
 	

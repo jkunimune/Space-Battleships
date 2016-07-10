@@ -31,8 +31,8 @@ import java.util.ArrayList;
  */
 public class GasCloud extends Body {
 
-	public static final double halfLife = 5*Univ.s;	// the half-life of energy in this cloud
-	public static final double laserEnergy = 0.1*Univ.MJ;	// the energy required to form a laser
+	public static final double HALF_LIFE = 5*Univ.s;	// the half-life of energy in this cloud
+	public static final double LASER_ENERGY = 0.1*Univ.MJ;	// the energy required to form a laser
 	/* WARNING: laserEnergy must always be an even factor of ship-fired laser energies lest there be bugs */
 	
 	protected ArrayList<double[]> energy;	// an ArrayList that keeps track of the ever-changing energy value
@@ -51,14 +51,14 @@ public class GasCloud extends Body {
 	
 	@Override
 	public void update(double t) {	// a GasCloud with energy will gradually release lasers
-		while (EsValAt(t) >= laserEnergy) {
+		while (EsValAt(t) >= LASER_ENERGY) {
 			double tht = 2*Math.PI*Math.random();	// pick a random direction
-			double r = this.rValAt(t) + Laser.rValFor(laserEnergy);	// pick a safe distance
+			double r = this.rValAt(t) + Laser.rValFor(LASER_ENERGY);	// pick a safe distance
 			space.spawn(new Laser(xValAt(t) + r*Math.cos(tht),		// fire it
 								  yValAt(t) + r*Math.sin(tht),
-								  tht, t, space, laserEnergy));
+								  tht, t, space, LASER_ENERGY));
 			
-			final double[] newE = {t, EValAt(t)-laserEnergy, EsValAt(t)-laserEnergy};
+			final double[] newE = {t, EValAt(t)-LASER_ENERGY, EsValAt(t)-LASER_ENERGY};
 			energy.add(newE);	// WARNING: 
 		}
 	}
@@ -107,7 +107,7 @@ public class GasCloud extends Body {
 		for (int i = energy.size()-1; i >= 0; i --) {
 			final double[] state = energy.get(i);
 			if (state[0] <= t)
-				return state[2] + state[1]*(t-state[0])/halfLife;
+				return state[2] + state[1]*(t-state[0])/HALF_LIFE;
 		}
 		return 0;
 	}

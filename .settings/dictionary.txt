@@ -23,3 +23,6 @@ sublicense
 kunimune
 interwebs
 multiplayer
+megawatt
+watt
+litre

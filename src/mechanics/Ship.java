@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 /**
  * An object that can move around and produce <code>Laser</code> objects on
- * command from the player or the client.
+ * command from the <code>Controller</code> or the <code>Client</code>.
  * 
  * @author jkunimune
  * @version 1.0
@@ -34,7 +34,12 @@ public abstract class Ship extends Body {
 
 	public static final double MAX_H_VALUE = 1.5*Univ.MJ;	// maximum health
 	public static final double MAX_E_VALUE = 2.0*Univ.MJ;	// maximum energy
-
+	
+	public static final double RECHARGE_RATE = 50*Univ.kW;
+	
+	public static final double MOVEMENT_COST = 0.5*Univ.MJ;
+	public static final double LASER_ENERGY = 1.0*Univ.MJ;
+	
 	private boolean isBlue;	// whether it is blue or red
 	
 	protected byte id;		// an identifier for this particular ship
@@ -74,6 +79,55 @@ public abstract class Ship extends Body {
 	}
 	
 	
+	public void shoot(double x, double y, double t) {	// shoots a 1 megajoule laser at time t
+		if (canExpend(LASER_ENERGY, t)) {
+			final double theta = Math.atan2(y-yValAt(t),x-xValAt(t));
+			final double spawnDist = Laser.rValFor(LASER_ENERGY) + 1*Univ.m;	// make sure you spawn it in front of the ship so it doesn't shoot itself
+			space.spawn(new Laser(xValAt(t) + spawnDist*Math.cos(theta),
+								  yValAt(t) + spawnDist*Math.sin(theta),
+								  theta, t, space, LASER_ENERGY));
+			
+			playSound("pew", t);	// play the pew pew sound
+		}
+	}
+	
+	
+	public void move(double x, double y, double t) {	// moves to the point x,y at a speed of c/10
+		if (canExpend(MOVEMENT_COST, t)) {
+			for (int i = pos.size()-1; i >= 0; i --) {	// first, clear any movement after this order
+				if (pos.get(i)[0] >= t)	pos.remove(i);
+				else					break;
+			}
+			final double x0 = xValAt(t);	// calculate the initial coordinates
+			final double y0 = yValAt(t);
+			final double delT = Math.hypot(x-x0, y-y0)/(Univ.c/10);	// the duration of the trip
+			
+			double[] newPos = {t, x0, y0, (x-x0)/delT, (y-y0)/delT};	// add a segment for the motion
+			pos.add(newPos);
+			double[] newnewPos = {t+delT, x, y, 0, 0};	// and have it stop afterward
+			pos.add(newnewPos);
+			
+			playSound("blast", t);			// then make it play the blast sound at the beginning and end
+			clearSoundsAfter(t);
+			playSound("blast", t+delT);
+		}
+	}
+	
+	
+	public abstract void special(double x, double y, double t);	// executes a special attack
+	
+	
+	public double hValAt(double t) {	// returns the health at time t
+		for (int i = health.size()-1; i >= 0; i --) {	// iterate through health to find the correct health value
+			final double[] timehealth = health.get(i);
+			if (timehealth[0] <= t) {	// they should be sorted chronologically
+				return timehealth[1];	// calculate health based on this
+			}
+		}
+		return health.get(0)[1];	// if it didn't find anything, just use the first one
+	}
+	
+	
 	public void damaged(double amount, double t) {	// takes some out of your health
 		double[] newHVal = {t, hValAt(t)-amount};
 		health.add(newHVal);
@@ -84,53 +138,25 @@ public abstract class Ship extends Body {
 	}
 	
 	
-	public void shoot(double x, double y, double t) {	// shoots a 1 megajoule laser at time t
-		final double theta = Math.atan2(y-yValAt(t),x-xValAt(t));
-		final double nrg = 1*Univ.MJ;
-		final double spawnDist = Laser.rValFor(nrg) + 1*Univ.m;	// make sure you spawn it in front of the ship so it doesn't shoot itself
-		space.spawn(new Laser(xValAt(t) + spawnDist*Math.cos(theta),
-							  yValAt(t) + spawnDist*Math.sin(theta),
-							  theta, t, space, nrg));
-		playSound("pew", t);	// play the pew pew sound
-	}
-	
-	
-	public void move(double x, double y, double t) {	// moves to the point x,y at a speed of c/10
-		for (int i = pos.size()-1; i >= 0; i --) {	// first, clear any movement after this order
-			if (pos.get(i)[0] >= t)	pos.remove(i);
-			else					break;
-		}
-		final double x0 = xValAt(t);	// calculate the initial coordinates
-		final double y0 = yValAt(t);
-		final double delT = Math.hypot(x-x0, y-y0)/(Univ.c/10);	// the duration of the trip
-		
-		double[] newPos = {t, x0, y0, (x-x0)/delT, (y-y0)/delT};	// add a segment for the motion
-		pos.add(newPos);
-		double[] newnewPos = {t+delT, x, y, 0, 0};	// and have it stop afterward
-		pos.add(newnewPos);
-		
-		playSound("blast", t);			// then make it play the blast sound at the beginning and end
-		clearSoundsAfter(t);
-		playSound("blast", t+delT);
-	}
-	
-	
-	public abstract void special(double x, double y, double t);	// executes a special attack
-	
-	
-	public double hValAt(double t) {	// returns the health at time t
-		for (int i = health.size()-1; i >= 0; i --) {	// iterate through health to find the correct motion segment
-			final double[] timehealth = health.get(i);
-			if (timehealth[0] <= t) {	// they should be sorted chronologically
-				return timehealth[1];	// calculate health based on this
+	public double eValAt(double t) {	// returns the energy at time t
+		for (int i = energy.size()-1; i >= 0; i --) {	// iterate through energy to find the correct energy segment
+			final double[] timeenergy = energy.get(i);
+			if (timeenergy[0] <= t) {	// they should be sorted chronologically
+				return Math.min(MAX_E_VALUE, timeenergy[1] + RECHARGE_RATE*(t-timeenergy[0]));	// calculate energy based on this
 			}
 		}
-		return health.get(0)[1];	// if it didn't find anything, just use the first one
+		return energy.get(0)[1];	// if it didn't find anything, just use the first one
 	}
 	
 	
-	public double eValAt(double t) {	// returns the energy at time t
-		return 1*Univ.MJ;
+	public boolean canExpend(double amount, double t) {	// takes some out of your energy
+		double[] newEVal = {t, eValAt(t)-amount};
+		if (newEVal[1] >= 0) {
+			energy.add(newEVal);
+			return true;	// returns true if it successfully spent energy
+		}
+		else
+			return false;	// returns false if there was not enough energy
 	}
 	
 	

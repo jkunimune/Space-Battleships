@@ -36,8 +36,7 @@ public class UVLaser extends Laser {
 	
 	
 	UVLaser(double x0, double y0, double tht, double time, Battlefield space, double energy) {
-		super(x0, y0, tht, time, space);
-		E = energy;
+		super(x0, y0, tht, time, space, energy);
 	}
 	
 	

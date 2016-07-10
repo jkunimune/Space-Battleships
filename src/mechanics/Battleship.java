@@ -32,7 +32,6 @@ public class Battleship extends Ship {
 
 	public Battleship(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
 		super(newX, newY, time, pin, blue, space);
-		// TODO Auto-generated constructor stub
 	}
 	
 	
@@ -44,14 +43,18 @@ public class Battleship extends Ship {
 	
 	
 	@Override
-	public void special(double x, double y, double t) {
-		final double theta = Math.atan2(y-yValAt(t),x-xValAt(t));
+	public void special(double x, double y, double t) {	// for its special attack, the Battleship shoots a superlaser
 		final double nrg = 1.5*Univ.MJ;
-		final double spawnDist = Laser.rValFor(nrg);	// make sure you spawn it in front of the ship so it doesn't shoot itself
-		space.spawn(new UVLaser(xValAt(t) + spawnDist*Math.cos(theta),
-								yValAt(t) + spawnDist*Math.sin(theta),
-								theta, t, space, nrg));
-		playSound("pew", t);	// play the pew pew sound
+		if (canExpend(nrg, t)) {
+			final double theta = Math.atan2(y-yValAt(t),x-xValAt(t));
+			
+			final double spawnDist = Laser.rValFor(nrg);	// make sure you spawn it in front of the ship so it doesn't shoot itself
+			space.spawn(new UVLaser(xValAt(t) + spawnDist*Math.cos(theta),
+									yValAt(t) + spawnDist*Math.sin(theta),
+									theta, t, space, nrg));
+			
+			playSound("pew", t);	// play the pew pew sound
+		}
 	}
 
 }

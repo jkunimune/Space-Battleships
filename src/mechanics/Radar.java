@@ -32,7 +32,6 @@ public class Radar extends Ship {
 
 	public Radar(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
 		super(newX, newY, time, pin, blue, space);
-		// TODO Auto-generated constructor stub
 	}
 	
 	
@@ -45,7 +44,7 @@ public class Radar extends Ship {
 	
 	@Override
 	public void special(double x, double y, double t) {
-		shoot(x, y, t);
+		canExpend(1.0*Univ.MJ, t);
 	}
 
 }

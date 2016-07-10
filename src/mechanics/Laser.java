@@ -30,7 +30,7 @@ package mechanics;
  */
 public class Laser extends Body {
 
-	public static final double energyDens = Math.pow(10,-13)*Univ.MJ/Univ.km3;
+	public static final double ENERGY_DENS = Math.pow(10,-13)*Univ.MJ/Univ.km3;
 	
 	private double heading;	// the direction
 	protected double E;		// the energy
@@ -53,7 +53,7 @@ public class Laser extends Body {
 		super(x0, y0, Univ.c*Math.cos(tht), Univ.c*Math.sin(tht), time, space);
 		heading = tht;
 		E = energy;
-		r = Math.pow(E/energyDens*0.75/Math.PI, 1/3.0);
+		r = rValFor(E);
 		collidedTime = Double.MAX_VALUE;
 	}
 	
@@ -99,7 +99,7 @@ public class Laser extends Body {
 	
 	
 	public static double rValFor(double E) {
-		return Math.pow(E/energyDens*0.75/Math.PI, 1/3.0);	// gives the radius of a laser of energy E
+		return Math.pow(E/ENERGY_DENS*0.75/Math.PI, 1/3.0);	// gives the radius of a laser of energy E
 	}
 
 }
