@@ -32,6 +32,9 @@ import java.util.ArrayList;
  */
 public abstract class Ship extends Body {
 
+	public static final double MAX_H_VALUE = 1.5*Univ.MJ;	// maximum health
+	public static final double MAX_E_VALUE = 2.0*Univ.MJ;	// maximum energy
+
 	private boolean isBlue;	// whether it is blue or red
 	
 	protected byte id;		// an identifier for this particular ship
@@ -71,7 +74,7 @@ public abstract class Ship extends Body {
 	}
 	
 	
-	public void damaged(double amount, double t) {	// take some out of your health
+	public void damaged(double amount, double t) {	// takes some out of your health
 		double[] newHVal = {t, hValAt(t)-amount};
 		health.add(newHVal);
 		if (newHVal[1] <= 0) {
@@ -81,7 +84,7 @@ public abstract class Ship extends Body {
 	}
 	
 	
-	public void shoot(double x, double y, double t) {	// shoot a 1 megajoule laser at time t
+	public void shoot(double x, double y, double t) {	// shoots a 1 megajoule laser at time t
 		final double theta = Math.atan2(y-yValAt(t),x-xValAt(t));
 		final double nrg = 1*Univ.MJ;
 		final double spawnDist = Laser.rValFor(nrg) + 1*Univ.m;	// make sure you spawn it in front of the ship so it doesn't shoot itself
@@ -92,7 +95,7 @@ public abstract class Ship extends Body {
 	}
 	
 	
-	public void move(double x, double y, double t) {	// move to the point x,y at a speed of c/10
+	public void move(double x, double y, double t) {	// moves to the point x,y at a speed of c/10
 		for (int i = pos.size()-1; i >= 0; i --) {	// first, clear any movement after this order
 			if (pos.get(i)[0] >= t)	pos.remove(i);
 			else					break;
@@ -112,10 +115,10 @@ public abstract class Ship extends Body {
 	}
 	
 	
-	public abstract void special(double x, double y, double t);
+	public abstract void special(double x, double y, double t);	// executes a special attack
 	
 	
-	public double hValAt(double t) {	// the health at time t
+	public double hValAt(double t) {	// returns the health at time t
 		for (int i = health.size()-1; i >= 0; i --) {	// iterate through health to find the correct motion segment
 			final double[] timehealth = health.get(i);
 			if (timehealth[0] <= t) {	// they should be sorted chronologically
@@ -126,7 +129,12 @@ public abstract class Ship extends Body {
 	}
 	
 	
-	public byte getID() {
+	public double eValAt(double t) {	// returns the energy at time t
+		return 1*Univ.MJ;
+	}
+	
+	
+	public byte getID() {	// returns the id number of this ship
 		return id;
 	}
 

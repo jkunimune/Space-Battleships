@@ -64,6 +64,7 @@ public class GameScreen extends JPanel {
 	
 	private Battlefield space;
 	private Controller listener;
+	private Ship activeShip;
 	
 	private Canvas canvs;			// some necessary java.awt stuff
 	private BufferStrategy strat;
@@ -202,7 +203,7 @@ public class GameScreen extends JPanel {
 		final int pos = getMousePos(MouseInfo.getPointerInfo().getLocation(), this.getLocationOnScreen(), t);
 		final int active = listener.getOrder();
 		
-		if (active == -2)
+		if (active == -2)	// the buttons may be lit, on, or off depending on circumstance
 			g.drawImage(hudPics.get("button0_lt"), 0, 0, null);
 		else if (pos == -2)
 			g.drawImage(hudPics.get("button0_on"), 0, 0, null);
@@ -222,6 +223,29 @@ public class GameScreen extends JPanel {
 			g.drawImage(hudPics.get("button2_on"), 880, 400, null);
 		else
 			g.drawImage(hudPics.get("button2_of"), 880, 400, null);
+		
+		if (this.activeShip != null) {	// if there is a selected ship
+			final Point hudPos = new Point(1050, 30);
+			g.drawImage(hudPics.get("bars"), hudPos.x, hudPos.y, null);	// draw more HUD stuff
+			
+			AffineTransform at;		// these classes help with the HP/PP bars
+			AffineTransformOp op;
+			BufferedImage mask;
+			
+			final double hTheta = Math.PI/2 - activeShip.hValAt(t)/Ship.MAX_H_VALUE*Math.PI/2;
+			at = new AffineTransform();			// start with an AffineTransform
+			at.rotate(hTheta, 200, 200);		// set it to rotate based on health
+			op = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+			mask = op.filter(hudPics.get("health_mask"), null).getSubimage(200,0,200,200);	// now rotate the mask and draw it over the bars
+			g.drawImage(mask, hudPos.x, hudPos.y, null);
+			
+			final double eTheta = -Math.PI/2 + activeShip.eValAt(t)/Ship.MAX_E_VALUE*Math.PI/2;
+			at = new AffineTransform();			// repeat for energy bar
+			at.rotate(eTheta, 0, 200);
+			op = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+			mask = op.filter(hudPics.get("energy_mask"), null).getSubimage(0, 0, 200, 200);
+			g.drawImage(mask, hudPos.x, hudPos.y, null);
+		}
 	}
 	
 	
@@ -232,13 +256,13 @@ public class GameScreen extends JPanel {
 		
 		AffineTransform at = new AffineTransform();
 		
-		at.scale(params[1]/zoominess, params[2]/zoominess);						// scales (if necessary)
+		at.scale(params[1]/zoominess, params[2]/zoominess);					// scales (if necessary)
 		
 		if (params[0] != 0.0)
-			at.rotate(params[0], img.getWidth()/2, img.getHeight()/2);	// rotates (if necessary)
+			at.rotate(params[0], img.getWidth()/2, img.getHeight()/2);		// rotates (if necessary)
 		
 		AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-		Point size = new Point((int) (img.getWidth()*params[1]/zoominess),
+		Point size = new Point((int) (img.getWidth()*params[1]/zoominess),	// this is how big it would be if it didn't pad with zeros
 				(int) (img.getHeight()*params[2]/zoominess));
 		return op.filter(img, null).getSubimage(0, 0, size.x, size.y);	// executes affine transformation, crops, and returns
 	}
@@ -323,6 +347,11 @@ public class GameScreen extends JPanel {
 	
 	public Battlefield getField() {			// getter method for space
 		return space;
+	}
+	
+	
+	public void setShip(byte id) {			// sets the activeShip field to the one with the matching id
+		activeShip = space.getShipByID(id);
 	}
 
 }

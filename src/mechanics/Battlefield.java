@@ -98,5 +98,13 @@ public class Battlefield {
 	public Carrier getBlueCarrier() {
 		return (Carrier) bodies.get(0);
 	}
+	
+	
+	public Ship getShipByID(byte id) {	// returns the Ship that has the matching id
+		for (int i = 0; i < 5; i ++)
+			if (((Ship) bodies.get(i)).getID() == id)
+				return (Ship) bodies.get(i);
+		return null;
+	}
 
 }

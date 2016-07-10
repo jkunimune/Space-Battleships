@@ -78,8 +78,19 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	}
 	
 	
+	private void setOrder(byte o) {
+		orderMode = o;
+	}
+	
+	
 	public byte getShip() {
 		return activeShip;
+	}
+	
+	
+	private void setShip(byte s) {
+		activeShip = s;
+		view.setShip(s);
 	}
 	
 	
@@ -106,13 +117,13 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 			activeShip = -1;
 		}
 		else if (mPos < -1)			// if a button was clicked on
-			orderMode = mPos;
+			setOrder(mPos);
 		else if (mPos >= 0)			// if a ship was clicked on
-			activeShip = mPos;//activeShip = mPos;
+			setShip(mPos);
 		else if (orderMode < -1)	// if there is an active order
-			orderMode = mPos;
+			setOrder(mPos);
 		else if (activeShip >= 0)	// if there is an active ship
-			activeShip = mPos;
+			setShip(mPos);
 	}
 	
 	
