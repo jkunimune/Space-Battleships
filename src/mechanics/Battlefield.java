@@ -23,19 +23,31 @@ package mechanics;
 
 import java.util.ArrayList;
 
+import network.Transmitter;
+
 /**
  * The class that handles the game and physics-engine, keeping track of all
  * bodies, and updating things.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
 public class Battlefield {
 
-	public ArrayList<Body> bodies;
+	public static final byte DP_ORDER = 0;	// the DataPacket index 0 value options
+	public static final byte DP_COLLISION = 1;	// TODO: make a class to deal with these bytes
+	
+	protected ArrayList<Body> bodies;	// the list of game elements
+	protected String network;
 	
 	
-	public Battlefield() {
+	public Battlefield(String host) {
+		double time = (double)System.currentTimeMillis();	// the current time
+		
+		bodies = new ArrayList<Body>();
+		network = host;
+		
+		// TODO: The player will eventually place the ships him/herself. This is all temporary
 		final double bluRC = -300000*Univ.km+Math.random()*100000*Univ.km;
 		final double bluTC = 2*Math.random()-1;	// the coordinates for the blue ships
 		final double[] bluR = new double[4];
@@ -44,9 +56,6 @@ public class Battlefield {
 			bluR[i] = (0.5+Math.random())*100000*Univ.km;
 			bluT[i] = i*2*Math.PI/4 - Math.PI/4 + (Math.random()-0.5);
 		}
-		
-		double time = (double)System.currentTimeMillis();	// the current time
-		bodies = new ArrayList<Body>();
 		
 		bodies.add(new Carrier(		bluRC*Math.cos(bluTC),
 									bluRC*Math.sin(bluTC), time, (byte)0, true, this));
@@ -64,8 +73,12 @@ public class Battlefield {
 	
 	
 	
-	public ArrayList<Body> getBodies() {
-		return bodies;
+	public void receive(byte[] data, boolean transmit) {		// receives and interprets some data
+		if (data[0] == Battlefield.DP_ORDER) {		// if it was an order
+			((Carrier) bodies.get(0)).issueOrder(data);	// execute it
+		}
+		if (transmit)
+			Transmitter.transmit(data, network);
 	}
 	
 	
@@ -95,12 +108,17 @@ public class Battlefield {
 	}
 	
 	
+	public ArrayList<Body> getBodies() {
+		return bodies;
+	}
+	
+	
 	public Carrier getBlueCarrier() {
 		return (Carrier) bodies.get(0);
 	}
 	
 	
-	public Ship getShipByID(byte id) {	// returns the Ship that has the matching id
+	public Ship getShipByID(byte id) {	// searches for the ship that has the matching id
 		for (int i = 0; i < 5; i ++)
 			if (((Ship) bodies.get(i)).getID() == id)
 				return (Ship) bodies.get(i);

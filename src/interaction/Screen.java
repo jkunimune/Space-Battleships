@@ -27,13 +27,13 @@ import javax.swing.JPanel;
 import mechanics.Battlefield;
 
 /**
- * The class to handle all mouse input, JFrames, JPanels, and other high-level
- * display stuff.
+ * The class to handle all high-level display stuff for my game. This class handles
+ * user input, <code>JPanel</code> and <code>JFrame</code> objects, and stuff of the sort.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
-public class Screen {
+public class Screen {	// TODO: implement Menu
 
 	private JFrame frame;
 	private JPanel panel;

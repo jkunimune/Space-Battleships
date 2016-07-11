@@ -31,7 +31,6 @@ import java.awt.event.MouseWheelListener;
 import java.nio.ByteBuffer;
 
 import mechanics.Battlefield;
-import mechanics.Carrier;
 import mechanics.Ship;
 
 /**
@@ -43,7 +42,7 @@ import mechanics.Ship;
 public class Controller implements MouseWheelListener, MouseMotionListener, MouseListener, KeyListener {
 
 	private GameScreen view;	// the GameScreen this listens to
-	private Carrier ship;		// the ship that this interacts through
+	private Battlefield game;		// the ship that this interacts through
 	
 	private byte orderMode;				// the type of order being given (-1 for none, -2 for move, -3 for shoot, -4 for special)
 	private byte activeShip;				// the ship id being ordered (-1 for none, 0-4 for respective indices)
@@ -54,7 +53,7 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	
 	public Controller(GameScreen gs, Battlefield bf) {
 		view = gs;
-		ship = bf.getBlueCarrier();
+		game = bf;
 		
 		orderMode = -1;
 		activeShip = -1;
@@ -62,13 +61,14 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	
 	
 	
-	private byte[] composeOrder(byte order, byte ship, int mx, int my, long t) {	// composes a byte[] that includes critical information about an order
-		ByteBuffer output = ByteBuffer.wrap(new byte[26]);
-		output.put(0, order);
-		output.put(1, ship);
-		output.putDouble(2, view.spaceXFscreenX(mx));
-		output.putDouble(10, view.spaceYFscreenY(my));
-		output.putDouble(18, (double)t);
+	private byte[] composeOrder(byte order, byte ship, int mx, int my, double t) {	// composes a byte[] that includes critical information about an order
+		ByteBuffer output = ByteBuffer.wrap(new byte[27]);
+		output.put(0, Battlefield.DP_ORDER);		// the first zero says that this is an order
+		output.put(1, order);
+		output.put(2, ship);
+		output.putDouble(3, view.spaceXFscreenX(mx));
+		output.putDouble(11, view.spaceYFscreenY(my));
+		output.putDouble(19, t);
 		return output.array();
 	}
 	
@@ -112,7 +112,8 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	public void mouseClicked(MouseEvent e) {	// when the mouse is released...
 		byte mPos = view.getMousePos(e.getX(), e.getY(), e.getWhen());
 		if (orderMode < -1 && activeShip >= 0) {		// if an order and a ship were active
-			ship.issueOrder(composeOrder(orderMode, activeShip, e.getX(), e.getY(), System.currentTimeMillis()));
+			game.receive(composeOrder(orderMode, activeShip, e.getX(), e.getY(),	// give the order to the game
+					                  (double) System.currentTimeMillis()), true);
 			setOrder((byte) -1);
 		}
 		else if (mPos < -1)			// if a button was clicked on
@@ -144,6 +145,10 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 			setOrder((byte) -3);
 		else if (e.getKeyCode() == KeyEvent.VK_M)	// M is move
 			setOrder((byte) -2);
+		else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {	// pressing escape cancels all attacks
+			setOrder((byte) -1);
+			setShip((byte) -1);
+		}
 	}
 	
 	

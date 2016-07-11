@@ -224,7 +224,8 @@ public class GameScreen extends JPanel {
 		else
 			g.drawImage(hudPics.get("button2_of"), 880, 400, null);
 		
-		if (this.activeShip != null) {	// if there is a selected ship
+		if (activeShip == null)		return;	// if there's no selected ship, that's the end of it
+		try {								// otherwise, draw more HUD
 			final Point hudPos = new Point(1050, 30);
 			g.drawImage(hudPics.get("bars"), hudPos.x, hudPos.y, null);	// draw more HUD stuff
 			
@@ -245,7 +246,7 @@ public class GameScreen extends JPanel {
 			op = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 			mask = op.filter(hudPics.get("energy_mask"), null).getSubimage(0, 0, 200, 200);
 			g.drawImage(mask, hudPos.x, hudPos.y, null);
-		}
+		} catch (NullPointerException e) {}	// it might throw a NullPointerException if the controller modifies activeShip at the wrong moment
 	}
 	
 	

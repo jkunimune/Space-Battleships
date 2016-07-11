@@ -50,6 +50,7 @@ public class Carrier extends Ship {
 	
 	public void issueOrder(byte[] orderArr) {	// a Carrier-unique method
 		ByteBuffer bb = ByteBuffer.wrap(orderArr);	// parses an array of bytes
+		bb.get();	// ignore the first byte
 		byte order = bb.get();						// for the important information about
 		byte ship = bb.get();						// the order
 		double x = bb.getDouble();

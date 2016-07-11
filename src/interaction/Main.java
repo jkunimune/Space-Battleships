@@ -21,26 +21,44 @@
  */
 package interaction;
 
+import java.io.IOException;
+
 import mechanics.Battlefield;
+import network.Receiver;
 
 /**
  * The driver class that runs the whole application.
  * 
- * @author jkunimune
+ * @author	jkunimune
  * @version 1.0
  */
 public class Main {
 
 	public static void main(String[] args) {
-		Screen mainWindow = new Screen(1280, 800);
-		Battlefield field = new Battlefield();
+	
+		final String hostName = "239.0.113.0";	// start by declaring the network variables
+		Receiver ceiver;
+		
+		Screen mainWindow = new Screen(1280, 800);	// open the main menu
+		
+		try {
+			ceiver = new Receiver(hostName);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		new Thread(ceiver).start();
+		
+		Battlefield field = new Battlefield(hostName);	// create a game
 		mainWindow.lookAt(field);
+		ceiver.setField(field);
 		mainWindow.display();
 		
-		while (true) {
+		while (true) {				// and enter the main loop
 			field.update();
 			mainWindow.display();
 		}
+	
 	}
 
 }
