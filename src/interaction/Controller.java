@@ -28,16 +28,15 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.nio.ByteBuffer;
-
 import mechanics.Battlefield;
 import mechanics.Ship;
+import network.Interpreter;
 
 /**
  * A class to take mouse input and interact with the game
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
 public class Controller implements MouseWheelListener, MouseMotionListener, MouseListener, KeyListener {
 
@@ -59,18 +58,6 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 		activeShip = -1;
 	}
 	
-	
-	
-	private byte[] composeOrder(byte order, byte ship, int mx, int my, double t) {	// composes a byte[] that includes critical information about an order
-		ByteBuffer output = ByteBuffer.wrap(new byte[27]);
-		output.put(0, Battlefield.DP_ORDER);		// the first zero says that this is an order
-		output.put(1, order);
-		output.put(2, ship);
-		output.putDouble(3, view.spaceXFscreenX(mx));
-		output.putDouble(11, view.spaceYFscreenY(my));
-		output.putDouble(19, t);
-		return output.array();
-	}
 	
 	
 	public byte getOrder() {
@@ -110,9 +97,12 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {	// when the mouse is released...
-		byte mPos = view.getMousePos(e.getX(), e.getY(), e.getWhen());
+		final byte mPos = view.getMousePos(e.getX(), e.getY(), e.getWhen());
+		
 		if (orderMode < -1 && activeShip >= 0) {		// if an order and a ship were active
-			game.receive(composeOrder(orderMode, activeShip, e.getX(), e.getY(),	// give the order to the game
+			final double sx = view.spaceXFscreenX(e.getX());
+			final double sy = view.spaceYFscreenY(e.getY());
+			game.receive(Interpreter.composeOrder(orderMode, activeShip, sx, sy,	// give the order to the game
 					                  (double) System.currentTimeMillis()), true);
 			setOrder((byte) -1);
 		}

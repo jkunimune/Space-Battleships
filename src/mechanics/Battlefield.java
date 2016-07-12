@@ -21,9 +21,10 @@
  */
 package mechanics;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
-import network.Transmitter;
+import network.Interpreter;
 
 /**
  * The class that handles the game and physics-engine, keeping track of all
@@ -34,18 +35,15 @@ import network.Transmitter;
  */
 public class Battlefield {
 
-	public static final byte DP_ORDER = 0;	// the DataPacket index 0 value options
-	public static final byte DP_COLLISION = 1;	// TODO: make a class to deal with these bytes
-	
 	protected ArrayList<Body> bodies;	// the list of game elements
-	protected String network;
+	protected PrintWriter out;
 	
 	
-	public Battlefield(String host) {
-		double time = (double)System.currentTimeMillis();	// the current time
-		
+	public Battlefield(PrintWriter pw) {
 		bodies = new ArrayList<Body>();
-		network = host;
+		out = pw;
+		
+		double time = (double)System.currentTimeMillis();	// the current time
 		
 		// TODO: The player will eventually place the ships him/herself. This is all temporary
 		final double bluRC = -300000*Univ.km+Math.random()*100000*Univ.km;
@@ -73,12 +71,12 @@ public class Battlefield {
 	
 	
 	
-	public void receive(byte[] data, boolean transmit) {		// receives and interprets some data
-		if (data[0] == Battlefield.DP_ORDER) {		// if it was an order
+	public void receive(String data, boolean transmit) {		// receives and interprets some data
+		if (Interpreter.isOrder(data)) {		// if it was an order
 			((Carrier) bodies.get(0)).issueOrder(data);	// execute it
 		}
-		if (transmit)
-			Transmitter.transmit(data, network);
+		if (transmit && out != null)	// if you got it from a non-network sourse
+			this.out.println(data);		// broadcast it
 	}
 	
 	

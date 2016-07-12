@@ -21,14 +21,14 @@
  */
 package mechanics;
 
-import java.nio.ByteBuffer;
+import network.Interpreter;
 
 /**
  * The command ship, most important of any fleet, which can't do much but give
  * orders and move.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
 public class Carrier extends Ship {
 
@@ -48,14 +48,12 @@ public class Carrier extends Ship {
 	public void special(double x, double y, double t) {}
 	
 	
-	public void issueOrder(byte[] orderArr) {	// a Carrier-unique method
-		ByteBuffer bb = ByteBuffer.wrap(orderArr);	// parses an array of bytes
-		bb.get();	// ignore the first byte
-		byte order = bb.get();						// for the important information about
-		byte ship = bb.get();						// the order
-		double x = bb.getDouble();
-		double y = bb.getDouble();
-		double t = bb.getDouble();
+	public void issueOrder(String data) {	// a Carrier-unique method
+		byte order = Interpreter.getOrder(data);						// for the important information about
+		byte ship = Interpreter.getShip(data);						// the order
+		double x = Interpreter.getX(data);
+		double y = Interpreter.getY(data);
+		double t = Interpreter.getT(data);
 		space.spawn(new Order(xValAt(t), yValAt(t), t, order, ship, x, y, space));	// send the order!
 	}
 

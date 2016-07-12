@@ -21,35 +21,34 @@
  */
 package network;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-
 import mechanics.Battlefield;
 
 /**
- * A class to receive <code>DatagramSocket</code> signals sent by <code>Transmitter</code> objects.
+ * A class to read the <code>Socket</code> to get information from the internebs.
  * Upon running, it continuously listens for input and alerts the game of any information it receives.
  * 
  * @author	jkunimune
  * @version	1.0
  */
-public class Receiver implements Runnable {
+public class Client implements Runnable {
 
-	protected MulticastSocket socket;
-	protected InetAddress address;
+	protected BufferedReader in;
 	
 	protected Battlefield field;
 	
-	protected boolean stillGoing;	// whether the game is in session
 	
 	
+	public Client(BufferedReader br) {
+		in = br;
+		field = null;
+	}
 	
-	public Receiver(String host) throws IOException {
-		socket = new MulticastSocket(Transmitter.PORT_NUM);
-		address = InetAddress.getByName(host);
-		socket.joinGroup(address);
+	
+	public Client() {	// for testing only! Clients instantiated like this will be non-functional
+		in = null;
+		field = null;
 	}
 	
 	
@@ -61,29 +60,26 @@ public class Receiver implements Runnable {
 	
 	@Override
 	public void run() {	// starts the receiver thread and listens
-		while (stillGoing)
-			listen();
-		
-		try {
-			socket.leaveGroup(address);
-		} catch (IOException e) {}
-		socket.close();
+		if (in != null)
+			while (true)
+				listen();
 	}
 	
 	
-	public void close() {	// stops the receiver
-		stillGoing = false;	// TODO: I wonder if this will be enough to stop it...
+	private void listen() {	// waits for data and passes it on
+		try {
+			String data = in.readLine();
+			if (field != null)
+				field.receive(data, false);
+		} catch (IOException e) {}
 	}
 	
 	
-	private void listen() {	// waits for data and returns false when the game ends
-		byte[] b = new byte[26];
-		DatagramPacket packet = new DatagramPacket(b, b.length);
-		try {
-			socket.receive(packet);
-			
-			field.receive(packet.getData(), false);
-		} catch (IOException e) {}
+	
+	public static Client startListening(BufferedReader input) {	// opens a receiver and sets it listening
+		Client c = new Client(input);
+		new Thread(c).start();
+		return c;
 	}
 
 }

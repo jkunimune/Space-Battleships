@@ -22,9 +22,9 @@
 package interaction;
 
 import java.io.IOException;
-
 import mechanics.Battlefield;
-import network.Receiver;
+import network.Client;
+import network.Connection;
 
 /**
  * The driver class that runs the whole application.
@@ -36,22 +36,29 @@ public class Main {
 
 	public static void main(String[] args) {
 	
-		final String hostName = "239.0.113.0";	// start by declaring the network variables
-		Receiver ceiver;
+		final String hostName = "localhost";	// start by declaring the network variables
 		
 		Screen mainWindow = new Screen(1280, 800);	// open the main menu
 		
+		Connection connection;			// establish a connection based on args
 		try {
-			ceiver = new Receiver(hostName);
-		} catch (IOException e) {
-			e.printStackTrace();
+			if (args.length == 0)
+				connection = Connection.makeDummyConnection();
+			else if (args[0].equals("host"))
+				connection = Connection.hostConnection();
+			else if (args[0].equals("join"))
+				connection = Connection.joinConnection(hostName);
+			else
+				throw new IllegalArgumentException("The first argument must be 'host', 'join', or blank. '"+args[0]+"' is not a valid argument.");
+		} catch (IOException e) {		// TODO: find a better way to deal with failed connections
+			System.err.println("Failed Connection");
 			return;
 		}
-		new Thread(ceiver).start();
+		Client receiver = Client.startListening(connection.getInput());	// start the receiver
 		
-		Battlefield field = new Battlefield(hostName);	// create a game
+		Battlefield field = new Battlefield(connection.getOutput());	// create a game
+		receiver.setField(field);
 		mainWindow.lookAt(field);
-		ceiver.setField(field);
 		mainWindow.display();
 		
 		while (true) {				// and enter the main loop

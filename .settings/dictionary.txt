@@ -29,3 +29,5 @@ litre
 recharge
 endpoint
 endpoints
+internebs
+localhost
