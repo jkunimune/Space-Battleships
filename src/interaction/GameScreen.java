@@ -99,6 +99,31 @@ public class GameScreen extends JPanel {
 	
 	
 	
+	@Override
+	public void setVisible(boolean v) {	// draws all things and plays sounds and displays itself
+		final Graphics2D g = (Graphics2D)strat.getDrawGraphics();
+		final double t = (double)System.currentTimeMillis();
+		
+		g.drawImage(hudPics.get("space"), 0, 0, null);
+		
+		for (int i = space.getBodies().size()-1; i >= 0; i --) {	// then draw the bodies
+			final Body b = space.getBodies().get(i);
+			
+			if (b.existsAt(t))
+				draw(b, g, t);
+			try {
+				sounds.get(b.soundName(t)).play();
+			} catch (NullPointerException e) {}
+		}
+		
+		drawHUD(g, t);		// and the heads-up display
+		
+		g.dispose();
+		strat.show();
+		super.setVisible(v);
+	}
+	
+	
 	private void loadImages() {	// reads all images in the assets directory and saves them in a HashMap
 		sprites = new HashMap<String, BufferedImage>();
 		hudPics = new HashMap<String, BufferedImage>();
@@ -150,31 +175,6 @@ public class GameScreen extends JPanel {
 		canvs.addKeyListener(c);
 		
 		listener = c;
-	}
-	
-	
-	@Override
-	public void setVisible(boolean v) {	// draws all things and plays sounds and displays itself
-		final Graphics2D g = (Graphics2D)strat.getDrawGraphics();
-		final double t = (double)System.currentTimeMillis();
-		
-		g.drawImage(hudPics.get("space"), 0, 0, null);
-		
-		for (int i = space.getBodies().size()-1; i >= 0; i --) {	// then draw the bodies
-			final Body b = space.getBodies().get(i);
-			
-			if (b.existsAt(t))
-				draw(b, g, t);
-			try {
-				sounds.get(b.soundName(t)).play();
-			} catch (NullPointerException e) {}
-		}
-		
-		drawHUD(g, t);		// and the heads-up display
-		
-		g.dispose();
-		strat.show();
-		super.setVisible(v);
 	}
 	
 	

@@ -21,7 +21,7 @@
  */
 package mechanics;
 
-import network.Interpreter;
+import network.Protocol;
 
 /**
  * The command ship, most important of any fleet, which can't do much but give
@@ -49,11 +49,11 @@ public class Carrier extends Ship {
 	
 	
 	public void issueOrder(String data) {	// a Carrier-unique method
-		byte order = Interpreter.getOrder(data);						// for the important information about
-		byte ship = Interpreter.getShip(data);						// the order
-		double x = Interpreter.getX(data);
-		double y = Interpreter.getY(data);
-		double t = Interpreter.getT(data);
+		byte order = Protocol.getOrder(data);						// for the important information about
+		byte ship = Protocol.getShip(data);						// the order
+		double x = Protocol.getX(data);
+		double y = Protocol.getY(data);
+		double t = Protocol.getT(data);
 		space.spawn(new Order(xValAt(t), yValAt(t), t, order, ship, x, y, space));	// send the order!
 	}
 

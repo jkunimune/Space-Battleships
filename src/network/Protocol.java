@@ -27,7 +27,7 @@ package network;
  * @author	jkunimune
  * @version	1.0
  */
-public class Interpreter {
+public class Protocol {
 
 	private static final char ORDER = 'o';
 	private static final char COLLISION = 'c';

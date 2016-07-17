@@ -35,16 +35,22 @@ import mechanics.Battlefield;
  */
 public class Screen {	// TODO: implement Menu
 
+	public static final byte MENU = 0;
+	public static final byte GAME = 0;
+	
+	
 	private JFrame frame;
 	private JPanel panel;
 	
 	private int width, height;
+	private byte state;
 	
 	
 	
 	public Screen(int w, int h) {
 		frame = new JFrame("Space Battleships!");
 		panel = new Menu(w,h);
+		state = MENU;
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(w,h);
@@ -61,6 +67,16 @@ public class Screen {	// TODO: implement Menu
 	
 	
 	
+	public void goToMenu() {	// goes to the main menu
+		frame.remove(panel);
+		panel = new Menu(width, height);
+		frame.setContentPane(panel);
+		frame.setVisible(true);
+		frame.pack();
+		((Menu) panel).developStrategy();
+	}
+	
+	
 	public void lookAt(Battlefield field) {	// sets the panel to a GameScreen focused on field
 		frame.remove(panel);
 		panel = new GameScreen(width, height, field);
@@ -71,11 +87,15 @@ public class Screen {	// TODO: implement Menu
 		frame.pack();
 		((GameScreen) panel).developStrategy();
 	}
-
-
-
+	
+	
 	public void display() {
 		panel.setVisible(true);
+	}
+	
+	
+	public byte getState() {
+		return state;
 	}
 
 }

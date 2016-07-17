@@ -21,7 +21,7 @@
  */
 package network;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
 import mechanics.Battlefield;
 
@@ -34,14 +34,14 @@ import mechanics.Battlefield;
  */
 public class Client implements Runnable {
 
-	protected BufferedReader in;
+	protected DataInputStream in;
 	
 	protected Battlefield field;
 	
 	
 	
-	public Client(BufferedReader br) {
-		in = br;
+	public Client(DataInputStream dis) {
+		in = dis;
 		field = null;
 	}
 	
@@ -60,23 +60,23 @@ public class Client implements Runnable {
 	
 	@Override
 	public void run() {	// starts the receiver thread and listens
-		if (in != null)
-			while (true)
-				listen();
+		if (in != null) {
+			String data;
+			try {
+				while ((data = in.readUTF()) != null) {
+					if (field != null)
+						field.receive(data, false);
+				}
+			} catch (IOException e) {
+				System.err.println("Connection lost! It would appear that the other end has closed their game.");
+				Thread.currentThread().interrupt();
+			}
+		}
 	}
 	
 	
-	private void listen() {	// waits for data and passes it on
-		try {
-			String data = in.readLine();
-			if (field != null)
-				field.receive(data, false);
-		} catch (IOException e) {}
-	}
 	
-	
-	
-	public static Client startListening(BufferedReader input) {	// opens a receiver and sets it listening
+	public static Client startListening(DataInputStream input) {	// opens a receiver and sets it listening
 		Client c = new Client(input);
 		new Thread(c).start();
 		return c;

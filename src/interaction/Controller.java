@@ -30,7 +30,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import mechanics.Battlefield;
 import mechanics.Ship;
-import network.Interpreter;
+import network.Protocol;
 
 /**
  * A class to take mouse input and interact with the game
@@ -102,7 +102,7 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 		if (orderMode < -1 && activeShip >= 0) {		// if an order and a ship were active
 			final double sx = view.spaceXFscreenX(e.getX());
 			final double sy = view.spaceYFscreenY(e.getY());
-			game.receive(Interpreter.composeOrder(orderMode, activeShip, sx, sy,	// give the order to the game
+			game.receive(Protocol.composeOrder(orderMode, activeShip, sx, sy,	// give the order to the game
 					                  (double) System.currentTimeMillis()), true);
 			setOrder((byte) -1);
 		}

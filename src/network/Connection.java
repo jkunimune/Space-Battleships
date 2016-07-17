@@ -21,10 +21,10 @@
  */
 package network;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -47,8 +47,10 @@ public class Connection implements Runnable {
 	protected int port;
 	
 	protected Socket socket;
-	protected PrintWriter out;
-	protected BufferedReader in;
+	protected DataOutputStream out;
+	protected DataInputStream in;
+	
+	protected ServerSocket ss;
 	
 	
 	
@@ -77,25 +79,27 @@ public class Connection implements Runnable {
 		
 		try {
 			if (type == HOST) {									// if you are the host
-				ServerSocket ss = new ServerSocket(port);	// open a server socket
+				ss = new ServerSocket(port);	// open a server socket
 				socket = ss.accept();					// and wait for someone to contact you
-				ss.close();
 			}
 			else if (type == CLIENT) {											// if you are a client
-				socket = new Socket(name, port);		// reach out to the server
+				while (socket == null) {
+					try {
+					socket = new Socket(name, port);		// reach out to the server
+					} catch (ConnectException e) {}
+				}
 			}
 			
-			out = new PrintWriter(socket.getOutputStream());	// then create out and in
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			out = new DataOutputStream(socket.getOutputStream());	// then create out and in
+			in = new DataInputStream(socket.getInputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	
 	public boolean running() {
-		return type != DUMMY || socket == null;
+		return type == DUMMY || in == null;
 	}
 	
 	
@@ -105,13 +109,13 @@ public class Connection implements Runnable {
 	}
 	
 	
-	public PrintWriter getOutput() {
+	public DataOutputStream getOutput() {
 		if (type == DUMMY)	return null;
 		return out;
 	}
 	
 	
-	public BufferedReader getInput() {
+	public DataInputStream getInput() {
 		if (type == DUMMY)	return null;
 		return in;
 	}
@@ -122,29 +126,40 @@ public class Connection implements Runnable {
 			socket.close();
 			out.close();
 			in.close();
-		} catch (IOException e) {}
+			ss.close();
+		}
+		catch (IOException e) {}
+		catch (NullPointerException e) {}
+	}
+	
+	
+	@Override
+	public String toString() {
+		return  "Socket: " + socket + "\n" +
+				"Output: " + out + "\n" +
+				"Input:  " + in;
 	}
 	
 	
 	
-	public static Connection makeDummyConnection() throws IOException {	// for testing purposes only!
+	public static Connection makeDummyConnection() {	// for testing purposes only!
 		Connection c = new Connection();	// this Connection is non-functional
 		return c;
 	}
 	
 	
-	public static Connection hostConnection() throws IOException {	// opens a Connection as a client
+	public static Connection hostConnection() {	// opens a Connection as a client
 		Connection c = new Connection(PORT_NUM);
 		new Thread(c).start();
-		while (c.running()) {}	// until I figure out what to do while this thread is running, just wait for it
+		while (c.running()) {System.out.print("");}	// until I figure out what to do while this thread is running, just wait for it
 		return c;
 	}
 	
 	
-	public static Connection joinConnection(String name) throws IOException {	// opens a Connection as a host
+	public static Connection joinConnection(String name) {	// opens a Connection as a host
 		Connection c = new Connection(name, PORT_NUM);
 		new Thread(c).start();
-		while (c.running()) {}	// until I figure out what to do while this thread is running, just wait for it
+		while (c.running()) {System.out.print("");}	// until I figure out what to do while this thread is running, just wait for it
 		return c;
 	}
 

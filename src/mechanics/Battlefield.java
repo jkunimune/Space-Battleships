@@ -21,10 +21,11 @@
  */
 package mechanics;
 
-import java.io.PrintWriter;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
-import network.Interpreter;
+import network.Protocol;
 
 /**
  * The class that handles the game and physics-engine, keeping track of all
@@ -36,12 +37,12 @@ import network.Interpreter;
 public class Battlefield {
 
 	protected ArrayList<Body> bodies;	// the list of game elements
-	protected PrintWriter out;
+	protected DataOutputStream out;
 	
 	
-	public Battlefield(PrintWriter pw) {
+	public Battlefield(DataOutputStream dos) {
 		bodies = new ArrayList<Body>();
-		out = pw;
+		out = dos;
 		
 		double time = (double)System.currentTimeMillis();	// the current time
 		
@@ -72,11 +73,16 @@ public class Battlefield {
 	
 	
 	public void receive(String data, boolean transmit) {		// receives and interprets some data
-		if (Interpreter.isOrder(data)) {		// if it was an order
+		if (Protocol.isOrder(data)) {		// if it was an order
 			((Carrier) bodies.get(0)).issueOrder(data);	// execute it
 		}
-		if (transmit && out != null)	// if you got it from a non-network sourse
-			this.out.println(data);		// broadcast it
+		if (transmit && out != null) {	// if you got it from a non-network source
+			try {
+				out.writeUTF(data);		// broadcast it
+			} catch (IOException e) {
+				System.err.println("I don't know if this will ever print");
+			}
+		}
 	}
 	
 	

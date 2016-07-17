@@ -21,7 +21,6 @@
  */
 package interaction;
 
-import java.io.IOException;
 import mechanics.Battlefield;
 import network.Client;
 import network.Connection;
@@ -36,24 +35,27 @@ public class Main {
 
 	public static void main(String[] args) {
 	
-		final String hostName = "localhost";	// start by declaring the network variables
+		String hostname;
+		if (args.length >= 2)		// start by getting the hostname from args or from hard-code
+			hostname = args[1];
+		else
+			hostname = "522MT32.olin.edu";
 		
 		Screen mainWindow = new Screen(1280, 800);	// open the main menu
+		mainWindow.goToMenu();
+		while (mainWindow.getState() == Screen.MENU) {
+			mainWindow.display();
+		}
 		
 		Connection connection;			// establish a connection based on args
-		try {
-			if (args.length == 0)
-				connection = Connection.makeDummyConnection();
-			else if (args[0].equals("host"))
-				connection = Connection.hostConnection();
-			else if (args[0].equals("join"))
-				connection = Connection.joinConnection(hostName);
-			else
-				throw new IllegalArgumentException("The first argument must be 'host', 'join', or blank. '"+args[0]+"' is not a valid argument.");
-		} catch (IOException e) {		// TODO: find a better way to deal with failed connections
-			System.err.println("Failed Connection");
-			return;
-		}
+		if (args.length == 0)
+			connection = Connection.makeDummyConnection();
+		else if (args[0].equals("host"))
+			connection = Connection.hostConnection();
+		else if (args[0].equals("join"))
+			connection = Connection.joinConnection(hostname);
+		else
+			throw new IllegalArgumentException("The first argument must be 'host', 'join', or blank. '"+args[0]+"' is not a valid argument.");
 		Client receiver = Client.startListening(connection.getInput());	// start the receiver
 		
 		Battlefield field = new Battlefield(connection.getOutput());	// create a game
