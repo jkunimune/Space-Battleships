@@ -42,8 +42,7 @@ public class Main {
 			hostname = "522MT32.olin.edu";
 		
 		Screen mainWindow = new Screen(1280, 800);	// open the main menu
-		mainWindow.goToMenu();
-		while (mainWindow.getState() == Screen.MENU) {
+		while (!(mainWindow.getState().equals("Host") || mainWindow.getState().equals("Join"))) {
 			mainWindow.display();
 		}
 		

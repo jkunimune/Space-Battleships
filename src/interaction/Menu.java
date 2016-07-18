@@ -22,12 +22,18 @@
 package interaction;
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
@@ -44,7 +50,16 @@ public class Menu extends JPanel {
 
 	private static final long serialVersionUID = -6605421223497517651L;
 	
+	private static final Color COLOR_OFF = new Color(116, 88, 255);
+	private static final Color COLOR_ON = new Color(66, 38, 221);
+	private static final Color COLOR_LIT = new Color(250, 250, 250);
+	private static final Font TITLE_FONT = new Font("Comic Sans MS", Font.BOLD, 96);
+	private static final Font MENU_FONT = new Font("Comic Sans MS", Font.PLAIN, 36);
 	
+		
+	private String menu_pos;
+	
+	private HashMap<String, String[][]> menu_structure;
 	private HashMap<String, BufferedImage> buttons;
 	private BufferedImage background;
 	
@@ -54,7 +69,7 @@ public class Menu extends JPanel {
 	
 	
 	
-	public Menu(int w, int h) {
+	public Menu(int w, int h, String startMenu) {
 		super();
 		canvs = new Canvas();
 		
@@ -69,6 +84,9 @@ public class Menu extends JPanel {
 		canvs.setFocusable(true);
 		
 		loadImages();
+		loadMenus();
+		
+		menu_pos = startMenu;
 	}
 	
 	
@@ -79,10 +97,38 @@ public class Menu extends JPanel {
 		
 		g.drawImage(background, 0, 0, null);
 		
+		String[][] gui = menu_structure.get(this.getState());
+		for (String[] component: gui)
+			draw(component, g);
+		
 		g.dispose();
 		strat.show();
 		
 		super.setVisible(v);
+	}
+	
+	
+	private void draw(String[] component, Graphics2D g) {	// draw the given component
+		if (component[0].equals("layt")) {		// for a layout
+			BufferedImage img = buttons.get("layout_"+component[1]);
+			int x = Integer.parseInt(component[2]) - img.getWidth()/2 + this.getWidth()/2;
+			int y = Integer.parseInt(component[3]);
+			g.drawImage(img, x, y, null);		// just draw the provide image
+		}
+		else if (component[0].equals("text")) {	// for text
+			g.setColor(Color.WHITE);
+			g.setFont(TITLE_FONT);
+			int x = Integer.parseInt(component[1]) - g.getFontMetrics().stringWidth(component[3])/2 + this.getWidth()/2;
+			int y = Integer.parseInt(component[2]);
+			g.drawString(component[3], x, y);	// draw the text centered and big
+		}
+		else if (component[0].equals("butn")) {
+			g.setColor(COLOR_OFF);
+			g.setFont(MENU_FONT);
+			int x = Integer.parseInt(component[2]) - g.getFontMetrics().stringWidth(component[4])/2 + this.getWidth()/2;
+			int y = Integer.parseInt(component[3]);
+			g.drawString(component[4], x, y);
+		}
 	}
 	
 	
@@ -108,9 +154,41 @@ public class Menu extends JPanel {
 	}
 	
 	
+	private void loadMenus() {	// loads the assets/other/menu_structure.txt file into menu_structure
+		menu_structure = new HashMap<String, String[][]>();
+		
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(new File("assets/other/menu_structure.txt")));
+			String line = in.readLine();
+			
+			while (line != null) {		// until you hit the end of file:
+				ArrayList<String[]> menu = new ArrayList<String[]>();
+				
+				while (!line.equals("")) {					// read until a blank line
+					String[] component = line.split(":");	// split the line by ':'
+					menu.add(component);					// and save the array
+					line = in.readLine();
+				}
+				
+				menu_structure.put(menu.get(0)[1], menu.toArray(new String[menu.size()][]));
+				line = in.readLine();	// each group of string arrays is put in menu_structure
+			}
+			
+			in.close();
+		} catch (IOException e) {
+			// TODO: not auto-generated try-catch
+		}
+	}
+	
+	
 	public void developStrategy() {	// some required stuff for graphics to not fail
 		canvs.createBufferStrategy(2);
 		strat = canvs.getBufferStrategy();
+	}
+	
+	
+	public String getState() {	// returns the current menu screen
+		return menu_pos.substring(menu_pos.lastIndexOf("/")+1);	// the state is after the last slash in menu_pos
 	}
 
 }

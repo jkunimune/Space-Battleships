@@ -124,60 +124,6 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	private void loadImages() {	// reads all images in the assets directory and saves them in a HashMap
-		sprites = new HashMap<String, BufferedImage>();
-		hudPics = new HashMap<String, BufferedImage>();
-		
-		File[] files = new File("assets/images/game").listFiles();
-		for (File f: files) {	// for every file in that folder
-			try {
-				int i = f.getName().lastIndexOf('.');	// find the extension
-				if (i != -1 && f.getName().endsWith(".png"))	// if it is a png file
-					sprites.put(f.getName().substring(0,i), ImageIO.read(f));	// put it in the HashMap
-			} catch (IOException e) {
-				System.err.println("Something went wrong with "+f);	// I see no reason this error would ever throw
-			}
-		}
-		
-		files = new File("assets/images/interface").listFiles();	// do the same for HUD pics now
-		for (File f: files) {	// for every file in that folder
-			try {
-				int i = f.getName().lastIndexOf('.');	// find the extension
-				if (i != -1 && f.getName().endsWith(".png"))	// if it is a png file
-					hudPics.put(f.getName().substring(0,i), ImageIO.read(f));	// put it in the HashMap
-			} catch (IOException e) {
-				System.err.println("Something went wrong with "+f);	// I see no reason this error would ever throw
-			}
-		}
-	}
-	
-	
-	private void loadSounds() {
-		sounds = new HashMap<String, AudioClip>();
-		
-		File[] files = new File("assets/sounds").listFiles();
-		for (File f: files) {	// for every file in that folder
-			try {
-				int i = f.getName().lastIndexOf('.');	// find the extension
-				if (i != -1 && f.getName().endsWith(".wav"))	// if it is a wav file
-					sounds.put(f.getName().substring(0,i), Applet.newAudioClip(f.toURI().toURL()));	// put it in the HashMap
-			} catch (IOException e) {
-				System.err.println("Something went wrong with "+f);	// I see no reason this error would ever throw
-			}
-		}
-	}
-	
-	
-	public void addListener(Controller c) {
-		canvs.addMouseListener(c);
-		canvs.addMouseWheelListener(c);
-		canvs.addMouseMotionListener(c);
-		canvs.addKeyListener(c);
-		
-		listener = c;
-	}
-	
-	
 	private void draw(Body b, Graphics2D g, double t) {	// put a picture of b on g at time t
 		BufferedImage img;
 		if (b instanceof Ship && ((Ship) b).getID() == listener.getShip())
@@ -267,6 +213,67 @@ public class GameScreen extends JPanel {
 				(int) (img.getHeight()*params[2]/zoominess));
 		return op.filter(img, null).getSubimage(0, 0, size.x, size.y);	// executes affine transformation, crops, and returns
 	}
+
+
+
+	private void loadImages() {	// reads all images in the assets directory and saves them in a HashMap
+		sprites = new HashMap<String, BufferedImage>();
+		hudPics = new HashMap<String, BufferedImage>();
+		
+		File[] files = new File("assets/images/game").listFiles();
+		for (File f: files) {	// for every file in that folder
+			try {
+				int i = f.getName().lastIndexOf('.');	// find the extension
+				if (i != -1 && f.getName().endsWith(".png"))	// if it is a png file
+					sprites.put(f.getName().substring(0,i), ImageIO.read(f));	// put it in the HashMap
+			} catch (IOException e) {
+				System.err.println("Something went wrong with "+f);	// I see no reason this error would ever throw
+			}
+		}
+		
+		files = new File("assets/images/interface").listFiles();	// do the same for HUD pics now
+		for (File f: files) {	// for every file in that folder
+			try {
+				int i = f.getName().lastIndexOf('.');	// find the extension
+				if (i != -1 && f.getName().endsWith(".png"))	// if it is a png file
+					hudPics.put(f.getName().substring(0,i), ImageIO.read(f));	// put it in the HashMap
+			} catch (IOException e) {
+				System.err.println("Something went wrong with "+f);	// I see no reason this error would ever throw
+			}
+		}
+	}
+	
+	
+	private void loadSounds() {
+		sounds = new HashMap<String, AudioClip>();
+		
+		File[] files = new File("assets/sounds").listFiles();
+		for (File f: files) {	// for every file in that folder
+			try {
+				int i = f.getName().lastIndexOf('.');	// find the extension
+				if (i != -1 && f.getName().endsWith(".wav"))	// if it is a wav file
+					sounds.put(f.getName().substring(0,i), Applet.newAudioClip(f.toURI().toURL()));	// put it in the HashMap
+			} catch (IOException e) {
+				System.err.println("Something went wrong with "+f);	// I see no reason this error would ever throw
+			}
+		}
+	}
+	
+	
+	public void developStrategy() {	// some required stuff for graphics to not fail
+		canvs.createBufferStrategy(2);
+		strat = canvs.getBufferStrategy();
+	}
+	
+	
+	public void addListener(Controller c) {
+		canvs.addMouseListener(c);
+		canvs.addMouseWheelListener(c);
+		canvs.addMouseMotionListener(c);
+		canvs.addKeyListener(c);
+		
+		listener = c;
+	}
 	
 	
 	public void zoom(int amount, int mx, int my) {	// changes scale based on a multiplicative amount
@@ -286,12 +293,6 @@ public class GameScreen extends JPanel {
 	public void pan(int delX, int delY) {	// changes offsetX and offsetY based on a mouse drag
 		origX += delX;
 		origY += delY;
-	}
-	
-	
-	public void developStrategy() {	// some required stuff for graphics to not fail
-		canvs.createBufferStrategy(2);
-		strat = canvs.getBufferStrategy();
 	}
 	
 	
@@ -325,23 +326,23 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	public double spaceXFscreenX(int sx) {	// converts an x on screen to an x in space
+	public final double spaceXFscreenX(int sx) {	// converts an x on screen to an x in space
 		return (sx-origX)*scale;
 		
 	}
 	
 	
-	public double spaceYFscreenY(int sy) {	// converts a y on screen to a y in space
+	public final double spaceYFscreenY(int sy) {	// converts a y on screen to a y in space
 		return (sy-origY)*scale;
 	}
 	
 	
-	public int screenXFspaceX(double sx) {	// converts an x in space to an x on screen
+	public final int screenXFspaceX(double sx) {	// converts an x in space to an x on screen
 		return (int)(sx/scale) + origX;
 	}
 	
 	
-	public int screenYFspaceY(double sy) {	// converts a y in space to a y on screen
+	public final int screenYFspaceY(double sy) {	// converts a y in space to a y on screen
 		return (int)(sy/scale) + origY;
 	}
 	

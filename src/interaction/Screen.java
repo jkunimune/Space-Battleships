@@ -43,33 +43,30 @@ public class Screen {	// TODO: implement Menu
 	private JPanel panel;
 	
 	private int width, height;
-	private byte state;
 	
 	
 	
 	public Screen(int w, int h) {
 		frame = new JFrame("Space Battleships!");
-		panel = new Menu(w,h);
-		state = MENU;
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(w,h);
 		frame.setResizable(true);
 		frame.setFocusable(true);
 		
-		frame.setContentPane(panel);
-		frame.setVisible(true);
-		frame.pack();
-		
 		width = w;
 		height = h;
+		
+		goToMenu();
 	}
 	
 	
 	
 	public void goToMenu() {	// goes to the main menu
-		frame.remove(panel);
-		panel = new Menu(width, height);
+		try {
+			frame.remove(panel);
+		} catch (NullPointerException e) {}
+		panel = new Menu(width, height, "main");
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		frame.pack();
@@ -94,8 +91,15 @@ public class Screen {	// TODO: implement Menu
 	}
 	
 	
-	public byte getState() {
-		return state;
+	public String getState() {
+		try {
+			if (panel instanceof Menu)
+				return ((Menu) panel).getState();
+			return "Game";
+		} catch (NullPointerException e) {
+			System.err.println("Look at me! I'm a target!");
+			return "ERROR";
+		}
 	}
 
 }
