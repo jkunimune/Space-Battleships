@@ -1,12 +1,12 @@
-layt:main:0000:0320
-text:0000:0300:Space Battleships!!!
-butn:play:0000:0420:Play
-butn:help:-095:0600:Help
-butn:optn:+095:0600:More
-butn:exit:0000:0530:Exit
+main
+text:titl:Space Battleships!!!
+butn:play:Play
+butn:help:Help
+butn:optn:More
+butn:exit:Exit
 
-layt:play:0000:0400
-butn:host:0000:0400:Host Game
-butn:join:0000:0500:Join Game
-butn:back:0000:0600:Back
+play
+butn:host:Host Game
+butn:join:Join Game
+butn:back:Back
 

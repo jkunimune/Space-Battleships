@@ -53,14 +53,15 @@ public class Menu extends JPanel {
 	private static final Color COLOR_OFF = new Color(116, 88, 255);
 	private static final Color COLOR_ON = new Color(66, 38, 221);
 	private static final Color COLOR_LIT = new Color(250, 250, 250);
-	private static final Font TITLE_FONT = new Font("Comic Sans MS", Font.BOLD, 96);
-	private static final Font MENU_FONT = new Font("Comic Sans MS", Font.PLAIN, 36);
+	private static final Font TITLE_FONT = new Font("Papyrus", Font.BOLD, 96);
+	private static final Font BODY_FONT = new Font("Papyrus", Font.PLAIN, 24);
+	private static final Font BUTTON_FONT = new Font("Comic Sans MS", Font.PLAIN, 36);
 	
 		
 	private String menu_pos;
 	
 	private HashMap<String, String[][]> menu_structure;
-	private HashMap<String, BufferedImage> buttons;
+	private BufferedImage buttonImg;
 	private BufferedImage background;
 	
 	
@@ -98,8 +99,24 @@ public class Menu extends JPanel {
 		g.drawImage(background, 0, 0, null);
 		
 		String[][] gui = menu_structure.get(this.getState());
-		for (String[] component: gui)
-			draw(component, g);
+		int totHeight = 0;	// measure the height of the menu
+		int[] heights = new int[gui.length];	// and calculate the height of each component
+		
+		for (int i = 0; i < gui.length; i ++) {
+			final int top = totHeight;
+			if (gui[i][0].equals("butn"))
+				totHeight += buttonImg.getHeight();
+			else if (gui[i][0].equals("text")) {
+				if (gui[i][1].equals("titl"))
+					totHeight += g.getFontMetrics(TITLE_FONT).getHeight();
+				else if (gui[i][1].equals("body"))
+					totHeight += g.getFontMetrics(BODY_FONT).getHeight();
+			}
+			heights[i] = (top + totHeight)/2;
+		}
+		for (int i = 0; i < gui.length; i ++) {
+			draw(gui[i], g, heights[i] - totHeight/2);
+		}
 		
 		g.dispose();
 		strat.show();
@@ -108,48 +125,38 @@ public class Menu extends JPanel {
 	}
 	
 	
-	private void draw(String[] component, Graphics2D g) {	// draw the given component
-		if (component[0].equals("layt")) {		// for a layout
-			BufferedImage img = buttons.get("layout_"+component[1]);
-			int x = Integer.parseInt(component[2]) - img.getWidth()/2 + this.getWidth()/2;
-			int y = Integer.parseInt(component[3]);
-			g.drawImage(img, x, y, null);		// just draw the provide image
+	private void draw(String[] component, Graphics2D g, int yRel) {	// draw the given component
+		BufferedImage img;
+		if (component[0].equals("butn")) {
+			img = buttonImg;
+			int xi = this.getWidth()/2 - img.getWidth()/2;
+			int yi = yRel + this.getHeight()/2 - img.getHeight()/2;
+			g.drawImage(img, xi, yi, null);
+			g.setFont(BUTTON_FONT);
+			g.setColor(COLOR_LIT);
+			int xs = this.getWidth()/2 - g.getFontMetrics().stringWidth(component[2])/2;
+			int ys = yRel + this.getHeight()/2 + g.getFontMetrics().getHeight()/4;
+			g.drawString(component[2], xs, ys);
 		}
-		else if (component[0].equals("text")) {	// for text
+		else if (component[0].equals("text")) {
+			if (component[1].equals("titl"))
+				g.setFont(TITLE_FONT);
+			if (component[1].equals("body"))
+				g.setFont(BODY_FONT);
 			g.setColor(Color.WHITE);
-			g.setFont(TITLE_FONT);
-			int x = Integer.parseInt(component[1]) - g.getFontMetrics().stringWidth(component[3])/2 + this.getWidth()/2;
-			int y = Integer.parseInt(component[2]);
-			g.drawString(component[3], x, y);	// draw the text centered and big
-		}
-		else if (component[0].equals("butn")) {
-			g.setColor(COLOR_OFF);
-			g.setFont(MENU_FONT);
-			int x = Integer.parseInt(component[2]) - g.getFontMetrics().stringWidth(component[4])/2 + this.getWidth()/2;
-			int y = Integer.parseInt(component[3]);
-			g.drawString(component[4], x, y);
+			int xs = this.getWidth()/2 - g.getFontMetrics().stringWidth(component[2])/2;
+			int ys = yRel + this.getHeight()/2 + g.getFontMetrics().getHeight()/4;
+			g.drawString(component[2], xs, ys);
 		}
 	}
 	
 	
 	private void loadImages() {
-		buttons = new HashMap<String, BufferedImage>();
-		
-		File[] files = new File("assets/images/menu").listFiles();
-		for (File f: files) {	// for every file in that folder
-			try {
-				int i = f.getName().lastIndexOf('.');	// find the extension
-				if (i != -1 && f.getName().endsWith(".png"))	// if it is a png file
-					buttons.put(f.getName().substring(0,i), ImageIO.read(f));	// put it in the HashMap
-			} catch (IOException e) {
-				System.err.println("Something went wrong with "+f);	// I see no reason this error would ever throw
-			}
-		}
-		
 		try {
-			background = ImageIO.read(new File("assets/images/menu/background.jpg"));
+			buttonImg = ImageIO.read(new File("assets/images/menu/button.png"));
+			background = ImageIO.read(new File("assets/images/menu/background.png"));
 		} catch (IOException e) {
-			System.err.println("Gah! Where's background.jpg? It's supposed to be in assets/images/menu/! Oh, well, I guess we'll just continue without it.");
+			System.err.println("Gah! Where's background.png? It's supposed to be in assets/images/menu/! Actually, you may or may not be missing button.png as well. Oh, well, I guess we'll just continue without 'em.");
 		}
 	}
 	
@@ -159,19 +166,18 @@ public class Menu extends JPanel {
 		
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(new File("assets/other/menu_structure.txt")));
-			String line = in.readLine();
+			String key;
+			String line;
 			
-			while (line != null) {		// until you hit the end of file:
+			while ((key = in.readLine()) != null) {		// until you hit the end of file:
 				ArrayList<String[]> menu = new ArrayList<String[]>();
 				
-				while (!line.equals("")) {					// read until a blank line
+				while (!(line = in.readLine()).equals("")) {// read until a blank line
 					String[] component = line.split(":");	// split the line by ':'
 					menu.add(component);					// and save the array
-					line = in.readLine();
 				}
 				
-				menu_structure.put(menu.get(0)[1], menu.toArray(new String[menu.size()][]));
-				line = in.readLine();	// each group of string arrays is put in menu_structure
+				menu_structure.put(key, menu.toArray(new String[menu.size()][]));
 			}
 			
 			in.close();
