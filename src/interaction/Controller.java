@@ -21,6 +21,7 @@
  */
 package interaction;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -46,7 +47,7 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	private byte orderMode;				// the type of order being given (-1 for none, -2 for move, -3 for shoot, -4 for special)
 	private byte activeShip;				// the ship id being ordered (-1 for none, 0-4 for respective indices)
 	
-	int x, y;	// mouse location
+	private int x, y;	// mouse location
 	
 	
 	
@@ -56,6 +57,9 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 		
 		orderMode = -1;
 		activeShip = -1;
+		
+		x = 0;
+		y = 0;
 	}
 	
 	
@@ -78,6 +82,11 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	private void setShip(byte s) {
 		activeShip = s;
 		view.setShip(s);
+	}
+	
+	
+	public Point getMouseLocation() {
+		return new Point(x,y);
 	}
 	
 	

@@ -67,6 +67,8 @@ public class Screen {	// TODO: implement Menu
 			frame.remove(panel);
 		} catch (NullPointerException e) {}
 		panel = new Menu(width, height, "main");
+		MenuListener listener = new MenuListener((Menu) panel);
+		((Menu) panel).addListener(listener);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		frame.pack();

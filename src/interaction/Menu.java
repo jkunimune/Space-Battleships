@@ -26,11 +26,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,13 +58,14 @@ public class Menu extends JPanel {
 	private static final Font BODY_FONT = new Font("Papyrus", Font.PLAIN, 24);
 	private static final Font BUTTON_FONT = new Font("Comic Sans MS", Font.PLAIN, 36);
 	
-		
+	
 	private String menu_pos;
 	
 	private HashMap<String, String[][]> menu_structure;
 	private BufferedImage buttonImg;
 	private BufferedImage background;
 	
+	private MenuListener listener;
 	
 	private Canvas canvs;
 	private BufferStrategy strat;
@@ -99,24 +101,18 @@ public class Menu extends JPanel {
 		g.drawImage(background, 0, 0, null);
 		
 		String[][] gui = menu_structure.get(this.getState());
-		int totHeight = 0;	// measure the height of the menu
-		int[] heights = new int[gui.length];	// and calculate the height of each component
+		int[] heights = getHeights(gui, g);	// calculate the height of each component
+		final int mPos = getMousePos(listener.getMouseLocation());
 		
-		for (int i = 0; i < gui.length; i ++) {
-			final int top = totHeight;
-			if (gui[i][0].equals("butn"))
-				totHeight += buttonImg.getHeight();
-			else if (gui[i][0].equals("text")) {
-				if (gui[i][1].equals("titl"))
-					totHeight += g.getFontMetrics(TITLE_FONT).getHeight();
-				else if (gui[i][1].equals("body"))
-					totHeight += g.getFontMetrics(BODY_FONT).getHeight();
+		for (int i = 0; i < gui.length; i ++)
+			if (i == mPos) {
+				if (listener.getMousePressed())
+					draw(gui[i], g, heights[i], COLOR_LIT);
+				else
+					draw(gui[i], g, heights[i], COLOR_ON);
 			}
-			heights[i] = (top + totHeight)/2;
-		}
-		for (int i = 0; i < gui.length; i ++) {
-			draw(gui[i], g, heights[i] - totHeight/2);
-		}
+			else
+				draw(gui[i], g, heights[i], COLOR_OFF);
 		
 		g.dispose();
 		strat.show();
@@ -125,7 +121,7 @@ public class Menu extends JPanel {
 	}
 	
 	
-	private void draw(String[] component, Graphics2D g, int yRel) {	// draw the given component
+	private void draw(String[] component, Graphics2D g, int yRel, Color c) {	// draw the given component
 		BufferedImage img;
 		if (component[0].equals("butn")) {
 			img = buttonImg;
@@ -133,7 +129,7 @@ public class Menu extends JPanel {
 			int yi = yRel + this.getHeight()/2 - img.getHeight()/2;
 			g.drawImage(img, xi, yi, null);
 			g.setFont(BUTTON_FONT);
-			g.setColor(COLOR_LIT);
+			g.setColor(c);
 			int xs = this.getWidth()/2 - g.getFontMetrics().stringWidth(component[2])/2;
 			int ys = yRel + this.getHeight()/2 + g.getFontMetrics().getHeight()/4;
 			g.drawString(component[2], xs, ys);
@@ -193,8 +189,59 @@ public class Menu extends JPanel {
 	}
 	
 	
+	public void addListener(MenuListener l) {
+		canvs.addMouseListener(l);
+		canvs.addMouseMotionListener(l);
+		listener = l;
+	}
+	
+	
 	public String getState() {	// returns the current menu screen
 		return menu_pos.substring(menu_pos.lastIndexOf("/")+1);	// the state is after the last slash in menu_pos
+	}
+	
+	
+	public int getMousePos(Point coords) {	// decides which, if any, button the mouse is currently on
+		return getMousePos(coords.x, coords.y);
+	}
+	
+	
+	public int getMousePos(int mx, int my) {	// return the button index this point is on
+		int x = mx - this.getWidth()/2;		// normalize
+		int y = my - this.getHeight()/2;	// to center
+		
+		if (x < -buttonImg.getWidth()/2 || x > buttonImg.getWidth()/2)
+			return -1;	// -1 means no button
+		
+		final int dist = buttonImg.getHeight()/2;
+		final Graphics2D g = (Graphics2D) strat.getDrawGraphics();
+		final int[] heights = getHeights(menu_structure.get(getState()), g);
+		
+		for (int i = 0; i < heights.length; i ++)
+			if (Math.abs(y-heights[i]) <= dist)
+				return i;	// on the button
+		return -1;	// no button here
+	}
+	
+	
+	public int[] getHeights(String[][] gui, Graphics2D g) {	// determines the correct y positions for the components in gui
+		int totHeight = 0;
+		int[] heights = new int[gui.length];
+		for (int i = 0; i < gui.length; i ++) {	// first calculate what the heights would be if
+			final int top = totHeight;			// if the menu were flush with the top of the screen
+			if (gui[i][0].equals("butn"))
+				totHeight += buttonImg.getHeight();
+			else if (gui[i][0].equals("text")) {
+				if (gui[i][1].equals("titl"))
+					totHeight += g.getFontMetrics(TITLE_FONT).getHeight();
+				else if (gui[i][1].equals("body"))
+					totHeight += g.getFontMetrics(BODY_FONT).getHeight();
+			}
+			heights[i] = (top + totHeight)/2;
+		}
+		for (int i = 0; i < heights.length; i ++)	// normalize heights to be relative to the center of the screen
+			heights[i] -= totHeight/2;
+		return heights;
 	}
 
 }

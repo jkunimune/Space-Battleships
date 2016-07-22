@@ -25,9 +25,7 @@ import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Canvas;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -146,7 +144,7 @@ public class GameScreen extends JPanel {
 	
 	
 	private void drawHUD(Graphics2D g, double t) {	// draw the heads up display
-		final int pos = getMousePos(MouseInfo.getPointerInfo().getLocation(), this.getLocationOnScreen(), t);
+		final int pos = getMousePos(listener.getMouseLocation(), t);
 		final int active = listener.getOrder();
 		
 		if (active == -2)	// the buttons may be lit, on, or off depending on circumstance
@@ -296,11 +294,6 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	public byte getMousePos(Point mCoordsOnScreen, Point screenCoords, double t) {	// decides which, if any, button the mouse is currently on
-		return getMousePos(mCoordsOnScreen.x-screenCoords.x, mCoordsOnScreen.y-screenCoords.y, t);
-	}
-	
-	
 	public byte getMousePos(Point mCoords, double t) {	// decides which, if any, button the mouse is currently on
 		return getMousePos(mCoords.x, mCoords.y, t);
 	}
@@ -318,11 +311,6 @@ public class GameScreen extends JPanel {
 				return ((Ship) ship).getID();	// a ship
 		}
 		return -1;	// empty space
-	}
-	
-	
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
 	}
 	
 	
