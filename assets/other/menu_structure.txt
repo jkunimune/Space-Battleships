@@ -2,11 +2,95 @@ main
 text:titl:Space Battleships!!!
 butn:play:Play
 butn:help:Help
-butn:optn:More
+butn:more:More
 butn:exit:Exit
 
 play
 butn:host:Host Game
 butn:join:Join Game
 butn:back:Back
+
+more
+butn:cntl:Controls
+butn:optn:Options
+butn:cred:Credits
+butn:back:Back
+
+cred
+text:titl:Credits
+text:body:Initial Concept     Justin Kunimune
+text:body:       Graphics     Justin Kunimune
+text:body:     Programmer     Justin Kunimune
+text:body:  Sound Effects     soundbible.com
+text:body:                    and Justin Kunimune
+
+help
+text:body:Welcome to Space Battleships!
+butn:h001:Next
+butn:back:Back
+
+h001
+text:body:This screen is a WIP, but in case I never get around to finishing it, here's the basics.
+butn:h002:Next
+butn:back:Back
+butn:main:Main Menu
+
+h002
+text:body:This [insert pic] is a Ship. Click on a Ship or select it with a number key.
+butn:h003:Next
+butn:back:Back
+butn:main:Main Menu
+
+h003
+text:body:This [insert pic] is a Command. Click on a Command or select it with 'm' for Move, 'b' for Bombard, or 'x' for Special.
+butn:h004:Next
+butn:back:Back
+butn:main:Main Menu
+
+h004
+text:body:Once a ship and a command are selected, simply click somewhere on screen to issue that command to that ship.
+butn:h005:Next
+butn:back:Back
+butn:main:Main Menu
+
+h005
+text:body:Once the light from the Command reaches the Ship (remember, space is a big place), that Ship will act.
+butn:h006:Next
+butn:back:Back
+butn:main:Main Menu
+
+h006
+text:body:If it is a Move command, the Ship will begin moving to the specified location.
+butn:h007:Next
+butn:back:Back
+butn:main:Main Menu
+
+h007
+text:body:If it is a Bombard command, the Ship will fire a laser at the specified location.
+butn:h008:Next
+butn:back:Back
+butn:main:Main Menu
+
+h008
+text:body:If it is a Special command, the Ship will do something specific to its class. Every ship does something different!
+butn:h009:Next
+butn:back:Back
+butn:main:Main Menu
+
+h009
+text:body:Each action a ship takes will consume some Energy. Once it is out of energy, it will no longer react to Commands until it is recharged.
+butn:h010:Next
+butn:back:Back
+butn:main:Main Menu
+
+h010
+text:body:Ships also have Health goes down when they get hit by lasers. Health, unlike Energy, does not recharge.
+butn:h011:Next
+butn:back:Back
+butn:main:Main Menu
+
+h011
+text:body:Each player has one carrier, which is the source of all commands. Destroy your opponent's carrier to win!
+butn:back:Back
+butn:main:Main Menu
 

@@ -26,7 +26,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -54,12 +53,12 @@ public class Menu extends JPanel {
 	private static final Color COLOR_OFF = new Color(116, 88, 255);
 	private static final Color COLOR_ON = new Color(66, 38, 221);
 	private static final Color COLOR_LIT = new Color(250, 250, 250);
-	private static final Font TITLE_FONT = new Font("Papyrus", Font.BOLD, 96);
-	private static final Font BODY_FONT = new Font("Papyrus", Font.PLAIN, 24);
-	private static final Font BUTTON_FONT = new Font("Comic Sans MS", Font.PLAIN, 36);
+	private static final Font TITLE_FONT = new Font("Comic Sans MS", Font.BOLD, 96);
+	private static final Font BODY_FONT = new Font("Comic Sans MS", Font.PLAIN, 24);
+	private static final Font BUTTON_FONT = new Font("Papyrus", Font.PLAIN, 36);
 	
 	
-	private String menu_pos;
+	private String menuPos;
 	
 	private HashMap<String, String[][]> menu_structure;
 	private BufferedImage buttonImg;
@@ -89,7 +88,7 @@ public class Menu extends JPanel {
 		loadImages();
 		loadMenus();
 		
-		menu_pos = startMenu;
+		menuPos = startMenu;
 	}
 	
 	
@@ -177,6 +176,9 @@ public class Menu extends JPanel {
 			}
 			
 			in.close();
+		} catch (NullPointerException e) {
+			System.err.println("ERROR: You forgot the \\n\\n at the end of menu_structure.txt");
+			return;
 		} catch (IOException e) {
 			// TODO: not auto-generated try-catch
 		}
@@ -197,7 +199,7 @@ public class Menu extends JPanel {
 	
 	
 	public String getState() {	// returns the current menu screen
-		return menu_pos.substring(menu_pos.lastIndexOf("/")+1);	// the state is after the last slash in menu_pos
+		return menuPos.substring(menuPos.lastIndexOf("/")+1);	// the state is after the last slash in menu_pos
 	}
 	
 	
@@ -221,6 +223,38 @@ public class Menu extends JPanel {
 			if (Math.abs(y-heights[i]) <= dist)
 				return i;	// on the button
 		return -1;	// no button here
+	}
+	
+	
+	public String getCommand(int but) {	// figure out the command for the button at index but
+		String[][] gui = menu_structure.get(getState());
+		if (gui[but][0].equals("butn")) {
+			try {
+				return gui[but][1];
+			} catch (IndexOutOfBoundsException e) {
+				return "null";
+			}
+		}
+		return "null";
+	}
+	
+	
+	public void interpCommand(String command) {	// act according to this command
+		if (command.equals("null"))
+			return;
+		
+		else if (command.equals("back"))				// if it is a command
+			menuPos = menuPos.substring(0,menuPos.length()-5);
+		else if (command.equals("exit"))				// execute it
+			System.exit(ABORT);
+		else if (command.equals("main"))
+			menuPos = "main";
+		
+		else if (menu_structure.containsKey(command))	// if it is a menu
+			menuPos += "/"+command;						// go to that menu
+		
+		else
+			System.err.println("ERROR: '"+command+"' is not a recognized command nor an existing menu.");
 	}
 	
 	

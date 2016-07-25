@@ -26,8 +26,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import mechanics.Battlefield;
-
 /**
  * A MouseListener explicitly for the Menu
  * 
@@ -65,7 +63,7 @@ public class MenuListener implements MouseListener, MouseMotionListener {
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println(menu);
+		menu.interpCommand(menu.getCommand(menu.getMousePos(e.getX(), e.getY())));
 	}
 	
 	@Override
