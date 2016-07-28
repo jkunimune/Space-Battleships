@@ -1,14 +1,29 @@
 main
-text:titl:Space Battleships!!!
+text:titl:Space Battleships!!?!
 butn:play:Play
 butn:help:Help
 butn:more:More
 butn:exit:Exit
 
 play
-butn:host:Host Game
-butn:join:Join Game
+butn:wait:Host Game
+butn:seek:Join Game
 butn:back:Back
+
+wait
+auto:host
+text:body:Waiting for others to connect...
+butn:back:Cancel
+
+join
+text:body:Please enter the name of the computer to which you wish to connect.
+inpt:seek:Join
+butn:back:Back
+
+seek
+auto:join
+text:body:Connecting to server...
+butn:back:Cancel
 
 more
 butn:cntl:Controls

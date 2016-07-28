@@ -39,6 +39,8 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import network.Connection;
+
 /**
  * The JPanel that shows the main menu, instructions menu, etc. when not in a
  * match.
@@ -64,14 +66,17 @@ public class Menu extends JPanel {
 	private BufferedImage buttonImg;
 	private BufferedImage background;
 	
+	private Screen application;
 	private MenuListener listener;
 	
 	private Canvas canvs;
 	private BufferStrategy strat;
 	
+	private boolean menuChanged;
 	
 	
-	public Menu(int w, int h, String startMenu) {
+	
+	public Menu(int w, int h, String startMenu, Screen s) {
 		super();
 		canvs = new Canvas();
 		
@@ -89,12 +94,19 @@ public class Menu extends JPanel {
 		loadMenus();
 		
 		menuPos = startMenu;
+		application = s;
+		menuChanged = false;
 	}
 	
 	
 	
 	@Override
-	public void setVisible(boolean v) {
+	public void setVisible(boolean v) {	// display all buttons and GUI components
+		if (strat == null) {	// if strat isn't ready yet, just wait
+			super.setVisible(v);
+			return;
+		}
+		
 		final Graphics2D g = (Graphics2D)strat.getDrawGraphics();
 		
 		g.drawImage(background, 0, 0, null);
@@ -102,25 +114,29 @@ public class Menu extends JPanel {
 		String[][] gui = menu_structure.get(this.getState());
 		int[] heights = getHeights(gui, g);	// calculate the height of each component
 		final int mPos = getMousePos(listener.getMouseLocation());
+		final boolean menuChangedBefore = menuChanged;
 		
-		for (int i = 0; i < gui.length; i ++)
+		for (int i = 0; i < gui.length; i ++) {
 			if (i == mPos) {
 				if (listener.getMousePressed())
-					draw(gui[i], g, heights[i], COLOR_LIT);
+					draw(gui[i], g, heights[i], COLOR_LIT, menuChangedBefore);
 				else
-					draw(gui[i], g, heights[i], COLOR_ON);
+					draw(gui[i], g, heights[i], COLOR_ON, menuChangedBefore);
 			}
 			else
-				draw(gui[i], g, heights[i], COLOR_OFF);
+				draw(gui[i], g, heights[i], COLOR_OFF, menuChangedBefore);
+		}
 		
 		g.dispose();
 		strat.show();
+		if (menuChangedBefore)
+			menuChanged = false;
 		
 		super.setVisible(v);
 	}
 	
 	
-	private void draw(String[] component, Graphics2D g, int yRel, Color c) {	// draw the given component
+	private void draw(String[] component, Graphics2D g, int yRel, Color c, boolean autorun) {	// draw the given component
 		BufferedImage img;
 		if (component[0].equals("butn")) {
 			img = buttonImg;
@@ -142,6 +158,10 @@ public class Menu extends JPanel {
 			int xs = this.getWidth()/2 - g.getFontMetrics().stringWidth(component[2])/2;
 			int ys = yRel + this.getHeight()/2 + g.getFontMetrics().getHeight()/4;
 			g.drawString(component[2], xs, ys);
+		}
+		else if (component[0].equals("auto")) {
+			if (autorun)
+				interpCommand(component[1]);
 		}
 	}
 	
@@ -180,7 +200,7 @@ public class Menu extends JPanel {
 			System.err.println("ERROR: You forgot the \\n\\n at the end of menu_structure.txt");
 			return;
 		} catch (IOException e) {
-			// TODO: not auto-generated try-catch
+			System.err.println("ERROR: Where is menu_structure.txt?! Ugh!");
 		}
 	}
 	
@@ -249,9 +269,15 @@ public class Menu extends JPanel {
 			System.exit(ABORT);
 		else if (command.equals("main"))
 			menuPos = "main";
+		else if (command.equals("host"))
+			Connection.hostConnection(application);
+		else if (command.equals("join"))
+			Connection.joinConnection(application, "522MT32.olin.edu");	//TODO: make it so people besides me can host
 		
-		else if (menu_structure.containsKey(command))	// if it is a menu
+		else if (menu_structure.containsKey(command)) {	// if it is a menu
 			menuPos += "/"+command;						// go to that menu
+			menuChanged = true;
+		}
 		
 		else
 			System.err.println("ERROR: '"+command+"' is not a recognized command nor an existing menu.");

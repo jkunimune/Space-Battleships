@@ -40,9 +40,9 @@ public class Client implements Runnable {
 	
 	
 	
-	public Client(DataInputStream dis) {
+	public Client(DataInputStream dis, Battlefield bf) {
 		in = dis;
-		field = null;
+		field = bf;
 	}
 	
 	
@@ -76,8 +76,8 @@ public class Client implements Runnable {
 	
 	
 	
-	public static Client startListening(DataInputStream input) {	// opens a receiver and sets it listening
-		Client c = new Client(input);
+	public static Client startListening(DataInputStream input, Battlefield field) {	// opens a receiver and sets it listening
+		Client c = new Client(input, field);
 		new Thread(c).start();
 		return c;
 	}

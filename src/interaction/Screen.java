@@ -25,6 +25,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import mechanics.Battlefield;
+import network.Client;
+import network.Connection;
 
 /**
  * The class to handle all high-level display stuff for my game. This class handles
@@ -62,17 +64,24 @@ public class Screen {	// TODO: implement Menu
 	
 	
 	
+	public void startGame(Connection c) {	// either join or host a game
+		Battlefield bf = new Battlefield(c.getOutput());
+		lookAt(bf);
+		Client.startListening(c.getInput(), bf);
+	}
+	
+	
 	public void goToMenu() {	// goes to the main menu
 		try {
 			frame.remove(panel);
 		} catch (NullPointerException e) {}
-		panel = new Menu(width, height, "main");
+		panel = new Menu(width, height, "main", this);
 		MenuListener listener = new MenuListener((Menu) panel);
 		((Menu) panel).addListener(listener);
 		frame.setContentPane(panel);
-		frame.setVisible(true);
 		frame.pack();
 		((Menu) panel).developStrategy();
+		frame.setVisible(true);
 	}
 	
 	
@@ -82,9 +91,9 @@ public class Screen {	// TODO: implement Menu
 		Controller listener = new Controller((GameScreen) panel, field);
 		((GameScreen) panel).addListener(listener);
 		frame.setContentPane(panel);
-		frame.setVisible(true);
 		frame.pack();
 		((GameScreen) panel).developStrategy();
+		frame.setVisible(true);
 	}
 	
 	

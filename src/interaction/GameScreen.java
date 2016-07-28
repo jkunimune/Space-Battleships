@@ -99,6 +99,13 @@ public class GameScreen extends JPanel {
 	
 	@Override
 	public void setVisible(boolean v) {	// draws all things and plays sounds and displays itself
+		if (strat == null) {	// if strat isn't ready yet, give it more time
+			super.setVisible(v);
+			return;
+		}
+		
+		space.update();	// start by updating the game model
+		
 		final Graphics2D g = (Graphics2D)strat.getDrawGraphics();
 		final double t = (double)System.currentTimeMillis();
 		

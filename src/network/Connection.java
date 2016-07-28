@@ -28,6 +28,8 @@ import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import interaction.Screen;
+
 /**
  * This class exists for the sole purpose of establishing a connection on a port
  * 
@@ -52,22 +54,27 @@ public class Connection implements Runnable {
 	
 	protected ServerSocket ss;
 	
+	protected Screen app;
 	
 	
-	private Connection() {
+	
+	private Connection(Screen s) {
+		app = s;
 		type = DUMMY;
 	}
 	
 	
-	private Connection(int portNum) {
+	private Connection(int portNum, Screen s) {
 		port = portNum;
+		app = s;
 		type = HOST;
 	}
 	
 	
-	private Connection(String hostname, int portNum) {
+	private Connection(String hostname, int portNum, Screen s) {
 		name = hostname;
 		port = portNum;
+		app = s;
 		type = CLIENT;
 	}
 	
@@ -78,15 +85,15 @@ public class Connection implements Runnable {
 		if (type == DUMMY)	return;
 		
 		try {
-			if (type == HOST) {									// if you are the host
-				ss = new ServerSocket(port);	// open a server socket
+			if (type == HOST) {							// if you are the host
+				ss = new ServerSocket(port);			// open a server socket
 				socket = ss.accept();					// and wait for someone to contact you
 			}
-			else if (type == CLIENT) {											// if you are a client
+			else if (type == CLIENT) {						// if you are a client
 				while (socket == null) {
 					try {
-					socket = new Socket(name, port);		// reach out to the server
-					} catch (ConnectException e) {}
+						socket = new Socket(name, port);	// reach out to the server
+					} catch (ConnectException e) {}			// and keep trying until it works
 				}
 			}
 			
@@ -95,6 +102,8 @@ public class Connection implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		app.startGame(this);
 	}
 	
 	
@@ -142,24 +151,22 @@ public class Connection implements Runnable {
 	
 	
 	
-	public static Connection makeDummyConnection() {	// for testing purposes only!
-		Connection c = new Connection();	// this Connection is non-functional
+	public static Connection makeDummyConnection(Screen s) {	// for testing purposes only!
+		Connection c = new Connection(s);	// this Connection is non-functional
 		return c;
 	}
 	
 	
-	public static Connection hostConnection() {	// opens a Connection as a client
-		Connection c = new Connection(PORT_NUM);
+	public static Connection hostConnection(Screen s) {	// opens a Connection as a client
+		Connection c = new Connection(PORT_NUM, s);
 		new Thread(c).start();
-		while (c.running()) {System.out.print("");}	// until I figure out what to do while this thread is running, just wait for it
 		return c;
 	}
 	
 	
-	public static Connection joinConnection(String name) {	// opens a Connection as a host
-		Connection c = new Connection(name, PORT_NUM);
+	public static Connection joinConnection(Screen s, String name) {	// opens a Connection as a host
+		Connection c = new Connection(name, PORT_NUM, s);
 		new Thread(c).start();
-		while (c.running()) {System.out.print("");}	// until I figure out what to do while this thread is running, just wait for it
 		return c;
 	}
 

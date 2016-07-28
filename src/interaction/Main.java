@@ -21,10 +21,6 @@
  */
 package interaction;
 
-import mechanics.Battlefield;
-import network.Client;
-import network.Connection;
-
 /**
  * The driver class that runs the whole application.
  * 
@@ -35,36 +31,12 @@ public class Main {
 
 	public static void main(String[] args) {
 	
-		String hostname;
-		if (args.length >= 2)		// start by getting the hostname from args or from hard-code
-			hostname = args[1];
-		else
-			hostname = "522MT32.olin.edu";
-		
 		Screen mainWindow = new Screen(1280, 800);	// open the main menu
-		while (!(mainWindow.getState().equals("Host") || mainWindow.getState().equals("Join"))) {
+		
+		while (true) {								// and enter the main loop
+		
 			mainWindow.display();
-		}
 		
-		Connection connection;			// establish a connection based on args
-		if (args.length == 0)
-			connection = Connection.makeDummyConnection();
-		else if (args[0].equals("host"))
-			connection = Connection.hostConnection();
-		else if (args[0].equals("join"))
-			connection = Connection.joinConnection(hostname);
-		else
-			throw new IllegalArgumentException("The first argument must be 'host', 'join', or blank. '"+args[0]+"' is not a valid argument.");
-		Client receiver = Client.startListening(connection.getInput());	// start the receiver
-		
-		Battlefield field = new Battlefield(connection.getOutput());	// create a game
-		receiver.setField(field);
-		mainWindow.lookAt(field);
-		mainWindow.display();
-		
-		while (true) {				// and enter the main loop
-			field.update();
-			mainWindow.display();
 		}
 	
 	}
