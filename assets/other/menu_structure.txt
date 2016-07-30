@@ -7,7 +7,7 @@ butn:exit:Exit
 
 play
 butn:wait:Host Game
-butn:seek:Join Game
+butn:name:Join Game
 butn:back:Back
 
 wait
@@ -15,9 +15,11 @@ auto:host
 text:body:Waiting for others to connect...
 butn:back:Cancel
 
-join
-text:body:Please enter the name of the computer to which you wish to connect.
-inpt:seek:Join
+name
+text:body:Enter the name of the computer to which you wish to connect:
+text:body: 
+inpt:????:0123456789asdfghjkl;wiwiwiwiwi
+butn:seek:Go
 butn:back:Back
 
 seek
@@ -32,15 +34,21 @@ butn:cred:Credits
 butn:back:Back
 
 cred
+text:titl:This
+text:body:Shouldn't
+text:titl:be
+text:body:here
 text:titl:Credits
 text:body:Initial Concept     Justin Kunimune
 text:body:       Graphics     Justin Kunimune
 text:body:     Programmer     Justin Kunimune
 text:body:  Sound Effects     soundbible.com
 text:body:                    and Justin Kunimune
+butn:back:Back
 
 help
 text:body:Welcome to Space Battleships!
+text:body:Allow me to introduce you to the core mechanics of the game.
 butn:h001:Next
 butn:back:Back
 

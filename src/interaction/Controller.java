@@ -105,6 +105,13 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	
 	
 	@Override
+	public void mouseMoved(MouseEvent e) {		// update x and y
+		x = e.getX();
+		y = e.getY();
+	}
+	
+	
+	@Override
 	public void mouseClicked(MouseEvent e) {	// when the mouse is released...
 		final byte mPos = view.getMousePos(e.getX(), e.getY(), e.getWhen());
 		
@@ -152,28 +159,21 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	
 	
 	@Override
-	public void mousePressed(MouseEvent e) {	// when the mouse is pressed...
-		x = e.getX();
-		y = e.getY();
-	}
-	
-	
-	@Override
-	public void mouseReleased(MouseEvent e) {}
-
-	@Override
 	public void mouseEntered(MouseEvent e) {}
 
 	@Override
 	public void mouseExited(MouseEvent e) {}
 
 	@Override
+	public void mousePressed(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+
+	@Override
 	public void keyPressed(KeyEvent e) {}
 
 	@Override
 	public void keyTyped(KeyEvent e) {}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {}
 
 }

@@ -155,8 +155,10 @@ public abstract class Ship extends Body {
 			energy.add(newEVal);
 			return true;	// returns true if it successfully spent energy
 		}
-		else
+		else {
+			playSound("blip", t);
 			return false;	// returns false if there was not enough energy
+		}
 	}
 	
 	

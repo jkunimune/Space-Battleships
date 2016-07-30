@@ -53,11 +53,12 @@ public class Menu extends JPanel {
 	private static final long serialVersionUID = -6605421223497517651L;
 	
 	private static final Color COLOR_OFF = new Color(116, 88, 255);
-	private static final Color COLOR_ON = new Color(66, 38, 221);
+	private static final Color COLOR_ON = new Color(104, 76, 247);
 	private static final Color COLOR_LIT = new Color(250, 250, 250);
 	private static final Font TITLE_FONT = new Font("Comic Sans MS", Font.BOLD, 96);
 	private static final Font BODY_FONT = new Font("Comic Sans MS", Font.PLAIN, 24);
 	private static final Font BUTTON_FONT = new Font("Papyrus", Font.PLAIN, 36);
+	private static final Font MONO_FONT = new Font("Consolas", Font.PLAIN, 36);
 	
 	
 	private String menuPos;
@@ -137,29 +138,45 @@ public class Menu extends JPanel {
 	
 	
 	private void draw(String[] component, Graphics2D g, int yRel, Color c, boolean autorun) {	// draw the given component
-		BufferedImage img;
-		if (component[0].equals("butn")) {
-			img = buttonImg;
-			int xi = this.getWidth()/2 - img.getWidth()/2;
-			int yi = yRel + this.getHeight()/2 - img.getHeight()/2;
+		if (component[0].equals("butn")) {		// button
+			final BufferedImage img = buttonImg;
+			final int xi = this.getWidth()/2 - img.getWidth()/2;
+			final int yi = yRel + this.getHeight()/2 - img.getHeight()/2;
 			g.drawImage(img, xi, yi, null);
 			g.setFont(BUTTON_FONT);
 			g.setColor(c);
-			int xs = this.getWidth()/2 - g.getFontMetrics().stringWidth(component[2])/2;
-			int ys = yRel + this.getHeight()/2 + g.getFontMetrics().getHeight()/4;
+			final int xs = this.getWidth()/2 - g.getFontMetrics().stringWidth(component[2])/2;
+			final int ys = yRel + this.getHeight()/2 + g.getFontMetrics().getHeight()/4;
 			g.drawString(component[2], xs, ys);
 		}
-		else if (component[0].equals("text")) {
+		else if (component[0].equals("text")) {	// text
 			if (component[1].equals("titl"))
 				g.setFont(TITLE_FONT);
 			if (component[1].equals("body"))
 				g.setFont(BODY_FONT);
 			g.setColor(Color.WHITE);
-			int xs = this.getWidth()/2 - g.getFontMetrics().stringWidth(component[2])/2;
-			int ys = yRel + this.getHeight()/2 + g.getFontMetrics().getHeight()/4;
+			final int xs = this.getWidth()/2 - g.getFontMetrics().stringWidth(component[2])/2;
+			final int ys = yRel + this.getHeight()/2 + g.getFontMetrics().getHeight()/4;
 			g.drawString(component[2], xs, ys);
 		}
-		else if (component[0].equals("auto")) {
+		else if (component[0].equals("inpt")) {	// text input
+			g.setFont(MONO_FONT);
+			final int ws = g.getFontMetrics().stringWidth("_")*30;
+			final int hs = g.getFontMetrics().getHeight();
+			final int xs = this.getWidth()/2 - ws/2;
+			final int ys = yRel + this.getHeight()/2 + hs/2;
+			final int wr = ws + 12;
+			final int hr = hs + 12;
+			final int xr = xs - 6;
+			final int yr = ys - hs - 6;
+			g.setColor(Color.WHITE);
+			g.fillRect(xr, yr, wr, hr);
+			g.setColor(Color.BLACK);
+			g.fillRect(xr+2, yr+2, wr-4, hr-4);
+			g.setColor(Color.WHITE);
+			g.drawString(component[2], xs, ys - hs/4);
+		}
+		else if (component[0].equals("auto")) {	// automatic command
 			if (autorun)
 				interpCommand(component[1]);
 		}
@@ -289,13 +306,17 @@ public class Menu extends JPanel {
 		int[] heights = new int[gui.length];
 		for (int i = 0; i < gui.length; i ++) {	// first calculate what the heights would be if
 			final int top = totHeight;			// if the menu were flush with the top of the screen
-			if (gui[i][0].equals("butn"))
+			if (gui[i][0].equals("butn")) {
 				totHeight += buttonImg.getHeight();
+			}
 			else if (gui[i][0].equals("text")) {
 				if (gui[i][1].equals("titl"))
 					totHeight += g.getFontMetrics(TITLE_FONT).getHeight();
 				else if (gui[i][1].equals("body"))
 					totHeight += g.getFontMetrics(BODY_FONT).getHeight();
+			}
+			else if (gui[i][0].equals("inpt")) {
+				totHeight += g.getFontMetrics(MONO_FONT).getHeight();
 			}
 			heights[i] = (top + totHeight)/2;
 		}
