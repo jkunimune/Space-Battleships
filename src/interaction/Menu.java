@@ -176,10 +176,6 @@ public class Menu extends JPanel {
 			g.setColor(Color.WHITE);
 			g.drawString(component[2], xs, ys - hs/4);
 		}
-		else if (component[0].equals("auto")) {	// automatic command
-			if (autorun)
-				interpCommand(component[1]);
-		}
 	}
 	
 	
@@ -205,7 +201,11 @@ public class Menu extends JPanel {
 				ArrayList<String[]> menu = new ArrayList<String[]>();
 				
 				while (!(line = in.readLine()).equals("")) {// read until a blank line
-					String[] component = line.split(":");	// split the line by ':'
+					String[] component = line.split("%");	// split the line by ':'
+					for (int i = 0; i < component.length; i ++)
+						if (component[i].equals(" ")) {	// if it is a space,
+							component[i] = "";			// replace it with the empty string
+						}
 					menu.add(component);					// and save the array
 				}
 				
@@ -231,6 +231,7 @@ public class Menu extends JPanel {
 	public void addListener(MenuListener l) {
 		canvs.addMouseListener(l);
 		canvs.addMouseMotionListener(l);
+		canvs.addKeyListener(l);
 		listener = l;
 	}
 	
@@ -264,6 +265,8 @@ public class Menu extends JPanel {
 	
 	
 	public String getCommand(int but) {	// figure out the command for the button at index but
+		if (but == -1)	return "null";
+		
 		String[][] gui = menu_structure.get(getState());
 		if (gui[but][0].equals("butn")) {
 			try {
@@ -281,27 +284,55 @@ public class Menu extends JPanel {
 			return;
 		
 		else if (command.equals("back"))				// if it is a command
-			menuPos = menuPos.substring(0,menuPos.length()-5);
+			goToMenu(menuPos.substring(0,menuPos.length()-5));
 		else if (command.equals("exit"))				// execute it
 			System.exit(ABORT);
 		else if (command.equals("main"))
 			menuPos = "main";
 		else if (command.equals("host"))
-			Connection.hostConnection(application);
+			Connection.hostConnection(this);
 		else if (command.equals("join"))
-			Connection.joinConnection(application, "522MT32.olin.edu");	//TODO: make it so people besides me can host
+			Connection.joinConnection(this, listener.getInput());
+		else if (command.equals("fake"))
+			Connection.makeDummyConnection(this);
 		
-		else if (menu_structure.containsKey(command)) {	// if it is a menu
-			menuPos += "/"+command;						// go to that menu
-			menuChanged = true;
-		}
+		else if (menu_structure.containsKey(command))	// if it is a menu
+			goToMenu(menuPos+"/"+command);
 		
 		else
 			System.err.println("ERROR: '"+command+"' is not a recognized command nor an existing menu.");
 	}
 	
 	
-	public int[] getHeights(String[][] gui, Graphics2D g) {	// determines the correct y positions for the components in gui
+	public void startGame(Connection c) {
+		if (getState().equals("seek") ||
+			getState().equals("wait") ||
+			getState().equals("test"))	// XXX: temporary fix; later it should just terminate the thread when it leaves these menus
+			application.startGame(c);
+	}
+	
+	
+	public void abortJoin() {	// go back to the menu screen 
+		if (getState().equals("seek"))	// XXX: also a temporary fix
+			goToMenu(menuPos+"/fail");
+	}
+	
+	
+	private void goToMenu(String newMenuPos) {	// change the menu screen to seomthing else
+		menuPos = newMenuPos;
+		listener.deleteTextbox();
+		
+		final String suffix = newMenuPos.substring(newMenuPos.lastIndexOf("/")+1);
+		for (String[] component: menu_structure.get(suffix)) {	// the main reason this method is here
+			if (component[0].equals("inpt"))					// is to focus on textboxes
+				listener.setTextbox(component);
+			else if (component[0].equals("auto"))				// and execute commands
+				interpCommand(component[1]);
+		}
+	}
+	
+	
+	private int[] getHeights(String[][] gui, Graphics2D g) {	// determines the correct y positions for the components in gui
 		int totHeight = 0;
 		int[] heights = new int[gui.length];
 		for (int i = 0; i < gui.length; i ++) {	// first calculate what the heights would be if

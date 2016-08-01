@@ -1,119 +1,151 @@
 main
-text:titl:Space Battleships!!?!
-butn:play:Play
-butn:help:Help
-butn:more:More
-butn:exit:Exit
+text%titl%Space Battleships!!?!
+butn%play%Play
+butn%help%Help
+butn%more%More
+butn%exit%Exit
 
 play
-butn:wait:Host Game
-butn:name:Join Game
-butn:back:Back
+butn%wait%Host Game
+butn%name%Join Game
+butn%test%Single-Player
+butn%back%Back
 
 wait
-auto:host
-text:body:Waiting for others to connect...
-butn:back:Cancel
+auto%host
+text%body%Waiting for others to connect...
+butn%back%Cancel
 
 name
-text:body:Enter the name of the computer to which you wish to connect:
-text:body: 
-inpt:????:0123456789asdfghjkl;wiwiwiwiwi
-butn:seek:Go
-butn:back:Back
+text%body%Enter the name of the computer to which you wish to connect%
+inpt%????% 
+butn%seek%Go
+butn%back%Back
 
 seek
-auto:join
-text:body:Connecting to server...
-butn:back:Cancel
+auto%join
+text%body%Connecting to server...
+butn%back%Cancel
+
+fail
+text%body%Host not found! Make sure you spelled it correctly.
+butn%back%Try Again
+butn%main%Main Menu
+
+test
+auto%fake
+text%body%Starting up your game...
+butn%back%Cancel
 
 more
-butn:cntl:Controls
-butn:optn:Options
-butn:cred:Credits
-butn:back:Back
+butn%cntl%Controls
+butn%optn%Options
+butn%faqs%FAQ
+butn%cred%Credits
+butn%back%Back
+
+faqs
+text%body%Q: How can those lasers be bigger than the earth?
+text%body%A: They're not - it seems that way because auto-targeting.
+text%body%Q: Where do the ships get their energy?
+text%body%A: Solar power.
+text%body%Q: Why don't ships expend energy when they stop?
+text%body%A: They put that energy in reserve so that they don't end up drifting into space.
+text%body%Q: Then shouldn't they get that energy back if they change direction mid-flight?
+text%body%A: No. They have to completely stop before changing direction.
+text%body%Q: Why? That seems inefficient.
+text%body%A: The ships can't handle the calculations otherwise.
+text%body%Q: Aren't they on some hi-tech futuristic ships? It really isn't that hard of a calculation...
+text%body%A: It is if you ignore relativity and consider time as a linear progression from cause to effect.
+text%body%Q: ?
+text%body%A: Actually, from a non-linear, non-subjective viewpoint, it's more like a big ball of wibbly-wobbly, timey-wimey, stuff.
+text%body%Q: ... no words ...
+butn%back%Back
 
 cred
-text:titl:This
-text:body:Shouldn't
-text:titl:be
-text:body:here
-text:titl:Credits
-text:body:Initial Concept     Justin Kunimune
-text:body:       Graphics     Justin Kunimune
-text:body:     Programmer     Justin Kunimune
-text:body:  Sound Effects     soundbible.com
-text:body:                    and Justin Kunimune
-butn:back:Back
+text%titl%This
+text%body%Shouldn't
+text%titl%be
+text%body%here
+text%titl%Credits
+text%body%Initial Concept     Justin Kunimune
+text%body%       Graphics     Justin Kunimune
+text%body%     Programmer     Justin Kunimune
+text%body%  Sound Effects     soundbible.com
+text%body%                    Marianne Gagnon
+text%body%                    Mark DiAngelo
+text%body%                    Mike Koenig
+text%body%                    and Justin Kunimune
+butn%back%Back
 
 help
-text:body:Welcome to Space Battleships!
-text:body:Allow me to introduce you to the core mechanics of the game.
-butn:h001:Next
-butn:back:Back
+text%body%Welcome to Space Battleships!
+text%body%Allow me to introduce you to the core mechanics of the game.
+butn%h001%Next
+butn%back%Back
 
 h001
-text:body:This screen is a WIP, but in case I never get around to finishing it, here's the basics.
-butn:h002:Next
-butn:back:Back
-butn:main:Main Menu
+text%body%This screen is a WIP, but in case I never get around to finishing it, here's the basics.
+butn%h002%Next
+butn%back%Back
+butn%main%Main Menu
 
 h002
-text:body:This [insert pic] is a Ship. Click on a Ship or select it with a number key.
-butn:h003:Next
-butn:back:Back
-butn:main:Main Menu
+text%body%This [insert pic] is a Ship. Click on a Ship or select it with a number key.
+butn%h003%Next
+butn%back%Back
+butn%main%Main Menu
 
 h003
-text:body:This [insert pic] is a Command. Click on a Command or select it with 'm' for Move, 'b' for Bombard, or 'x' for Special.
-butn:h004:Next
-butn:back:Back
-butn:main:Main Menu
+text%body%This [insert pic] is a Command. Click on a Command or select it with 'm' for Move, 'b' for Bombard, or 'x' for Special.
+butn%h004%Next
+butn%back%Back
+butn%main%Main Menu
 
 h004
-text:body:Once a ship and a command are selected, simply click somewhere on screen to issue that command to that ship.
-butn:h005:Next
-butn:back:Back
-butn:main:Main Menu
+text%body%Once a ship and a command are selected, simply click somewhere on screen to issue that command to that ship.
+butn%h005%Next
+butn%back%Back
+butn%main%Main Menu
 
 h005
-text:body:Once the light from the Command reaches the Ship (remember, space is a big place), that Ship will act.
-butn:h006:Next
-butn:back:Back
-butn:main:Main Menu
+text%body%Once the light from the Command reaches the Ship (remember, space is a big place), that Ship will act.
+butn%h006%Next
+butn%back%Back
+butn%main%Main Menu
 
 h006
-text:body:If it is a Move command, the Ship will begin moving to the specified location.
-butn:h007:Next
-butn:back:Back
-butn:main:Main Menu
+text%body%If it is a Move command, the Ship will begin moving to the specified location.
+butn%h007%Next
+butn%back%Back
+butn%main%Main Menu
 
 h007
-text:body:If it is a Bombard command, the Ship will fire a laser at the specified location.
-butn:h008:Next
-butn:back:Back
-butn:main:Main Menu
+text%body%If it is a Bombard command, the Ship will fire a laser at the specified location.
+butn%h008%Next
+butn%back%Back
+butn%main%Main Menu
 
 h008
-text:body:If it is a Special command, the Ship will do something specific to its class. Every ship does something different!
-butn:h009:Next
-butn:back:Back
-butn:main:Main Menu
+text%body%If it is a Special command, the Ship will do something specific to its class. Every ship does something different!
+butn%h009%Next
+butn%back%Back
+butn%main%Main Menu
 
 h009
-text:body:Each action a ship takes will consume some Energy. Once it is out of energy, it will no longer react to Commands until it is recharged.
-butn:h010:Next
-butn:back:Back
-butn:main:Main Menu
+text%body%Each action a ship takes will consume some Energy. Once it is out of energy, it will no longer react to Commands until it is recharged.
+butn%h010%Next
+butn%back%Back
+butn%main%Main Menu
 
 h010
-text:body:Ships also have Health goes down when they get hit by lasers. Health, unlike Energy, does not recharge.
-butn:h011:Next
-butn:back:Back
-butn:main:Main Menu
+text%body%Ships also have Health goes down when they get hit by lasers. Health, unlike Energy, does not recharge.
+butn%h011%Next
+butn%back%Back
+butn%main%Main Menu
 
 h011
-text:body:Each player has one carrier, which is the source of all commands. Destroy your opponent's carrier to win!
-butn:back:Back
-butn:main:Main Menu
+text%body%Each player has one carrier, which is the source of all commands. Destroy your opponent's carrier to win!
+butn%back%Back
+butn%main%Main Menu
 

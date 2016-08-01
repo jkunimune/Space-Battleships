@@ -27,8 +27,9 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
-import interaction.Screen;
+import interaction.Menu;
 
 /**
  * This class exists for the sole purpose of establishing a connection on a port
@@ -54,27 +55,27 @@ public class Connection implements Runnable {
 	
 	protected ServerSocket ss;
 	
-	protected Screen app;
+	protected Menu menu;	// the class to alert when the thread finishes
 	
 	
 	
-	private Connection(Screen s) {
-		app = s;
+	private Connection(Menu m) {
+		menu = m;
 		type = DUMMY;
 	}
 	
 	
-	private Connection(int portNum, Screen s) {
+	private Connection(int portNum, Menu m) {
 		port = portNum;
-		app = s;
+		menu = m;
 		type = HOST;
 	}
 	
 	
-	private Connection(String hostname, int portNum, Screen s) {
+	private Connection(String hostname, int portNum, Menu m) {
 		name = hostname;
 		port = portNum;
-		app = s;
+		menu = m;
 		type = CLIENT;
 	}
 	
@@ -82,28 +83,35 @@ public class Connection implements Runnable {
 	
 	@Override
 	public void run() {	// find a connection
-		if (type == DUMMY)	return;
-		
-		try {
-			if (type == HOST) {							// if you are the host
-				ss = new ServerSocket(port);			// open a server socket
-				socket = ss.accept();					// and wait for someone to contact you
-			}
-			else if (type == CLIENT) {						// if you are a client
-				while (socket == null) {
-					try {
-						socket = new Socket(name, port);	// reach out to the server
-					} catch (ConnectException e) {}			// and keep trying until it works
+		if (type != DUMMY) {
+			try {
+				if (type == HOST) {							// if you are the host
+					ss = new ServerSocket(port);			// open a server socket
+					socket = ss.accept();					// and wait for someone to contact you
 				}
+				else if (type == CLIENT) {						// if you are a client
+					while (socket == null) {
+						try {
+							socket = new Socket(name, port);	// reach out to the server
+						}
+						catch (ConnectException e) {}			// and keep trying until it works
+						catch (UnknownHostException e) {
+							menu.abortJoin();
+							menu = null;
+							return;
+						}
+					}
+				}
+				
+				out = new DataOutputStream(socket.getOutputStream());	// then create out and in
+				in = new DataInputStream(socket.getInputStream());
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			
-			out = new DataOutputStream(socket.getOutputStream());	// then create out and in
-			in = new DataInputStream(socket.getInputStream());
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		
-		app.startGame(this);
+		menu.startGame(this);
+		menu = null;
 	}
 	
 	
@@ -151,21 +159,22 @@ public class Connection implements Runnable {
 	
 	
 	
-	public static Connection makeDummyConnection(Screen s) {	// for testing purposes only!
-		Connection c = new Connection(s);	// this Connection is non-functional
-		return c;
-	}
-	
-	
-	public static Connection hostConnection(Screen s) {	// opens a Connection as a client
-		Connection c = new Connection(PORT_NUM, s);
+	public static Connection makeDummyConnection(Menu m) {	// for testing purposes only!
+		Connection c = new Connection(m);	// this Connection is non-functional
 		new Thread(c).start();
 		return c;
 	}
 	
 	
-	public static Connection joinConnection(Screen s, String name) {	// opens a Connection as a host
-		Connection c = new Connection(name, PORT_NUM, s);
+	public static Connection hostConnection(Menu m) {	// opens a Connection as a client
+		Connection c = new Connection(PORT_NUM, m);
+		new Thread(c).start();
+		return c;
+	}
+	
+	
+	public static Connection joinConnection(Menu m, String name) {	// opens a Connection as a host
+		Connection c = new Connection(name, PORT_NUM, m);
 		new Thread(c).start();
 		return c;
 	}
