@@ -27,10 +27,10 @@ import java.util.ArrayList;
  * An object that can move around and produce <code>Laser</code> objects on
  * command from the <code>Controller</code> or the <code>Client</code>.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
-public abstract class Ship extends Body {
+public abstract class Ship extends PhysicalBody {
 
 	public static final double MAX_H_VALUE = 1.5*Univ.MJ;	// maximum health
 	public static final double MAX_E_VALUE = 2.0*Univ.MJ;	// maximum energy

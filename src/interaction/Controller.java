@@ -136,15 +136,15 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_1)	// number keys select ships
-			setShip(((Ship) view.getField().getBodies().get(0)).getID());
+			setShip(((Ship) game.getBodies().get(0)).getID());
 		else if (e.getKeyCode() == KeyEvent.VK_2)
-			setShip(((Ship) view.getField().getBodies().get(1)).getID());
+			setShip(((Ship) game.getBodies().get(1)).getID());
 		else if (e.getKeyCode() == KeyEvent.VK_3)
-			setShip(((Ship) view.getField().getBodies().get(2)).getID());
+			setShip(((Ship) game.getBodies().get(2)).getID());
 		else if (e.getKeyCode() == KeyEvent.VK_4)
-			setShip(((Ship) view.getField().getBodies().get(3)).getID());
+			setShip(((Ship) game.getBodies().get(3)).getID());
 		else if (e.getKeyCode() == KeyEvent.VK_5)
-			setShip(((Ship) view.getField().getBodies().get(4)).getID());
+			setShip(((Ship) game.getBodies().get(4)).getID());
 		else if (e.getKeyCode() == KeyEvent.VK_X)	// X is special
 			setOrder((byte) -4);
 		else if (e.getKeyCode() == KeyEvent.VK_B)	// B is bombard

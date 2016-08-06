@@ -25,8 +25,8 @@ package mechanics;
  * A body with no control that travels with constant velocity at the speed of
  * light and interacts with <code>Ship</code> objects.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
 public class UVLaser extends Laser {
 

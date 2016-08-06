@@ -22,26 +22,15 @@
 package mechanics;
 
 /**
- * An object with position and appearance.
- * Know subclasses: <code>PhysicalBody</code>, <code>AbstractBody</code>
+ * A body that looks like a ship, but moves via clicking and dragging.
  * 
  * @author	jkunimune
  * @version	1.0
  */
-public interface Body {
+public class ShipIcon extends AbstractBody {
 
-	public double xValAt(double t);
-
-	public double yValAt(double t);
-
-	public Object soundName(double t);
-
-	public String spriteName();
-
-	public double[] spriteTransform(double t);
-
-	public boolean doesScale();
-
-	public boolean existsAt(double t);
+	public ShipIcon() {
+		// TODO Auto-generated constructor stub
+	}
 
 }

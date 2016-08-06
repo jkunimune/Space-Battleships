@@ -25,10 +25,10 @@ package mechanics;
  * A body with no control that travels with constant velocity at the speed of
  * light and interacts with ships.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
-public class Laser extends Body {
+public class Laser extends PhysicalBody {
 
 	public static final double ENERGY_DENS = Math.pow(10,-13)*Univ.MJ/Univ.km3;
 	
@@ -60,7 +60,7 @@ public class Laser extends Body {
 	
 	
 	@Override
-	public void interactWith(Body that, double t) {
+	public void interactWith(PhysicalBody that, double t) {
 		if (t < collidedTime && that instanceof Ship && this.dist(that,t) < r) {
 			((Ship) that).damaged(E, t);
 			this.collide(t);

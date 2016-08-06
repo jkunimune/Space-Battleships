@@ -149,3 +149,15 @@ text%body%Each player has one carrier, which is the source of all commands. Dest
 butn%back%Back
 butn%main%Main Menu
 
+vict
+text%body%Congratulations! You win!
+text%body%What do I win?
+text%body%A sad feeling.
+text%body%Aww.
+
+loss
+text%body%I'm a winner, see my prize!
+text%body%You're a LOSER who sits and cries!
+text%body%Hahahahahaha!
+text%body%Ow! Ow, ow, ow, ow.
+

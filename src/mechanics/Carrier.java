@@ -49,11 +49,11 @@ public class Carrier extends Ship {
 	
 	
 	public void issueOrder(String data) {	// a Carrier-unique method
-		byte order = Protocol.getOrder(data);						// for the important information about
-		byte ship = Protocol.getShip(data);						// the order
-		double x = Protocol.getX(data);
-		double y = Protocol.getY(data);
-		double t = Protocol.getT(data);
+		byte order = Protocol.getOOrder(data);						// for the important information about
+		byte ship = Protocol.getOShip(data);						// the order
+		double x = Protocol.getOX(data);
+		double y = Protocol.getOY(data);
+		double t = Protocol.getOT(data);
 		space.spawn(new Order(xValAt(t), yValAt(t), t, order, ship, x, y, space));	// send the order!
 	}
 

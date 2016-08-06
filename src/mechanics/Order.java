@@ -24,10 +24,10 @@ package mechanics;
 /**
  * A signal that controls the behaviour of ships.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
-public class Order extends Body {
+public class Order extends PhysicalBody {
 
 	private byte orderType;		// the type of order
 	private byte targetShip;	// the ship being ordered
@@ -50,7 +50,7 @@ public class Order extends Body {
 	
 	
 	@Override
-	public void interactWith(Body that, double t) {
+	public void interactWith(PhysicalBody that, double t) {
 		if (!orderReceived && that instanceof Ship && this.dist(that,t) < this.rValAt(t)) {
 			if (((Ship) that).getID() == this.targetShip) {
 				switch (orderType) {

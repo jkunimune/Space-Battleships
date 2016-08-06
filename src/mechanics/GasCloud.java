@@ -26,10 +26,10 @@ import java.util.ArrayList;
 /**
  * A large body that absorbs and confounds lasers.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
-public class GasCloud extends Body {
+public class GasCloud extends PhysicalBody {
 
 	public static final double HALF_LIFE = 5*Univ.s;	// the half-life of energy in this cloud
 	public static final double LASER_ENERGY = 0.1*Univ.MJ;	// the energy required to form a laser
@@ -65,7 +65,7 @@ public class GasCloud extends Body {
 	
 	
 	@Override
-	public void interactWith(Body that, double t) {	// GasClouds interact with lasers by absorbing them
+	public void interactWith(PhysicalBody that, double t) {	// GasClouds interact with lasers by absorbing them
 		if (that instanceof Laser && !(that instanceof UVLaser) && this.dist(that, t) < rValAt(t)) {
 			((Laser) that).collide(t);	// absorb the laser
 

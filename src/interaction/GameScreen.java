@@ -342,11 +342,6 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	public Battlefield getField() {			// getter method for space
-		return space;
-	}
-	
-	
 	public void setShip(byte id) {			// sets the activeShip field to the one with the matching id
 		activeShip = space.getShipByID(id);
 	}

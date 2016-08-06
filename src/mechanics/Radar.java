@@ -25,8 +25,8 @@ package mechanics;
  * A ship with a powerful radar, capable of detecting ships anywhere on the map,
  * given time.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
 public class Radar extends Ship {
 

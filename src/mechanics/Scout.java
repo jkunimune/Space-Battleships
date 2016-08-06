@@ -24,8 +24,8 @@ package mechanics;
 /**
  * A small and quick ship capable of withstanding considerable damage.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
 public class Scout extends Ship {
 

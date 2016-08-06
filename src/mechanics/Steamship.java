@@ -25,8 +25,8 @@ package mechanics;
  * A ship that creates <code>GasCloud</code> objects, which confound
  * <code>Laser</code> objects.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
 public class Steamship extends Ship {
 

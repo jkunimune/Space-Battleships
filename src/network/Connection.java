@@ -138,6 +138,11 @@ public class Connection implements Runnable {
 	}
 	
 	
+	public boolean isHost() {
+		return type == HOST;
+	}
+	
+	
 	public void close() {
 		try {
 			socket.close();

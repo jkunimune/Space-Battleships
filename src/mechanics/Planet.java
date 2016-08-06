@@ -24,10 +24,10 @@ package mechanics;
 /**
  * An inert sphere that destroys other bodies that get too close.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
-public class Planet extends Body {
+public class Planet extends PhysicalBody {
 
 	private String name;
 	private double radius;
@@ -44,7 +44,7 @@ public class Planet extends Body {
 	
 	
 	@Override
-	public void interactWith(Body that, double t) {
+	public void interactWith(PhysicalBody that, double t) {
 		if (this.dist(that, t) < radius) {
 			if (that instanceof Ship)
 				((Ship) that).damaged(((Ship) that).hValAt(t), t);

@@ -36,16 +36,20 @@ import network.Protocol;
  */
 public class Battlefield {
 
-	protected ArrayList<Body> bodies;	// the list of game elements
-	protected DataOutputStream out;
+	protected ArrayList<PhysicalBody> bodies;	// the list of game elements
+	protected DataOutputStream out;		// the stream to write all events to
+	
+	private byte currentID;				// the ID of the next ship we place
 	
 	
-	public Battlefield(DataOutputStream dos) {
-		bodies = new ArrayList<Body>();
+	public Battlefield(DataOutputStream dos, boolean host) {
+		bodies = new ArrayList<PhysicalBody>();
 		out = dos;
 		
 		double time = (double)System.currentTimeMillis();	// the current time
 		
+		if (host)	currentID = 0;
+		else		currentID = 8;
 		// TODO: The player will eventually place the ships him/herself. This is all temporary
 		final double bluRC = -300000*Univ.km+Math.random()*100000*Univ.km;
 		final double bluTC = 2*Math.random()-1;	// the coordinates for the blue ships
@@ -57,7 +61,8 @@ public class Battlefield {
 		}
 		
 		bodies.add(new Carrier(		bluRC*Math.cos(bluTC),
-									bluRC*Math.sin(bluTC), time, (byte)0, true, this));
+									bluRC*Math.sin(bluTC), time, (byte)currentID, true, this));
+		currentID ++;
 		bodies.add(new Battleship(	bluRC*Math.cos(bluTC)+bluR[0]*Math.cos(bluT[0]),
 									bluRC*Math.sin(bluTC)+bluR[0]*Math.sin(bluT[0]), time, (byte)1, true, this));
 		bodies.add(new Scout(		bluRC*Math.cos(bluTC)+bluR[1]*Math.cos(bluT[1]),
@@ -90,10 +95,10 @@ public class Battlefield {
 		double t = (double)System.currentTimeMillis();
 		
 		for (int i = bodies.size()-1; i > 0; i --) {
-			final Body b1 = bodies.get(i);
+			final PhysicalBody b1 = bodies.get(i);
 			if (b1.existsAt(t)) {
 				for (int j = 0; j < i; j ++) {
-					final Body b2 = bodies.get(j);
+					final PhysicalBody b2 = bodies.get(j);
 					if (b2.existsAt(t)) {
 						b1.interactWith(b2, t);
 						b2.interactWith(b1, t);
@@ -107,12 +112,12 @@ public class Battlefield {
 	}
 	
 	
-	public void spawn(Body b) {	// adds a new body to the battlefield
+	public void spawn(PhysicalBody b) {	// adds a new body to the battlefield
 		bodies.add(b);
 	}
 	
 	
-	public ArrayList<Body> getBodies() {
+	public ArrayList<PhysicalBody> getBodies() {
 		return bodies;
 	}
 	

@@ -24,8 +24,8 @@ package mechanics;
 /**
  * A simple class to hold universal values and constants.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
 public class Univ {
 

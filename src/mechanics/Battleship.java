@@ -25,8 +25,8 @@ package mechanics;
  * A ship with powerful guns, long range, and a special ultraviolet laser that
  * bypasses gas clouds.
  * 
- * @author jkunimune
- * @version 1.0
+ * @author	jkunimune
+ * @version	1.0
  */
 public class Battleship extends Ship {
 

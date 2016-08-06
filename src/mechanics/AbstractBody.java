@@ -22,26 +22,53 @@
 package mechanics;
 
 /**
- * An object with position and appearance.
- * Know subclasses: <code>PhysicalBody</code>, <code>AbstractBody</code>
+ * An object with position and appearance, but no physical limitations
  * 
  * @author	jkunimune
  * @version	1.0
  */
-public interface Body {
+public class AbstractBody implements Body {
 
-	public double xValAt(double t);
+	@Override
+	public String spriteName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-	public double yValAt(double t);
+	@Override
+	public double xValAt(double t) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-	public Object soundName(double t);
+	@Override
+	public double yValAt(double t) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-	public String spriteName();
+	@Override
+	public Object soundName(double t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-	public double[] spriteTransform(double t);
+	@Override
+	public double[] spriteTransform(double t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-	public boolean doesScale();
+	@Override
+	public boolean doesScale() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-	public boolean existsAt(double t);
+	@Override
+	public boolean existsAt(double t) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

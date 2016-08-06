@@ -29,8 +29,14 @@ package network;
  */
 public class Protocol {
 
-	private static final char ORDER = 'o';
-	private static final char COLLISION = 'c';
+	private static final char PLACE = 'p';		// placing a ship
+	private static final char ORDER = 'o';		// giving an order
+	private static final char COLLISION = 'c';	// two bodies colliding
+	
+	
+	public static String writePlacement(byte id, byte type, double x, double y) {	// create a placement String to send over the Socket
+		return null;
+	}
 	
 	
 	public static String composeOrder(byte order, byte ship, double x, double y, double t) {	// create an order String to send over the Socket
@@ -42,10 +48,38 @@ public class Protocol {
 	}
 	
 	
-	public static char getType(String data) {	// returns the character representing the type of informatio nthis is
+	public static char getType(String data) {	// returns the character representing the type of information this is
 		return data.charAt(0);
 	}
 	
+	
+	public static boolean isPlacement(String data) {	// is this a ship placement?
+		return data.charAt(0) == PLACE;
+	}
+	
+	/* METHODS THAT WORK ONLY FOR PLACE-TYPE DATA STRINGS */
+	
+	public static byte getID(String data) {
+		return 0;		// what is the ID of the new ship?
+		
+	}
+	
+	
+	public static byte getPType(String data) {	// what kind of ship is it?
+		return 0;
+	}
+	
+	
+	public static double getPX(String data) {	// where was it placed (x)?
+		return 0;
+	}
+	
+	
+	public static double getPY(String data) {	// where was it placed (y)?
+		return 0;
+	}
+	
+	/* END PLACEMENT-SPECIFIC METHODS */
 	
 	public static boolean isOrder(String data) {	// is this an order?
 		return data.charAt(0) == ORDER; 
@@ -53,27 +87,27 @@ public class Protocol {
 	
 	/* METHODS THAT WORK ONLY FOR ORDER-TYPE DATA STRINGS */
 	
-	public static byte getOrder(String data) {	// what kind of order is it?
+	public static byte getOOrder(String data) {	// what kind of order is it?
 		return (byte) (Byte.parseByte(data.substring(1, 3), 16) - 128);
 	}
 	
 	
-	public static byte getShip(String data) {	// which ship is it directed toward?
+	public static byte getOShip(String data) {	// which ship is it directed toward?
 		return Byte.parseByte(data.substring(3, 5), 16);
 	}
 	
 	
-	public static double getX(String data) {	// where is it aimed (x)?
+	public static double getOX(String data) {	// where is it aimed (x)?
 		return Double.parseDouble(data.substring(5, 21));
 	}
 	
 	
-	public static double getY(String data) {	// where is it aimed (y)?
+	public static double getOY(String data) {	// where is it aimed (y)?
 		return Double.parseDouble(data.substring(21, 37));
 	}
 	
 	
-	public static double getT(String data) {	// when was the order given?
+	public static double getOT(String data) {	// when was the order given?
 		return Double.parseDouble(data.substring(37));
 	}
 	
