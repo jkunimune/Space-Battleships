@@ -37,9 +37,11 @@ import network.Protocol;
 public class Battlefield {
 
 	protected ArrayList<PhysicalBody> bodies;	// the list of game elements
+	protected Carrier myCarrier;		// the main carrier
+	protected Carrier yourCarrier;		// the opponent carrier
 	protected DataOutputStream out;		// the stream to write all events to
 	
-	private byte currentID;				// the ID of the next ship we place
+	private byte[] blueIDs;				// the ID of the next ship we place
 	
 	
 	public Battlefield(DataOutputStream dos, boolean host) {
@@ -47,39 +49,41 @@ public class Battlefield {
 		out = dos;
 		
 		double time = (double)System.currentTimeMillis();	// the current time
-		
-		if (host)	currentID = 0;
-		else		currentID = 8;
-		// TODO: The player will eventually place the ships him/herself. This is all temporary
-		final double bluRC = -300000*Univ.km+Math.random()*100000*Univ.km;
-		final double bluTC = 2*Math.random()-1;	// the coordinates for the blue ships
-		final double[] bluR = new double[4];
-		final double[] bluT = new double[4];
-		for (int i = 0; i < 4; i ++) {
-			bluR[i] = (0.5+Math.random())*100000*Univ.km;
-			bluT[i] = i*2*Math.PI/4 - Math.PI/4 + (Math.random()-0.5);
-		}
-		
-		bodies.add(new Carrier(		bluRC*Math.cos(bluTC),
-									bluRC*Math.sin(bluTC), time, (byte)currentID, true, this));
-		currentID ++;
-		bodies.add(new Battleship(	bluRC*Math.cos(bluTC)+bluR[0]*Math.cos(bluT[0]),
-									bluRC*Math.sin(bluTC)+bluR[0]*Math.sin(bluT[0]), time, (byte)1, true, this));
-		bodies.add(new Scout(		bluRC*Math.cos(bluTC)+bluR[1]*Math.cos(bluT[1]),
-									bluRC*Math.sin(bluTC)+bluR[1]*Math.sin(bluT[1]), time, (byte)2, true, this));
-		bodies.add(new Radar(		bluRC*Math.cos(bluTC)+bluR[2]*Math.cos(bluT[2]),
-									bluRC*Math.sin(bluTC)+bluR[2]*Math.sin(bluT[2]), time, (byte)3, true, this));
-		bodies.add(new Steamship(	bluRC*Math.cos(bluTC)+bluR[3]*Math.cos(bluT[3]),
-									bluRC*Math.sin(bluTC)+bluR[3]*Math.sin(bluT[3]), time, (byte)4, true, this));
-		
 		bodies.add(new Planet(0*Univ.km,0*Univ.km,43441*Univ.mi,"Jupiter",time,this));
+		
+		// TODO: The player will eventually place the ships him/herself. This is mostly temporary
+		bodies.add(new Carrier(		-300000*Univ.km, 0, time, (byte)0, host, this));
+		bodies.add(new Battleship(	-240000*Univ.km, 0, time, (byte)1, host, this));
+		bodies.add(new Scout(		-270000*Univ.km, 0, time, (byte)2, host, this));
+		bodies.add(new Radar(		-330000*Univ.km, 0, time, (byte)3, host, this));
+		bodies.add(new Steamship(	-360000*Univ.km, 0, time, (byte)4, host, this));
+		bodies.add(new Carrier(		 300000*Univ.km, 0, time, (byte)5, !host, this));
+		bodies.add(new Battleship(	 240000*Univ.km, 0, time, (byte)6, !host, this));
+		bodies.add(new Scout(		 270000*Univ.km, 0, time, (byte)7, !host, this));
+		bodies.add(new Radar(		 330000*Univ.km, 0, time, (byte)8, !host, this));
+		bodies.add(new Steamship(	 360000*Univ.km, 0, time, (byte)9, !host, this));
+		if (host) {
+			byte[] temp = {0, 1, 2, 3, 4};
+			blueIDs = temp;
+			myCarrier = (Carrier) bodies.get(1);
+			yourCarrier = (Carrier) bodies.get(6);
+		}
+		else {
+			byte[] temp = {5, 6, 7, 8, 9};
+			blueIDs = temp;
+			myCarrier = (Carrier) bodies.get(6);
+			yourCarrier = (Carrier) bodies.get(1);
+		}
 	}
 	
 	
 	
 	public void receive(String data, boolean transmit) {		// receives and interprets some data
 		if (Protocol.isOrder(data)) {		// if it was an order
-			((Carrier) bodies.get(0)).issueOrder(data);	// execute it
+			if (transmit)
+				myCarrier.issueOrder(data);	// execute it
+			else
+				yourCarrier.issueOrder(data);
 		}
 		if (transmit && out != null) {	// if you got it from a non-network source
 			try {
@@ -123,15 +127,21 @@ public class Battlefield {
 	
 	
 	public Carrier getBlueCarrier() {
-		return (Carrier) bodies.get(0);
+		return (Carrier) getShipByID(blueIDs[0]);
 	}
 	
 	
 	public Ship getShipByID(byte id) {	// searches for the ship that has the matching id
-		for (int i = 0; i < 5; i ++)
-			if (((Ship) bodies.get(i)).getID() == id)
-				return (Ship) bodies.get(i);
+		for (Body b: bodies)	// TODO: make this faster (maybe)
+			if (b instanceof Ship)
+				if (((Ship) b).getID() == id)
+					return (Ship) b;
 		return null;
+	}
+	
+	
+	public byte[] getIDs() {
+		return blueIDs;
 	}
 
 }

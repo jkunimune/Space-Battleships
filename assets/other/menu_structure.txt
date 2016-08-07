@@ -29,7 +29,7 @@ butn%back%Cancel
 
 fail
 text%body%Host not found! Make sure you spelled it correctly.
-butn%back%Try Again
+butn%name%Try Again
 butn%main%Main Menu
 
 test

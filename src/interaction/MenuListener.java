@@ -112,7 +112,7 @@ public class MenuListener implements MouseListener, MouseMotionListener, KeyList
 	
 	
 	@Override
-	public void keyTyped(KeyEvent e) {
+	public void keyTyped(KeyEvent e) {	// for entering text TODO: Enter?
 		if (textbox != null) {
 			if (e.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
 				if (textbox[2].length() >= 1)					// backspaces space backward

@@ -311,12 +311,12 @@ public class GameScreen extends JPanel {
 		if (Math.pow(x, 2)*3 + Math.pow(y, 2) < r2)				return -2;	// move button
 		if (Math.pow(x, 2)*3 + Math.pow(y-800, 2) < r2)			return -3;	// shoot button
 		if (Math.pow(x-1280, 2)*3 + Math.pow(y-800, 2) < r2)	return -4;	// special button
-		for (int i = 0; i < 5; i ++) {
-			final Body ship = space.getBodies().get(i);
-			if (Math.hypot(x-screenXFspaceX(ship.xValAt(t)),
-				           y-screenYFspaceY(ship.yValAt(t))) < 15)
-				return ((Ship) ship).getID();	// a ship
-		}
+		for (Body b: space.getBodies())
+			if (b instanceof Ship)
+				if (((Ship) b).isBlue())
+				if (Math.hypot(x-screenXFspaceX(b.xValAt(t)),
+					           y-screenYFspaceY(b.yValAt(t))) < 15)
+					return ((Ship) b).getID();	// a ship
 		return -1;	// empty space
 	}
 	

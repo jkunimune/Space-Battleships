@@ -30,7 +30,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import mechanics.Battlefield;
-import mechanics.Ship;
 import network.Protocol;
 
 /**
@@ -112,7 +111,7 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	
 	
 	@Override
-	public void mouseClicked(MouseEvent e) {	// when the mouse is released...
+	public void mouseClicked(MouseEvent e) {	// when the mouse is clicked...
 		final byte mPos = view.getMousePos(e.getX(), e.getY(), e.getWhen());
 		
 		if (orderMode < -1 && activeShip >= 0) {		// if an order and a ship were active
@@ -136,15 +135,15 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_1)	// number keys select ships
-			setShip(((Ship) game.getBodies().get(0)).getID());
+			setShip(game.getIDs()[0]);
 		else if (e.getKeyCode() == KeyEvent.VK_2)
-			setShip(((Ship) game.getBodies().get(1)).getID());
+			setShip(game.getIDs()[1]);
 		else if (e.getKeyCode() == KeyEvent.VK_3)
-			setShip(((Ship) game.getBodies().get(2)).getID());
+			setShip(game.getIDs()[2]);
 		else if (e.getKeyCode() == KeyEvent.VK_4)
-			setShip(((Ship) game.getBodies().get(3)).getID());
+			setShip(game.getIDs()[3]);
 		else if (e.getKeyCode() == KeyEvent.VK_5)
-			setShip(((Ship) game.getBodies().get(4)).getID());
+			setShip(game.getIDs()[4]);
 		else if (e.getKeyCode() == KeyEvent.VK_X)	// X is special
 			setOrder((byte) -4);
 		else if (e.getKeyCode() == KeyEvent.VK_B)	// B is bombard

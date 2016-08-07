@@ -165,5 +165,10 @@ public abstract class Ship extends PhysicalBody {
 	public byte getID() {	// returns the id number of this ship
 		return id;
 	}
+	
+	
+	public boolean isBlue() {
+		return isBlue;
+	}
 
 }
