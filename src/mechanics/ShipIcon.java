@@ -30,7 +30,7 @@ package mechanics;
 public class ShipIcon extends AbstractBody {
 
 	public ShipIcon() {
-		// TODO Auto-generated constructor stub
+		super("ship_battleship_b", 0.0, 0.0);
 	}
 
 }

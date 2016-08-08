@@ -24,7 +24,9 @@ package interaction;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
@@ -55,9 +57,12 @@ public class GameScreen extends JPanel {
 	private static final double MIN_SCALE = Math.exp(-1);	// the limits of the zooming
 	private static final double MAX_SCALE = Math.exp(1);
 	
+	private static final Color MSG_COLOR = new Color(250, 245, 250);
+	private static final Font MSG_FONT = new Font("Comic Sans MS", Font.ITALIC, 64);
+	
 	
 	private HashMap<String, BufferedImage> sprites;	// the images it uses to display objects
-	private HashMap<String, BufferedImage> hudPics;
+	private HashMap<String, BufferedImage> icons;
 	private HashMap<String, AudioClip> sounds;
 	
 	private Battlefield space;
@@ -109,7 +114,7 @@ public class GameScreen extends JPanel {
 		final Graphics2D g = (Graphics2D)strat.getDrawGraphics();
 		final double t = (double)System.currentTimeMillis();
 		
-		g.drawImage(hudPics.get("space"), 0, 0, null);
+		g.drawImage(icons.get("space"), 0, 0, null);
 		
 		for (int i = space.getBodies().size()-1; i >= 0; i --) {	// then draw the bodies
 			final Body b = space.getBodies().get(i);
@@ -122,6 +127,8 @@ public class GameScreen extends JPanel {
 		}
 		
 		drawHUD(g, t);		// and the heads-up display
+		
+		drawMessage(g, t);
 		
 		g.dispose();
 		strat.show();
@@ -155,30 +162,30 @@ public class GameScreen extends JPanel {
 		final int active = listener.getOrder();
 		
 		if (active == -2)	// the buttons may be lit, on, or off depending on circumstance
-			g.drawImage(hudPics.get("button0_lt"), 0, 0, null);
+			g.drawImage(icons.get("button0_lt"), 0, 0, null);
 		else if (pos == -2)
-			g.drawImage(hudPics.get("button0_on"), 0, 0, null);
+			g.drawImage(icons.get("button0_on"), 0, 0, null);
 		else
-			g.drawImage(hudPics.get("button0_of"), 0, 0, null);
+			g.drawImage(icons.get("button0_of"), 0, 0, null);
 		
 		if (active == -3)
-			g.drawImage(hudPics.get("button1_lt"), 0, 400, null);
+			g.drawImage(icons.get("button1_lt"), 0, 400, null);
 		else if (pos == -3)
-			g.drawImage(hudPics.get("button1_on"), 0, 400, null);
+			g.drawImage(icons.get("button1_on"), 0, 400, null);
 		else
-			g.drawImage(hudPics.get("button1_of"), 0, 400, null);
+			g.drawImage(icons.get("button1_of"), 0, 400, null);
 		
 		if (active == -4)
-			g.drawImage(hudPics.get("button2_lt"), 880, 400, null);
+			g.drawImage(icons.get("button2_lt"), 880, 400, null);
 		else if (pos == -4)
-			g.drawImage(hudPics.get("button2_on"), 880, 400, null);
+			g.drawImage(icons.get("button2_on"), 880, 400, null);
 		else
-			g.drawImage(hudPics.get("button2_of"), 880, 400, null);
+			g.drawImage(icons.get("button2_of"), 880, 400, null);
 		
 		if (activeShip == null)		return;	// if there's no selected ship, that's the end of it
 		try {								// otherwise, draw more HUD
 			final Point hudPos = new Point(1050, 30);
-			g.drawImage(hudPics.get("bars"), hudPos.x, hudPos.y, null);	// draw more HUD stuff
+			g.drawImage(icons.get("bars"), hudPos.x, hudPos.y, null);	// draw more HUD stuff
 			
 			AffineTransform at;		// these classes help with the HP/PP bars
 			AffineTransformOp op;
@@ -188,16 +195,32 @@ public class GameScreen extends JPanel {
 			at = new AffineTransform();			// start with an AffineTransform
 			at.rotate(hTheta, 200, 200);		// set it to rotate based on health
 			op = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-			mask = op.filter(hudPics.get("health_mask"), null).getSubimage(200,0,200,200);	// now rotate the mask and draw it over the bars
+			mask = op.filter(icons.get("health_mask"), null).getSubimage(200,0,200,200);	// now rotate the mask and draw it over the bars
 			g.drawImage(mask, hudPos.x, hudPos.y, null);
 			
 			final double eTheta = -Math.PI/2 + activeShip.eValAt(t)/Ship.MAX_E_VALUE*Math.PI/2;
 			at = new AffineTransform();			// repeat for energy bar
 			at.rotate(eTheta, 0, 200);
 			op = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-			mask = op.filter(hudPics.get("energy_mask"), null).getSubimage(0, 0, 200, 200);
+			mask = op.filter(icons.get("energy_mask"), null).getSubimage(0, 0, 200, 200);
 			g.drawImage(mask, hudPos.x, hudPos.y, null);
 		} catch (NullPointerException e) {}	// it might throw a NullPointerException if the controller modifies activeShip at the wrong moment
+	}
+	
+	
+	private void drawMessage(Graphics2D g, double t) {
+		if (space.message.isEmpty())	// if there is no message,
+			return;						// don't do anything
+		
+		final BufferedImage img = icons.get("popup");
+		final int xi = this.getWidth()/2 - img.getWidth()/2;
+		final int yi = this.getHeight()/2 - img.getHeight()/2;
+		g.drawImage(img, xi, yi, null);
+		g.setColor(MSG_COLOR);
+		g.setFont(MSG_FONT);
+		final int xs = this.getWidth()/2 - g.getFontMetrics().stringWidth(space.message)/2;
+		final int ys = this.getHeight()/2 + g.getFontMetrics().getHeight()/4;
+		g.drawString(space.message, xs, ys);
 	}
 	
 	
@@ -218,12 +241,11 @@ public class GameScreen extends JPanel {
 				(int) (img.getHeight()*params[2]/zoominess));
 		return op.filter(img, null).getSubimage(0, 0, size.x, size.y);	// executes affine transformation, crops, and returns
 	}
-
-
-
+	
+	
 	private void loadImages() {	// reads all images in the assets directory and saves them in a HashMap
 		sprites = new HashMap<String, BufferedImage>();
-		hudPics = new HashMap<String, BufferedImage>();
+		icons = new HashMap<String, BufferedImage>();
 		
 		File[] files = new File("assets/images/game").listFiles();
 		for (File f: files) {	// for every file in that folder
@@ -241,7 +263,7 @@ public class GameScreen extends JPanel {
 			try {
 				int i = f.getName().lastIndexOf('.');	// find the extension
 				if (i != -1 && f.getName().endsWith(".png"))	// if it is a png file
-					hudPics.put(f.getName().substring(0,i), ImageIO.read(f));	// put it in the HashMap
+					icons.put(f.getName().substring(0,i), ImageIO.read(f));	// put it in the HashMap
 			} catch (IOException e) {
 				System.err.println("Something went wrong with "+f);	// I see no reason this error would ever throw
 			}

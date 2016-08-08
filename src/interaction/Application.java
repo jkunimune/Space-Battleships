@@ -35,7 +35,7 @@ import network.Connection;
  * @author	jkunimune
  * @version	1.0
  */
-public class Screen {	// TODO: implement Menu
+public class Application {	// TODO: implement Menu
 
 	public static final byte MENU = 0;
 	public static final byte GAME = 0;
@@ -48,7 +48,7 @@ public class Screen {	// TODO: implement Menu
 	
 	
 	
-	public Screen(int w, int h) {
+	public Application(int w, int h) {
 		frame = new JFrame("Space Battleships!");
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

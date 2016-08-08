@@ -31,7 +31,7 @@ public class Main {
 
 	public static void main(String[] args) {
 	
-		Screen mainWindow = new Screen(1280, 800);	// open the main menu
+		Application mainWindow = new Application(1280, 800);	// open the main menu
 		
 		while (true) {								// and enter the main loop
 		

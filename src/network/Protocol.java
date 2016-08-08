@@ -27,11 +27,13 @@ package network;
  * @author	jkunimune
  * @version	1.0
  */
-public class Protocol {
+public final class Protocol {
 
 	private static final char PLACE = 'p';		// placing a ship
 	private static final char ORDER = 'o';		// giving an order
 	private static final char COLLISION = 'c';	// two bodies colliding
+	private static final char VICTORY = 'v';
+	
 	
 	
 	public static String writePlacement(byte id, byte type, double x, double y) {	// create a placement String to send over the Socket
@@ -45,6 +47,11 @@ public class Protocol {
 				String.format("%1$" + 16 + "s", Double.toHexString(x)) +
 				String.format("%1$" + 16 + "s", Double.toHexString(y)) +
 				String.format("%1$" + 16 + "s", Double.toHexString(t));
+	}
+	
+	
+	public static String denoteVictory() {	// create a victory String to send over the Socket
+		return Character.toString(VICTORY);
 	}
 	
 	
@@ -119,5 +126,9 @@ public class Protocol {
 	
 	/* METHODS THAT ONLY WORK WITH COLLISION-TYPE DATA STRINGS */
 	/* END COLLISION-SPECIFIC METHODS */
+	
+	public static boolean isVictory(String data) {	// is this a victory condition?
+		return data.charAt(0) == VICTORY;
+	}
 
 }

@@ -29,46 +29,54 @@ package mechanics;
  */
 public class AbstractBody implements Body {
 
+	public static final double[] DEFAULT_TRANSFORM = {0.0, 0.0, 1.0};
+	
+	protected String sprite;
+	protected double x, y;
+	
+	
+	
+	public AbstractBody(String spriteString, double newX, double newY) {
+		sprite = spriteString;
+		x = newX;
+		y = newY;
+	}
+	
+	
+	
 	@Override
 	public String spriteName() {
-		// TODO Auto-generated method stub
-		return null;
+		return sprite;
 	}
 
 	@Override
 	public double xValAt(double t) {
-		// TODO Auto-generated method stub
-		return 0;
+		return x;
 	}
 
 	@Override
 	public double yValAt(double t) {
-		// TODO Auto-generated method stub
-		return 0;
+		return y;
 	}
 
 	@Override
 	public Object soundName(double t) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public double[] spriteTransform(double t) {
-		// TODO Auto-generated method stub
-		return null;
+		return DEFAULT_TRANSFORM;
 	}
 
 	@Override
 	public boolean doesScale() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean existsAt(double t) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }

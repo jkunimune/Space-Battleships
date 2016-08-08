@@ -54,7 +54,7 @@ public class Menu extends JPanel {
 	
 	private static final Color COLOR_OFF = new Color(116, 88, 255);
 	private static final Color COLOR_ON = new Color(104, 76, 247);
-	private static final Color COLOR_LIT = new Color(250, 250, 250);
+	private static final Color COLOR_LIT = new Color(250, 245, 250);
 	private static final Font TITLE_FONT = new Font("Comic Sans MS", Font.BOLD, 96);
 	private static final Font BODY_FONT = new Font("Comic Sans MS", Font.PLAIN, 24);
 	private static final Font BUTTON_FONT = new Font("Papyrus", Font.PLAIN, 36);
@@ -67,7 +67,7 @@ public class Menu extends JPanel {
 	private BufferedImage buttonImg;
 	private BufferedImage background;
 	
-	private Screen application;
+	private Application application;
 	private MenuListener listener;
 	
 	private Canvas canvs;
@@ -77,7 +77,7 @@ public class Menu extends JPanel {
 	
 	
 	
-	public Menu(int w, int h, String startMenu, Screen s) {
+	public Menu(int w, int h, String startMenu, Application a) {
 		super();
 		canvs = new Canvas();
 		
@@ -95,7 +95,7 @@ public class Menu extends JPanel {
 		loadMenus();
 		
 		menuPos = startMenu;
-		application = s;
+		application = a;
 		menuChanged = false;
 	}
 	

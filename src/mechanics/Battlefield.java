@@ -43,10 +43,13 @@ public class Battlefield {
 	
 	private byte[] blueIDs;				// the ID of the next ship we place
 	
+	public String message;				// a public phrase for the GameScreen to print out
+	
 	
 	public Battlefield(DataOutputStream dos, boolean host) {
 		bodies = new ArrayList<PhysicalBody>();
 		out = dos;
+		message = "";
 		
 		double time = (double)System.currentTimeMillis();	// the current time
 		bodies.add(new Planet(0*Univ.km,0*Univ.km,43441*Univ.mi,"Jupiter",time,this));
@@ -78,12 +81,32 @@ public class Battlefield {
 	
 	
 	
+	public void receive(String data) {	// if in doubt, transmit should be true
+		receive(data, true);
+	}
+	
+	
 	public void receive(String data, boolean transmit) {		// receives and interprets some data
-		if (Protocol.isOrder(data)) {		// if it was an order
+		if (Protocol.isPlacement(data)) {
+			System.err.println("Uh, I haven't programmed that, yet.");
+		}
+		else if (Protocol.isOrder(data)) {		// if it was an order
 			if (transmit)
 				myCarrier.issueOrder(data);	// execute it
 			else
 				yourCarrier.issueOrder(data);
+		}
+		else if (Protocol.isCollision(data)) {
+			System.err.println("I haven't programmed that yet, either");
+		}
+		else if (Protocol.isVictory(data)) {
+			if (myCarrier.existsAt(System.currentTimeMillis()))
+				message = "You're Winner !";
+			else
+				message = "You're Loser. :(";
+		}
+		else {
+			System.err.println("Wait, what does '"+data+"' mean?");
 		}
 		if (transmit && out != null) {	// if you got it from a non-network source
 			try {

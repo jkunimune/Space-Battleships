@@ -118,7 +118,7 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 			final double sx = view.spaceXFscreenX(e.getX());
 			final double sy = view.spaceYFscreenY(e.getY());
 			game.receive(Protocol.composeOrder(orderMode, activeShip, sx, sy,	// give the order to the game
-					                  (double) System.currentTimeMillis()), true);
+					                           (double)System.currentTimeMillis()));
 			setOrder((byte) -1);
 		}
 		else if (mPos < -1)			// if a button was clicked on

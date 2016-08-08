@@ -47,6 +47,8 @@ public abstract class Ship extends PhysicalBody {
 	protected ArrayList<double[]> health;
 	protected ArrayList<double[]> energy;
 	
+	protected double timeOfDeath;
+	
 	
 	
 	public Ship(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
@@ -54,12 +56,13 @@ public abstract class Ship extends PhysicalBody {
 		id = pin;
 		isBlue = blue;
 		
-		double[] hInit = {time, 1.5*Univ.MJ};
+		double[] hInit = {time, 1.5*Univ.MJ};	// max health and energy at time of creation
 		double[] eInit = {time, 5*Univ.MJ};
 		health = new ArrayList<double[]>(1);
 		energy = new ArrayList<double[]>(1);
 		health.add(hInit);
 		energy.add(eInit);
+		timeOfDeath = Double.POSITIVE_INFINITY;	// I'm gonna live forever!
 		
 		scales = false;	// ships don't scale because they're sprites are icons
 	}
@@ -75,7 +78,7 @@ public abstract class Ship extends PhysicalBody {
 	
 	@Override
 	public boolean existsAt(double t) {
-		return super.existsAt(t) && hValAt(t) > 0;
+		return super.existsAt(t) && t < timeOfDeath;
 	}
 	
 	
@@ -132,8 +135,7 @@ public abstract class Ship extends PhysicalBody {
 		double[] newHVal = {t, hValAt(t)-amount};
 		health.add(newHVal);
 		if (newHVal[1] <= 0) {
-			clearSoundsAfter(t);	// if the ship just died
-			playSound("boom"+(int)(Math.random()*2.001), t);	// cancel any later sounds with a boom
+			die(t);
 		}
 	}
 	
@@ -159,6 +161,13 @@ public abstract class Ship extends PhysicalBody {
 			playSound("blip", t);
 			return false;	// returns false if there was not enough energy
 		}
+	}
+	
+	
+	protected void die(double t) {	// just DIE already!
+		clearSoundsAfter(t);
+		playSound("boom"+(int)(Math.random()*2.001), t);	// play explosion sound
+		timeOfDeath = t;	// record death
 	}
 	
 	

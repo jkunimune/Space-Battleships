@@ -28,7 +28,7 @@ import network.Protocol;
  * orders and move.
  * 
  * @author	jkunimune
- * @version	1.0
+ * @version	1.0.0
  */
 public class Carrier extends Ship {
 
@@ -46,6 +46,13 @@ public class Carrier extends Ship {
 	
 	@Override
 	public void special(double x, double y, double t) {}
+	
+	
+	@Override
+	protected void die(double t) {	// a carrier death is no ordinary death
+		super.die(t);
+		space.receive(Protocol.denoteVictory());	// it signals the end of the game
+	}
 	
 	
 	public void issueOrder(String data) {	// a Carrier-unique method
