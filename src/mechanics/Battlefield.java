@@ -36,10 +36,15 @@ import network.Protocol;
  */
 public class Battlefield {
 
-	protected ArrayList<PhysicalBody> bodies;	// the list of game elements
-	protected Carrier myCarrier;		// the main carrier
-	protected Carrier yourCarrier;		// the opponent carrier
-	protected DataOutputStream out;		// the stream to write all events to
+	private static final double VICTORY_DELAY = 5*Univ.s;	// the time between game end and return to menu
+	
+	
+	private ArrayList<PhysicalBody> bodies;	// the list of game elements
+	private Carrier myCarrier;		// the main carrier
+	private Carrier yourCarrier;		// the opponent carrier
+	private DataOutputStream out;		// the stream to write all events to
+	
+	private double endGame;		// the time the game ended
 	
 	private byte[] blueIDs;				// the ID of the next ship we place
 	
@@ -49,6 +54,7 @@ public class Battlefield {
 	public Battlefield(DataOutputStream dos, boolean host) {
 		bodies = new ArrayList<PhysicalBody>();
 		out = dos;
+		endGame = Double.POSITIVE_INFINITY;
 		message = "";
 		
 		double time = (double)System.currentTimeMillis();	// the current time
@@ -87,7 +93,7 @@ public class Battlefield {
 	
 	
 	public void receive(String data, boolean transmit) {		// receives and interprets some data
-		if (Protocol.isPlacement(data)) {
+		if (Protocol.isPlacement(data)) {	// if a ship got placed
 			System.err.println("Uh, I haven't programmed that, yet.");
 		}
 		else if (Protocol.isOrder(data)) {		// if it was an order
@@ -96,18 +102,20 @@ public class Battlefield {
 			else
 				yourCarrier.issueOrder(data);
 		}
-		else if (Protocol.isCollision(data)) {
+		else if (Protocol.isCollision(data)) {	// if it was a collision
 			System.err.println("I haven't programmed that yet, either");
 		}
-		else if (Protocol.isVictory(data)) {
-			if (myCarrier.existsAt(System.currentTimeMillis()))
-				message = "You're Winner !";
+		else if (Protocol.isVictory(data)) {	// if someone won
+			endGame = (double)System.currentTimeMillis() + VICTORY_DELAY;
+			if (myCarrier.existsAt(endGame))
+				message = "You're Winner !";	// alert the GameScreen
 			else
 				message = "You're Loser. :(";
 		}
 		else {
 			System.err.println("Wait, what does '"+data+"' mean?");
 		}
+		
 		if (transmit && out != null) {	// if you got it from a non-network source
 			try {
 				out.writeUTF(data);		// broadcast it
@@ -118,7 +126,7 @@ public class Battlefield {
 	}
 	
 	
-	public void update() {	// updates all bodies that need to be updated and collides anything close enough to collide
+	public boolean update() {	// updates all bodies that need to be updated and collides anything close enough to collide
 		double t = (double)System.currentTimeMillis();
 		
 		for (int i = bodies.size()-1; i > 0; i --) {
@@ -136,6 +144,8 @@ public class Battlefield {
 		
 		for (int i = bodies.size()-1; i >= 0; i --)
 			bodies.get(i).update(t);
+		
+		return t < endGame;	// return value is whether the game should keep going
 	}
 	
 	

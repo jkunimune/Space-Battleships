@@ -35,7 +35,7 @@ import network.Connection;
  * @author	jkunimune
  * @version	1.0
  */
-public class Application {	// TODO: implement Menu
+public class Application {
 
 	public static final byte MENU = 0;
 	public static final byte GAME = 0;
@@ -87,7 +87,7 @@ public class Application {	// TODO: implement Menu
 	
 	public void lookAt(Battlefield field) {	// sets the panel to a GameScreen focused on field
 		frame.remove(panel);
-		panel = new GameScreen(width, height, field);
+		panel = new GameScreen(width, height, field, this);
 		Controller listener = new Controller((GameScreen) panel, field);
 		((GameScreen) panel).addListener(listener);
 		frame.setContentPane(panel);

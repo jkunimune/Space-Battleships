@@ -65,7 +65,8 @@ public class GameScreen extends JPanel {
 	private HashMap<String, BufferedImage> icons;
 	private HashMap<String, AudioClip> sounds;
 	
-	private Battlefield space;
+	private Application main;
+	private Battlefield game;
 	private Controller listener;
 	private Ship activeShip;
 	
@@ -77,10 +78,11 @@ public class GameScreen extends JPanel {
 	
 	
 	
-	public GameScreen(int w, int h, Battlefield field) {
+	public GameScreen(int w, int h, Battlefield field, Application app) {
 		super();
 		canvs = new Canvas();
-		space = field;
+		main = app;
+		game = field;
 		
 		super.add(canvs);
 		super.setPreferredSize(new Dimension(w,h));
@@ -109,15 +111,18 @@ public class GameScreen extends JPanel {
 			return;
 		}
 		
-		space.update();	// start by updating the game model
+		if (!game.update()) {	// start by updating the game model
+			main.goToMenu();
+			return;				// and quitting if the game is over
+		}
 		
 		final Graphics2D g = (Graphics2D)strat.getDrawGraphics();
 		final double t = (double)System.currentTimeMillis();
 		
 		g.drawImage(icons.get("space"), 0, 0, null);
 		
-		for (int i = space.getBodies().size()-1; i >= 0; i --) {	// then draw the bodies
-			final Body b = space.getBodies().get(i);
+		for (int i = game.getBodies().size()-1; i >= 0; i --) {	// then draw the bodies
+			final Body b = game.getBodies().get(i);
 			
 			if (b.existsAt(t))
 				draw(b, g, t);
@@ -209,7 +214,7 @@ public class GameScreen extends JPanel {
 	
 	
 	private void drawMessage(Graphics2D g, double t) {
-		if (space.message.isEmpty())	// if there is no message,
+		if (game.message.isEmpty())	// if there is no message,
 			return;						// don't do anything
 		
 		final BufferedImage img = icons.get("popup");
@@ -218,9 +223,9 @@ public class GameScreen extends JPanel {
 		g.drawImage(img, xi, yi, null);
 		g.setColor(MSG_COLOR);
 		g.setFont(MSG_FONT);
-		final int xs = this.getWidth()/2 - g.getFontMetrics().stringWidth(space.message)/2;
+		final int xs = this.getWidth()/2 - g.getFontMetrics().stringWidth(game.message)/2;
 		final int ys = this.getHeight()/2 + g.getFontMetrics().getHeight()/4;
-		g.drawString(space.message, xs, ys);
+		g.drawString(game.message, xs, ys);
 	}
 	
 	
@@ -333,7 +338,7 @@ public class GameScreen extends JPanel {
 		if (Math.pow(x, 2)*3 + Math.pow(y, 2) < r2)				return -2;	// move button
 		if (Math.pow(x, 2)*3 + Math.pow(y-800, 2) < r2)			return -3;	// shoot button
 		if (Math.pow(x-1280, 2)*3 + Math.pow(y-800, 2) < r2)	return -4;	// special button
-		for (Body b: space.getBodies())
+		for (Body b: game.getBodies())
 			if (b instanceof Ship)
 				if (((Ship) b).isBlue())
 				if (Math.hypot(x-screenXFspaceX(b.xValAt(t)),
@@ -365,7 +370,7 @@ public class GameScreen extends JPanel {
 	
 	
 	public void setShip(byte id) {			// sets the activeShip field to the one with the matching id
-		activeShip = space.getShipByID(id);
+		activeShip = game.getShipByID(id);
 	}
 
 }
