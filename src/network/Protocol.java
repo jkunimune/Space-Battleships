@@ -36,22 +36,31 @@ public final class Protocol {
 	
 	
 	
-	public static String writePlacement(byte id, byte type, double x, double y) {	// create a placement String to send over the Socket
-		return null;
+	public static String writePlacement(byte id, String type, double x, double y) {	// create a placement String to send over the Socket
+		return String.valueOf(PLACE) +
+				String.format("%02x", id) +
+				String.format("%1$16s", Double.toHexString(x)) +
+				String.format("%1$16s", Double.toHexString(y)) +
+				type;
 	}
 	
 	
 	public static String composeOrder(byte order, byte ship, double x, double y, double t) {	// create an order String to send over the Socket
-		return Character.toString(ORDER) +
+		return String.valueOf(ORDER) +
 				String.format("%02x", order+128) + String.format("%02x", ship) +
-				String.format("%1$" + 16 + "s", Double.toHexString(x)) +
-				String.format("%1$" + 16 + "s", Double.toHexString(y)) +
-				String.format("%1$" + 16 + "s", Double.toHexString(t));
+				String.format("%1$16s", Double.toHexString(x)) +
+				String.format("%1$16s", Double.toHexString(y)) +
+				String.format("%1$16s", Double.toHexString(t));
+	}
+	
+	
+	public static String describeCollision() {	// create a collision String to send over the Socket
+		return null;
 	}
 	
 	
 	public static String denoteVictory() {	// create a victory String to send over the Socket
-		return Character.toString(VICTORY);
+		return String.valueOf(VICTORY);
 	}
 	
 	
@@ -66,24 +75,23 @@ public final class Protocol {
 	
 	/* METHODS THAT WORK ONLY FOR PLACE-TYPE DATA STRINGS */
 	
-	public static byte getID(String data) {
-		return 0;		// what is the ID of the new ship?
-		
+	public static byte getPID(String data) {
+		return (byte) (Byte.parseByte(data.substring(1, 3), 16));
 	}
 	
 	
-	public static byte getPType(String data) {	// what kind of ship is it?
-		return 0;
+	public static String getPType(String data) {	// what kind of ship is it?
+		return data.substring(35);
 	}
 	
 	
 	public static double getPX(String data) {	// where was it placed (x)?
-		return 0;
+		return Double.parseDouble(data.substring(3, 19));
 	}
 	
 	
 	public static double getPY(String data) {	// where was it placed (y)?
-		return 0;
+		return Double.parseDouble(data.substring(19, 35));
 	}
 	
 	/* END PLACEMENT-SPECIFIC METHODS */

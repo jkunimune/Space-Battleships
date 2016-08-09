@@ -76,6 +76,8 @@ public class GameScreen extends JPanel {
 	private int origX, origY;
 	private double scale;	// the variables that define the screen's position and zoom-level
 	
+	boolean gameStarted = false;	// whether we are in the game or the pregame
+	
 	
 	
 	public GameScreen(int w, int h, Battlefield field, Application app) {
@@ -94,12 +96,15 @@ public class GameScreen extends JPanel {
 		canvs.setIgnoreRepaint(true);
 		canvs.setFocusable(true);
 		
+		addListener(new ShipPlacer(this, field));
+		
 		loadImages();
 		loadSounds();
 		
 		origX = w/2;
 		origY = h/2;
 		scale = 1.0;
+		gameStarted = false;
 	}
 	
 	
@@ -131,7 +136,10 @@ public class GameScreen extends JPanel {
 			} catch (NullPointerException e) {}
 		}
 		
-		drawHUD(g, t);		// and the heads-up display
+		if (gameStarted)
+			drawHUD(g, t);		// and the heads-up display
+		else
+			drawPregame(g);		// or the pre-game HUD
 		
 		drawMessage(g, t);
 		
@@ -143,7 +151,7 @@ public class GameScreen extends JPanel {
 	
 	private void draw(Body b, Graphics2D g, double t) {	// put a picture of b on g at time t
 		BufferedImage img;
-		if (b instanceof Ship && ((Ship) b).getID() == listener.getShip())
+		if (gameStarted && b instanceof Ship && ((Ship) b).getID() == listener.getShip())
 			img = sprites.get(b.spriteName()+"i");	// active ships have a special sprite
 		else
 			img = sprites.get(b.spriteName());	// finds the correct sprite
@@ -159,6 +167,11 @@ public class GameScreen extends JPanel {
 		double screenX = screenXFspaceX(b.xValAt(t));	// gets coordinates of b, 
 		double screenY = screenYFspaceY(b.yValAt(t));	// and offsets appropriately
 		g.drawImage(img, (int)screenX-img.getWidth()/2, (int)screenY-img.getHeight()/2, null);
+	}
+	
+	
+	private void drawPregame(Graphics2D g) {	// draw the ships being placed
+		// TODO: Draw available ships and held ship
 	}
 	
 	
@@ -292,6 +305,12 @@ public class GameScreen extends JPanel {
 	}
 	
 	
+	public void startGame() {	// exit pregame and begin the real battle
+		gameStarted = true;
+		addListener(new Controller(this, game));
+	}
+	
+	
 	public void developStrategy() {	// some required stuff for graphics to not fail
 		canvs.createBufferStrategy(2);
 		strat = canvs.getBufferStrategy();
@@ -299,6 +318,13 @@ public class GameScreen extends JPanel {
 	
 	
 	public void addListener(Controller c) {
+		if (listener != null) {
+			canvs.removeMouseListener(listener);
+			canvs.removeMouseWheelListener(listener);
+			canvs.removeMouseMotionListener(listener);
+			canvs.removeKeyListener(listener);
+		}
+		
 		canvs.addMouseListener(c);
 		canvs.addMouseWheelListener(c);
 		canvs.addMouseMotionListener(c);

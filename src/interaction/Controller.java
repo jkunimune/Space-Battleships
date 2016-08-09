@@ -40,13 +40,13 @@ import network.Protocol;
  */
 public class Controller implements MouseWheelListener, MouseMotionListener, MouseListener, KeyListener {
 
-	private GameScreen view;	// the GameScreen this listens to
-	private Battlefield game;		// the ship that this interacts through
+	protected GameScreen view;	// the GameScreen this listens to
+	protected Battlefield game;		// the ship that this interacts through
 	
 	private byte orderMode;				// the type of order being given (-1 for none, -2 for move, -3 for shoot, -4 for special)
-	private byte activeShip;				// the ship id being ordered (-1 for none, 0-4 for respective indices)
+	private byte activeShip;			// the ship id being ordered (-1 for none, 0-4 for respective indices)
 	
-	private int x, y;	// mouse location
+	protected int x, y;	// mouse location
 	
 	
 	

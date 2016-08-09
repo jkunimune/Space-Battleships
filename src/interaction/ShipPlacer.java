@@ -19,64 +19,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package mechanics;
+package interaction;
+
+import java.awt.event.MouseEvent;
+import mechanics.Battlefield;
+import network.Protocol;
 
 /**
- * An object with position and appearance, but no physical limitations
+ * The class that handles user input during the pre-game
  * 
  * @author	jkunimune
  * @version	1.0
  */
-public class AbstractBody implements Body {
+public class ShipPlacer extends Controller {
 
-	public static final double[] DEFAULT_TRANSFORM = {0.0, 0.0, 1.0};
-	
-	protected String sprite;
-	protected double x, y;
+	private String heldShip;	// the type of ship we hold
+	private int numShips;		// the number of ships we have placed
 	
 	
 	
-	public AbstractBody(String spriteString, double newX, double newY) {
-		sprite = spriteString;
-		x = newX;
-		y = newY;
+	public ShipPlacer(GameScreen gs, Battlefield bf) {
+		super(gs, bf);
+		
+		heldShip = "Carrier";
+		numShips = 0;
 	}
 	
 	
 	
 	@Override
-	public String spriteName() {
-		return sprite;
-	}
-
-	@Override
-	public double xValAt(double t) {
-		return x;
-	}
-
-	@Override
-	public double yValAt(double t) {
-		return y;
-	}
-
-	@Override
-	public Object soundName(double t) {
-		return null;
-	}
-
-	@Override
-	public double[] spriteTransform(double t) {
-		return DEFAULT_TRANSFORM;
-	}
-
-	@Override
-	public boolean doesScale() {
-		return false;
-	}
-
-	@Override
-	public boolean existsAt(double t) {
-		return true;
+	public void mouseClicked(MouseEvent e) {
+		if (heldShip != null) {
+			final double sx = view.spaceXFscreenX(x);
+			final double sy = view.spaceYFscreenY(y);
+			final byte id = game.getIDs()[numShips];
+			
+			game.receive(Protocol.writePlacement(id, heldShip, sx, sy));
+			numShips ++;
+			
+			if (numShips == 5)
+				view.startGame();
+		}
 	}
 
 }

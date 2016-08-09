@@ -51,13 +51,13 @@ public abstract class Ship extends PhysicalBody {
 	
 	
 	
-	public Ship(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
-		super(newX, newY, 0, 0, time, space);
+	public Ship(double x, double y, double t, byte pin, boolean blue, Battlefield bf) {
+		super(x, y, 0, 0, t, bf);
 		id = pin;
 		isBlue = blue;
 		
-		double[] hInit = {time, 1.5*Univ.MJ};	// max health and energy at time of creation
-		double[] eInit = {time, 5*Univ.MJ};
+		double[] hInit = {t, 1.5*Univ.MJ};	// max health and energy at time of creation
+		double[] eInit = {t, 5*Univ.MJ};
 		health = new ArrayList<double[]>(1);
 		energy = new ArrayList<double[]>(1);
 		health.add(hInit);
@@ -134,9 +134,9 @@ public abstract class Ship extends PhysicalBody {
 	public void damaged(double amount, double t) {	// takes some out of your health
 		double[] newHVal = {t, hValAt(t)-amount};
 		health.add(newHVal);
-		if (newHVal[1] <= 0) {
+		playSound("clunk"+(int)(Math.random()*2), t);
+		if (newHVal[1] <= 0)
 			die(t);
-		}
 	}
 	
 	
@@ -178,6 +178,29 @@ public abstract class Ship extends PhysicalBody {
 	
 	public boolean isBlue() {
 		return isBlue;
+	}
+	
+	
+	
+	public static Ship buildShip(String type,	// build a new ship with type given by a string
+			                     double x, double y, double t, byte pin, boolean blue, Battlefield bf) {	// XXX: perhaps transition from Strings to bytes later...
+		if (type.equalsIgnoreCase("Carrier"))
+			return new Carrier(x,y,t,pin,blue,bf);
+		
+		else if (type.equalsIgnoreCase("Battleship"))
+			return new Battleship(x,y,t,pin,blue,bf);
+		
+		else if (type.equalsIgnoreCase("Scout"))
+			return new Scout(x,y,t,pin,blue,bf);
+		
+		else if (type.equalsIgnoreCase("Radar"))
+			return new Radar(x,y,t,pin,blue,bf);
+		
+		else if (type.equalsIgnoreCase("Steamship"))
+			return new Steamship(x,y,t,pin,blue,bf);
+		
+		else
+			return null;
 	}
 
 }

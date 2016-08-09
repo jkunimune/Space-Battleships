@@ -76,8 +76,6 @@ public class Application {
 			frame.remove(panel);
 		} catch (NullPointerException e) {}
 		panel = new Menu(width, height, "main", this);
-		MenuListener listener = new MenuListener((Menu) panel);
-		((Menu) panel).addListener(listener);
 		frame.setContentPane(panel);
 		frame.pack();
 		((Menu) panel).developStrategy();
@@ -88,8 +86,6 @@ public class Application {
 	public void lookAt(Battlefield field) {	// sets the panel to a GameScreen focused on field
 		frame.remove(panel);
 		panel = new GameScreen(width, height, field, this);
-		Controller listener = new Controller((GameScreen) panel, field);
-		((GameScreen) panel).addListener(listener);
 		frame.setContentPane(panel);
 		frame.pack();
 		((GameScreen) panel).developStrategy();

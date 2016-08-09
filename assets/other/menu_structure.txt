@@ -18,7 +18,7 @@ butn%back%Cancel
 
 name
 text%body%Enter the name of the computer to which you wish to connect%
-inpt%????% 
+inpt%seek% 
 butn%seek%Go
 butn%back%Back
 
@@ -47,6 +47,8 @@ butn%back%Back
 faqs
 text%body%Q: How can those lasers be bigger than the earth?
 text%body%A: They're not - it seems that way because auto-targeting.
+text%body%A: Why don't you account for relativity?
+text%body%Q: It's negligible. Also, the last time I made a game that accounted for relativity, it was hell.
 text%body%Q: Where do the ships get their energy?
 text%body%A: Solar power.
 text%body%Q: Why don't ships expend energy when they stop?
@@ -56,7 +58,7 @@ text%body%A: No. They have to completely stop before changing direction.
 text%body%Q: Why? That seems inefficient.
 text%body%A: The ships can't handle the calculations otherwise.
 text%body%Q: Aren't they on some hi-tech futuristic ships? It really isn't that hard of a calculation...
-text%body%A: It is if you ignore relativity and consider time as a linear progression from cause to effect.
+text%body%A: It isn't if you ignore relativity and consider time as a linear progression from cause to effect.
 text%body%Q: ?
 text%body%A: Actually, from a non-linear, non-subjective viewpoint, it's more like a big ball of wibbly-wobbly, timey-wimey, stuff.
 text%body%Q: ... no words ...

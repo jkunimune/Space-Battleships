@@ -46,7 +46,7 @@ public class Battlefield {
 	
 	private double endGame;		// the time the game ended
 	
-	private byte[] blueIDs;				// the ID of the next ship we place
+	private byte[] blueIDs;				// the IDs of the ships we own
 	
 	public String message;				// a public phrase for the GameScreen to print out
 	
@@ -60,28 +60,13 @@ public class Battlefield {
 		double time = (double)System.currentTimeMillis();	// the current time
 		bodies.add(new Planet(0*Univ.km,0*Univ.km,43441*Univ.mi,"Jupiter",time,this));
 		
-		// TODO: The player will eventually place the ships him/herself. This is mostly temporary
-		bodies.add(new Carrier(		-300000*Univ.km, 0, time, (byte)0, host, this));
-		bodies.add(new Battleship(	-240000*Univ.km, 0, time, (byte)1, host, this));
-		bodies.add(new Scout(		-270000*Univ.km, 0, time, (byte)2, host, this));
-		bodies.add(new Radar(		-330000*Univ.km, 0, time, (byte)3, host, this));
-		bodies.add(new Steamship(	-360000*Univ.km, 0, time, (byte)4, host, this));
-		bodies.add(new Carrier(		 300000*Univ.km, 0, time, (byte)5, !host, this));
-		bodies.add(new Battleship(	 240000*Univ.km, 0, time, (byte)6, !host, this));
-		bodies.add(new Scout(		 270000*Univ.km, 0, time, (byte)7, !host, this));
-		bodies.add(new Radar(		 330000*Univ.km, 0, time, (byte)8, !host, this));
-		bodies.add(new Steamship(	 360000*Univ.km, 0, time, (byte)9, !host, this));
 		if (host) {
 			byte[] temp = {0, 1, 2, 3, 4};
 			blueIDs = temp;
-			myCarrier = (Carrier) bodies.get(1);
-			yourCarrier = (Carrier) bodies.get(6);
 		}
 		else {
 			byte[] temp = {5, 6, 7, 8, 9};
 			blueIDs = temp;
-			myCarrier = (Carrier) bodies.get(6);
-			yourCarrier = (Carrier) bodies.get(1);
 		}
 	}
 	
@@ -94,7 +79,7 @@ public class Battlefield {
 	
 	public void receive(String data, boolean transmit) {		// receives and interprets some data
 		if (Protocol.isPlacement(data)) {	// if a ship got placed
-			System.err.println("Uh, I haven't programmed that, yet.");
+			spawnShip(data, transmit);
 		}
 		else if (Protocol.isOrder(data)) {		// if it was an order
 			if (transmit)
@@ -103,7 +88,7 @@ public class Battlefield {
 				yourCarrier.issueOrder(data);
 		}
 		else if (Protocol.isCollision(data)) {	// if it was a collision
-			System.err.println("I haven't programmed that yet, either");
+			System.err.println("I haven't programmed that yet.");
 		}
 		else if (Protocol.isVictory(data)) {	// if someone won
 			endGame = (double)System.currentTimeMillis() + VICTORY_DELAY;
@@ -146,6 +131,22 @@ public class Battlefield {
 			bodies.get(i).update(t);
 		
 		return t < endGame;	// return value is whether the game should keep going
+	}
+	
+	
+	public void spawnShip(String info, boolean blue) {	// create a ship based on a placement string
+		final String type = Protocol.getPType(info);
+		final double x = Protocol.getPX(info);
+		final double y = Protocol.getPY(info);
+		final byte id = Protocol.getPID(info);
+		final double t = System.currentTimeMillis();
+		Ship s = Ship.buildShip(type, x, y, t, id, blue, this);
+		
+		if (s instanceof Carrier) {
+			if (s.isBlue())	myCarrier = (Carrier) s;
+			else			yourCarrier = (Carrier) s;
+		}
+		spawn(s);
 	}
 	
 	

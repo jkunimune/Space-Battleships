@@ -34,7 +34,7 @@ public class Order extends PhysicalBody {
 	private double xTarg;		// the x value this order refers to
 	private double yTarg;		// the y value this order refers to
 	
-	private boolean orderReceived;	// becomes true whenever it meets its target ship
+	private double receiptTime;	// the time this order met its target ship
 	
 	
 	Order(double x0, double y0, double t0, byte order, byte ship, double xr, double yr, Battlefield field) {
@@ -45,13 +45,13 @@ public class Order extends PhysicalBody {
 		xTarg = xr;
 		yTarg = yr;
 		
-		orderReceived = false;
+		receiptTime = Double.POSITIVE_INFINITY;
 	}
 	
 	
 	@Override
 	public void interactWith(PhysicalBody that, double t) {
-		if (!orderReceived && that instanceof Ship && this.dist(that,t) < this.rValAt(t)) {
+		if (that instanceof Ship && this.dist(that,t) < this.rValAt(t)) {
 			if (((Ship) that).getID() == this.targetShip) {
 				switch (orderType) {
 				case -2:
@@ -65,7 +65,7 @@ public class Order extends PhysicalBody {
 					break;
 				}
 				
-				orderReceived = true;
+				receiptTime = t;
 			}
 		}
 	}
@@ -86,6 +86,12 @@ public class Order extends PhysicalBody {
 		res[1] = 0;
 		res[2] = 0;
 		return res;
+	}
+	
+	
+	@Override
+	public boolean existsAt(double t) {
+		return super.existsAt(t) && t < receiptTime;
 	}
 	
 	

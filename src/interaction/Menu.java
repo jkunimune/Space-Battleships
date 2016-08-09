@@ -91,6 +91,8 @@ public class Menu extends JPanel {
 		canvs.setIgnoreRepaint(true);
 		canvs.setFocusable(true);
 		
+		addListener(new MenuListener(this));
+		
 		loadImages();
 		loadMenus();
 		
