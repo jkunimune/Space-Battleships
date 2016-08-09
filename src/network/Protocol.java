@@ -59,8 +59,13 @@ public final class Protocol {
 	}
 	
 	
-	public static String denoteVictory() {	// create a victory String to send over the Socket
-		return String.valueOf(VICTORY);
+	public static String denoteVictory(int condition) {
+		return denoteVictory((byte) condition);
+	}
+	
+	public static String denoteVictory(byte condition) {	// create a victory String to send over the Socket
+		return String.valueOf(VICTORY) +
+				String.format("%02x", condition);
 	}
 	
 	
@@ -138,5 +143,13 @@ public final class Protocol {
 	public static boolean isVictory(String data) {	// is this a victory condition?
 		return data.charAt(0) == VICTORY;
 	}
+	
+	/* METHODS THAT ONLY WORK WITH VICTORY-TYPE DATA STRINGS */
+	
+	public static byte getVCondition(String data) {	// what caused the end of the game?
+		return Byte.parseByte(data.substring(1,3), 16);
+	}
+	
+	/* END VICTORY-SPECIFIC METHODS */
 
 }

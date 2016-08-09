@@ -92,10 +92,7 @@ public class Battlefield {
 		}
 		else if (Protocol.isVictory(data)) {	// if someone won
 			endGame = (double)System.currentTimeMillis() + VICTORY_DELAY;
-			if (myCarrier.existsAt(endGame))
-				message = "You're Winner !";	// alert the GameScreen
-			else
-				message = "You're Loser. :(";
+			message = getMessage(Protocol.getVCondition(data));
 		}
 		else {
 			System.err.println("Wait, what does '"+data+"' mean?");
@@ -104,14 +101,12 @@ public class Battlefield {
 		if (transmit && out != null) {	// if you got it from a non-network source
 			try {
 				out.writeUTF(data);		// broadcast it
-			} catch (IOException e) {
-				System.err.println("I don't know if this will ever print");
-			}
+			} catch (IOException e) {}
 		}
 	}
 	
 	
-	public boolean update() {	// updates all bodies that need to be updated and collides anything close enough to collide
+	public void update() {	// updates all bodies that need to be updated and collides anything close enough to collide
 		double t = (double)System.currentTimeMillis();
 		
 		for (int i = bodies.size()-1; i > 0; i --) {
@@ -129,8 +124,11 @@ public class Battlefield {
 		
 		for (int i = bodies.size()-1; i >= 0; i --)
 			bodies.get(i).update(t);
-		
-		return t < endGame;	// return value is whether the game should keep going
+	}
+	
+	
+	public boolean active() {	// is the game still going?
+		return System.currentTimeMillis() < endGame;
 	}
 	
 	
@@ -150,18 +148,35 @@ public class Battlefield {
 	}
 	
 	
+	public String getMessage(byte condition) {
+		switch (condition) {
+		case 0:
+			if (myCarrier.existsAt(endGame))
+				return "You're Winner !";
+			else
+				return "You're Loser :(";
+		case 1:
+			return "Connection Lost !";
+		default:
+			return "ERROR: Unrecognized error code "+condition;
+		}
+	}
+	
+	
 	public void spawn(PhysicalBody b) {	// adds a new body to the battlefield
 		bodies.add(b);
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public ArrayList<PhysicalBody> getBodies() {
-		return bodies;
+		return (ArrayList<PhysicalBody>) bodies.clone();
 	}
 	
 	
 	public Carrier getBlueCarrier() {
-		return (Carrier) getShipByID(blueIDs[0]);
+		System.err.println("DOes this get used?");
+		return myCarrier;
 	}
 	
 	

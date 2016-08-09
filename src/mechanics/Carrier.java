@@ -51,7 +51,7 @@ public class Carrier extends Ship {
 	@Override
 	protected void die(double t) {	// a carrier death is no ordinary death
 		super.die(t);
-		space.receive(Protocol.denoteVictory());	// it signals the end of the game
+		space.receive(Protocol.denoteVictory(0));	// it signals the end of the game
 	}
 	
 	

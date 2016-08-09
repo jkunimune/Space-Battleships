@@ -36,12 +36,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import mechanics.Battlefield;
 import mechanics.Body;
+import mechanics.PhysicalBody;
 import mechanics.Ship;
 
 /**
@@ -116,7 +118,8 @@ public class GameScreen extends JPanel {
 			return;
 		}
 		
-		if (!game.update()) {	// start by updating the game model
+		game.update();
+		if (!game.active()) {	// start by updating the game model
 			main.goToMenu();
 			return;				// and quitting if the game is over
 		}
@@ -126,8 +129,9 @@ public class GameScreen extends JPanel {
 		
 		g.drawImage(icons.get("space"), 0, 0, null);
 		
-		for (int i = game.getBodies().size()-1; i >= 0; i --) {	// then draw the bodies
-			final Body b = game.getBodies().get(i);
+		final List<PhysicalBody> bodies = game.getBodies();
+		for (int i = bodies.size()-1; i >= 0; i --) {
+			PhysicalBody b = bodies.get(i);
 			
 			if (b.existsAt(t))
 				draw(b, g, t);

@@ -64,14 +64,20 @@ public class Client implements Runnable {
 			String data;
 			try {
 				while ((data = in.readUTF()) != null) {
-					if (field != null)
-						field.receive(data, false);
+					if (field != null) {
+						field.receive(data, false);		// feed the game any data you get
+					}
+					if (!field.active()) {
+						in.close();
+						return;
+					}
 				}
 			} catch (IOException e) {
-				System.err.println("Connection lost! It would appear that the other end has closed their game.");
-				Thread.currentThread().interrupt();
+				field.receive(Protocol.denoteVictory(1));	// an exit code of 1 denotes connection loss
+				return;
 			}
 		}
+		System.out.println("BAI");
 	}
 	
 	
