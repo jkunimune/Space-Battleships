@@ -32,6 +32,13 @@ import java.util.ArrayList;
  */
 public abstract class Ship extends PhysicalBody {
 
+	public static final byte CARRIER = 0;		// ship class constants
+	public static final byte BATTLESHIP = 1;
+	public static final byte SCOUT  = 2;
+	public static final byte RADAR = 3;
+	public static final byte STEAMSHIP = 4;
+	
+	
 	public static final double MAX_H_VALUE = 1.5*Univ.MJ;	// maximum health
 	public static final double MAX_E_VALUE = 2.0*Univ.MJ;	// maximum energy
 	
@@ -39,6 +46,7 @@ public abstract class Ship extends PhysicalBody {
 	
 	public static final double MOVEMENT_COST = 0.5*Univ.MJ;
 	public static final double LASER_ENERGY = 1.0*Univ.MJ;
+	
 	
 	private boolean isBlue;	// whether it is blue or red
 	
@@ -182,46 +190,40 @@ public abstract class Ship extends PhysicalBody {
 	
 	
 	
-	public static Ship buildShip(String type,	// build a new ship with type given by a string
-			                     double x, double y, double t, byte pin, boolean blue, Battlefield bf) {	// XXX: perhaps transition from Strings to bytes later...
-		if (type.equalsIgnoreCase("Carrier"))
+	public static Ship buildShip(byte type,	// build a new ship with type given by a string
+			                     double x, double y, double t, byte pin, boolean blue, Battlefield bf) {
+		switch (type) {
+		case CARRIER:
 			return new Carrier(x,y,t,pin,blue,bf);
-		
-		else if (type.equalsIgnoreCase("Battleship"))
+		case BATTLESHIP:
 			return new Battleship(x,y,t,pin,blue,bf);
-		
-		else if (type.equalsIgnoreCase("Scout"))
+		case SCOUT:
 			return new Scout(x,y,t,pin,blue,bf);
-		
-		else if (type.equalsIgnoreCase("Radar"))
+		case RADAR:
 			return new Radar(x,y,t,pin,blue,bf);
-		
-		else if (type.equalsIgnoreCase("Steamship"))
+		case STEAMSHIP:
 			return new Steamship(x,y,t,pin,blue,bf);
-		
-		else
+		default:
 			return null;
+		}
 	}
 	
 	
-	public static String shipSprite(String type) {	// return the sprite name for this type of ship
-		if (type.equalsIgnoreCase("Carrier"))
+	public static String shipSprite(byte type) {	// return the sprite name for this type of ship
+		switch (type) {
+		case CARRIER:
 			return "ship_carrier_b";
-		
-		else if (type.equalsIgnoreCase("Battleship"))
+		case BATTLESHIP:
 			return "ship_battleship_b";
-		
-		else if (type.equalsIgnoreCase("Scout"))
+		case SCOUT:
 			return "ship_scout_b";
-		
-		else if (type.equalsIgnoreCase("Radar"))
+		case RADAR:
 			return "ship_radar_b";
-		
-		else if (type.equalsIgnoreCase("Steamship"))
+		case STEAMSHIP:
 			return "ship_steamship_b";
-		
-		else
+		default:
 			return null;
+		}
 	}
 
 }

@@ -24,6 +24,7 @@ package interaction;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import mechanics.Battlefield;
+import mechanics.Ship;
 import network.Protocol;
 
 /**
@@ -34,7 +35,7 @@ import network.Protocol;
  */
 public class ShipPlacer extends Controller {
 
-	private String heldShip;	// the type of ship we hold
+	private byte heldShip;		// the type of ship we hold
 	private int numShips;		// the number of ships we have placed
 	
 	
@@ -42,26 +43,26 @@ public class ShipPlacer extends Controller {
 	public ShipPlacer(GameScreen gs, Battlefield bf) {
 		super(gs, bf);
 		
-		heldShip = null;
+		heldShip = -1;
 		numShips = 0;
 	}
 	
 	
 	
-	public String getHeldShip() {
+	public byte getHeldShip() {
 		return heldShip;
 	}
 	
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (heldShip != null) {
+		if (heldShip != -1) {
 			final double sx = view.spaceXFscreenX(x);
 			final double sy = view.spaceYFscreenY(y);
 			final byte id = game.getIDs()[numShips];
 			
 			game.receive(Protocol.writePlacement(id, heldShip, sx, sy));
-			heldShip = null;
+			heldShip = -1;
 			numShips ++;
 			
 			if (numShips == 5)
@@ -73,17 +74,17 @@ public class ShipPlacer extends Controller {
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
-			heldShip = null;
+			heldShip = -1;
 		else if (e.getKeyCode() == KeyEvent.VK_A)
-			heldShip = "carrier";
+			heldShip = Ship.CARRIER;
 		else if (e.getKeyCode() == KeyEvent.VK_S)
-			heldShip = "battleship";
+			heldShip = Ship.BATTLESHIP;
 		else if (e.getKeyCode() == KeyEvent.VK_D)
-			heldShip = "scout";
+			heldShip = Ship.SCOUT;
 		else if (e.getKeyCode() == KeyEvent.VK_F)
-			heldShip = "radar";
+			heldShip = Ship.RADAR;
 		else if (e.getKeyCode() == KeyEvent.VK_G)
-			heldShip = "steamship";
+			heldShip = Ship.STEAMSHIP;
 	}
 
 }

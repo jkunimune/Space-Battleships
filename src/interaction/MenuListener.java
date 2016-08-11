@@ -122,11 +122,14 @@ public class MenuListener implements MouseListener, MouseMotionListener, KeyList
 	
 	
 	@Override
-	public void keyTyped(KeyEvent e) {	// for entering text TODO: Enter?
+	public void keyTyped(KeyEvent e) {	// for entering text
 		if (textbox != null) {
 			if (e.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
 				if (textbox[2].length() >= 1)					// backspaces space backward
 					textbox[2] = textbox[2].substring(0, textbox[2].length()-1);
+			}
+			else if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+				menu.interpCommand(textbox[1]);
 			}
 			else if (e.getKeyChar() != KeyEvent.VK_DELETE &&	// delete and esc should be ignored
 					 e.getKeyChar() != KeyEvent.VK_ESCAPE) {

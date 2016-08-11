@@ -36,12 +36,12 @@ public final class Protocol {
 	
 	
 	
-	public static String writePlacement(byte id, String type, double x, double y) {	// create a placement String to send over the Socket
+	public static String writePlacement(byte id, byte type, double x, double y) {	// create a placement String to send over the Socket
 		return String.valueOf(PLACE) +
 				String.format("%02x", id) +
+				String.format("%02x", type) +
 				String.format("%1$16s", Double.toHexString(x)) +
-				String.format("%1$16s", Double.toHexString(y)) +
-				type;
+				String.format("%1$16s", Double.toHexString(y));
 	}
 	
 	
@@ -81,22 +81,22 @@ public final class Protocol {
 	/* METHODS THAT WORK ONLY FOR PLACE-TYPE DATA STRINGS */
 	
 	public static byte getPID(String data) {
-		return (byte) (Byte.parseByte(data.substring(1, 3), 16));
+		return Byte.parseByte(data.substring(1, 3), 16);
 	}
 	
 	
-	public static String getPType(String data) {	// what kind of ship is it?
-		return data.substring(35);
+	public static byte getPType(String data) {	// what kind of ship is it?
+		return Byte.parseByte(data.substring(3,5), 16);
 	}
 	
 	
 	public static double getPX(String data) {	// where was it placed (x)?
-		return Double.parseDouble(data.substring(3, 19));
+		return Double.parseDouble(data.substring(5, 21));
 	}
 	
 	
 	public static double getPY(String data) {	// where was it placed (y)?
-		return Double.parseDouble(data.substring(19, 35));
+		return Double.parseDouble(data.substring(21, 37));
 	}
 	
 	/* END PLACEMENT-SPECIFIC METHODS */

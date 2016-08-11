@@ -133,7 +133,7 @@ public class Battlefield {
 	
 	
 	public void spawnShip(String info, boolean blue) {	// create a ship based on a placement string
-		final String type = Protocol.getPType(info);
+		final byte type = Protocol.getPType(info);
 		final double x = Protocol.getPX(info);
 		final double y = Protocol.getPY(info);
 		final byte id = Protocol.getPID(info);
