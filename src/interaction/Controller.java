@@ -84,6 +84,16 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	}
 	
 	
+	public int getX() {
+		return x;
+	}
+	
+	
+	public int getY() {
+		return y;
+	}
+	
+	
 	public Point getMouseLocation() {
 		return new Point(x,y);
 	}

@@ -62,6 +62,16 @@ public class MenuListener implements MouseListener, MouseMotionListener, KeyList
 	}
 	
 	
+	public int getX() {
+		return x;
+	}
+	
+	
+	public int getY() {
+		return y;
+	}
+	
+	
 	public Point getMouseLocation() {
 		return new Point(x,y);
 	}

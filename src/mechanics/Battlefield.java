@@ -174,12 +174,6 @@ public class Battlefield {
 	}
 	
 	
-	public Carrier getBlueCarrier() {
-		System.err.println("DOes this get used?");
-		return myCarrier;
-	}
-	
-	
 	public Ship getShipByID(byte id) {	// searches for the ship that has the matching id
 		for (Body b: bodies)	// TODO: make this faster (maybe)
 			if (b instanceof Ship)

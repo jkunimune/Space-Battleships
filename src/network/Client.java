@@ -77,7 +77,6 @@ public class Client implements Runnable {
 				return;
 			}
 		}
-		System.out.println("BAI");
 	}
 	
 	

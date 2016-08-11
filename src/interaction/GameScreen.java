@@ -175,7 +175,11 @@ public class GameScreen extends JPanel {
 	
 	
 	private void drawPregame(Graphics2D g) {	// draw the ships being placed
-		// TODO: Draw available ships and held ship
+		if (((ShipPlacer) listener).getHeldShip() != null) {
+			final BufferedImage img = sprites.get(Ship.shipSprite(((ShipPlacer) listener).getHeldShip()));
+			g.drawImage(img, listener.getX()-img.getWidth()/2, listener.getY()-img.getHeight()/2, null);
+		}
+		// TODO: Draw available ships
 	}
 	
 	

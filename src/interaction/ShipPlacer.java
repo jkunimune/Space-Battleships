@@ -21,6 +21,7 @@
  */
 package interaction;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import mechanics.Battlefield;
 import network.Protocol;
@@ -41,10 +42,15 @@ public class ShipPlacer extends Controller {
 	public ShipPlacer(GameScreen gs, Battlefield bf) {
 		super(gs, bf);
 		
-		heldShip = "Carrier";
+		heldShip = null;
 		numShips = 0;
 	}
 	
+	
+	
+	public String getHeldShip() {
+		return heldShip;
+	}
 	
 	
 	@Override
@@ -55,11 +61,29 @@ public class ShipPlacer extends Controller {
 			final byte id = game.getIDs()[numShips];
 			
 			game.receive(Protocol.writePlacement(id, heldShip, sx, sy));
+			heldShip = null;
 			numShips ++;
 			
 			if (numShips == 5)
 				view.startGame();
 		}
+	}
+	
+	
+	@Override
+	public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+			heldShip = null;
+		else if (e.getKeyCode() == KeyEvent.VK_A)
+			heldShip = "carrier";
+		else if (e.getKeyCode() == KeyEvent.VK_S)
+			heldShip = "battleship";
+		else if (e.getKeyCode() == KeyEvent.VK_D)
+			heldShip = "scout";
+		else if (e.getKeyCode() == KeyEvent.VK_F)
+			heldShip = "radar";
+		else if (e.getKeyCode() == KeyEvent.VK_G)
+			heldShip = "steamship";
 	}
 
 }

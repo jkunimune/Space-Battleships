@@ -202,5 +202,26 @@ public abstract class Ship extends PhysicalBody {
 		else
 			return null;
 	}
+	
+	
+	public static String shipSprite(String type) {	// return the sprite name for this type of ship
+		if (type.equalsIgnoreCase("Carrier"))
+			return "ship_carrier_b";
+		
+		else if (type.equalsIgnoreCase("Battleship"))
+			return "ship_battleship_b";
+		
+		else if (type.equalsIgnoreCase("Scout"))
+			return "ship_scout_b";
+		
+		else if (type.equalsIgnoreCase("Radar"))
+			return "ship_radar_b";
+		
+		else if (type.equalsIgnoreCase("Steamship"))
+			return "ship_steamship_b";
+		
+		else
+			return null;
+	}
 
 }
