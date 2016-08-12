@@ -62,7 +62,7 @@ public class GameScreen extends JPanel {
 	private static final Color MSG_COLOR = new Color(250, 245, 250);
 	private static final Font MSG_FONT = new Font("Comic Sans MS", Font.ITALIC, 64);
 	
-	private static final int SHIP_SPACING = 52;	// a little thing that handles ship placement
+	private static final int SHIP_SPACING = 46;	// a little thing that handles ship placement
 	
 	
 	private HashMap<String, BufferedImage> sprites;	// the images it uses to display objects
@@ -179,7 +179,7 @@ public class GameScreen extends JPanel {
 	private void drawPregame(Graphics2D g) {	// draw the ships being placed
 		g.drawImage(icons.get("selection_basin"), 0, 0, null);		// start with some background
 		final int xc = icons.get("selection_basin").getWidth()/2;
-		int pos = SHIP_SPACING/2;
+		int pos = SHIP_SPACING/2 + 6;
 		for (byte type: Ship.ALL_TYPES) {
 			final BufferedImage img = sprites.get(Ship.shipSprite(type));	// then draw each available ship
 			g.drawImage(img, xc - img.getWidth()/2, pos - img.getHeight()/2, null);
