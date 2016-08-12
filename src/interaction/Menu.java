@@ -65,6 +65,7 @@ public class Menu extends JPanel {
 	
 	private HashMap<String, String[][]> menu_structure;
 	private BufferedImage buttonImg;
+	private BufferedImage inputImg;
 	private BufferedImage background;
 	
 	private Application application;
@@ -162,21 +163,15 @@ public class Menu extends JPanel {
 			g.drawString(component[2], xs, ys);
 		}
 		else if (component[0].equals("inpt")) {	// text input
+			final BufferedImage img = inputImg;
+			final int xi = this.getWidth()/2 - img.getWidth()/2;
+			final int yi = yRel + this.getHeight()/2 - img.getHeight()/2;
+			g.drawImage(img, xi, yi, null);
 			g.setFont(MONO_FONT);
-			final int ws = g.getFontMetrics().stringWidth("_")*30;
-			final int hs = g.getFontMetrics().getHeight();
-			final int xs = this.getWidth()/2 - ws/2;
-			final int ys = yRel + this.getHeight()/2 + hs/2;
-			final int wr = ws + 12;
-			final int hr = hs + 12;
-			final int xr = xs - 6;
-			final int yr = ys - hs - 6;
+			final int xs = this.getWidth()/2 - img.getWidth()/2 + 8;
+			final int ys = yRel + this.getHeight()/2 + g.getFontMetrics().getHeight()/4;
 			g.setColor(Color.WHITE);
-			g.fillRect(xr, yr, wr, hr);
-			g.setColor(Color.BLACK);
-			g.fillRect(xr+2, yr+2, wr-4, hr-4);
-			g.setColor(Color.WHITE);
-			g.drawString(component[2], xs, ys - hs/4);
+			g.drawString(component[2], xs, ys);
 		}
 	}
 	
@@ -184,9 +179,10 @@ public class Menu extends JPanel {
 	private void loadImages() {
 		try {
 			buttonImg = ImageIO.read(new File("assets/images/menu/button.png"));
+			inputImg = ImageIO.read(new File("assets/images/menu/input.png"));
 			background = ImageIO.read(new File("assets/images/menu/background.png"));
 		} catch (IOException e) {
-			System.err.println("Gah! Where's background.png? It's supposed to be in assets/images/menu/! Actually, you may or may not be missing button.png as well. Oh, well, I guess we'll just continue without 'em.");
+			System.err.println("Gah! Where's background.png? It's supposed to be in assets/images/menu/! Actually, you may or may not be missing button.png and/or input.png as well. Oh, well, I guess we'll just continue without 'em.");
 		}
 	}
 	

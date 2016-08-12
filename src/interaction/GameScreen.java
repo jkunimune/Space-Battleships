@@ -62,6 +62,8 @@ public class GameScreen extends JPanel {
 	private static final Color MSG_COLOR = new Color(250, 245, 250);
 	private static final Font MSG_FONT = new Font("Comic Sans MS", Font.ITALIC, 64);
 	
+	private static final int SHIP_SPACING = 52;	// a little thing that handles ship placement
+	
 	
 	private HashMap<String, BufferedImage> sprites;	// the images it uses to display objects
 	private HashMap<String, BufferedImage> icons;
@@ -175,11 +177,19 @@ public class GameScreen extends JPanel {
 	
 	
 	private void drawPregame(Graphics2D g) {	// draw the ships being placed
-		if (((ShipPlacer) listener).getHeldShip() != -1) {
+		g.drawImage(icons.get("selection_basin"), 0, 0, null);		// start with some background
+		final int xc = icons.get("selection_basin").getWidth()/2;
+		int pos = SHIP_SPACING/2;
+		for (byte type: Ship.ALL_TYPES) {
+			final BufferedImage img = sprites.get(Ship.shipSprite(type));	// then draw each available ship
+			g.drawImage(img, xc - img.getWidth()/2, pos - img.getHeight()/2, null);
+			pos += SHIP_SPACING;
+		}
+		
+		if (((ShipPlacer) listener).getHeldShip() != -1) {	// then draw the ship in the user's hand
 			final BufferedImage img = sprites.get(Ship.shipSprite(((ShipPlacer) listener).getHeldShip()));
 			g.drawImage(img, listener.getX()-img.getWidth()/2, listener.getY()-img.getHeight()/2, null);
 		}
-		// TODO: Draw available ships
 	}
 	
 	
@@ -362,12 +372,34 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	public byte getMousePos(Point mCoords, double t) {	// decides which, if any, button the mouse is currently on
+	public byte getMousePos(Point mCoords, double t) {	// decides which, if any, button/object the mouse is currently on
 		return getMousePos(mCoords.x, mCoords.y, t);
 	}
 	
 	
-	public byte getMousePos(int x, int y, double t) {	// decides which, if any, button the mouse is currently on
+	public byte getMousePos(int x, int y) {	// decides which, if any, button/object the mosue is currently on
+		return getMousePosPreGame(x, y);
+	}
+	
+	
+	public byte getMousePos(int x, int y, double t) {	// decides which, if any, button/object the mouse is currently on
+		if (gameStarted)	return getMousePosInGame(x, y, t);
+		else				return getMousePosPreGame(x, y);
+	}
+	
+	
+	public byte getMousePosPreGame(int x, int y) {	// decides which, if any, button/object the mouse is currently one
+		if (x > icons.get("selection_basin").getWidth())
+			return -1;	// empty space
+		final int i = y/SHIP_SPACING;
+		if (i < Ship.ALL_TYPES.length)
+			return Ship.ALL_TYPES[i];
+		else
+			return -1;
+	}
+	
+	
+	public byte getMousePosInGame(int x, int y, double t) {	// decides which, if any, button/object the mouse is currently on
 		final int r2 = 190000;
 		if (Math.pow(x, 2)*3 + Math.pow(y, 2) < r2)				return -2;	// move button
 		if (Math.pow(x, 2)*3 + Math.pow(y-800, 2) < r2)			return -3;	// shoot button

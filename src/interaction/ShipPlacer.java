@@ -54,14 +54,23 @@ public class ShipPlacer extends Controller {
 	}
 	
 	
+	public void setHeldShip(byte newShip) {
+		heldShip = newShip;
+	}
+	
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (heldShip != -1) {
+		final byte mpos = view.getMousePos(x, y, System.currentTimeMillis());
+		if (mpos != -1) {
+			setHeldShip(mpos);
+		}
+		else if (heldShip != -1) {
 			final double sx = view.spaceXFscreenX(x);
 			final double sy = view.spaceYFscreenY(y);
 			final byte id = game.getIDs()[numShips];
 			
-			game.receive(Protocol.writePlacement(id, heldShip, sx, sy));
+			game.receive(Protocol.writePlacement(id, getHeldShip(), sx, sy));
 			heldShip = -1;
 			numShips ++;
 			

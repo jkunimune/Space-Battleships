@@ -38,7 +38,6 @@ public class Planet extends PhysicalBody {
 		super(x0, y0, 0, 0, time, space);
 		name = newName;
 		radius = r;
-		// TODO Auto-generated constructor stub
 	}
 	
 	

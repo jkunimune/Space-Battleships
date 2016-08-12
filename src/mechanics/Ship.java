@@ -38,24 +38,25 @@ public abstract class Ship extends PhysicalBody {
 	public static final byte RADAR = 3;
 	public static final byte STEAMSHIP = 4;
 	
+	public static final byte[] ALL_TYPES = {CARRIER, BATTLESHIP, SCOUT, RADAR, STEAMSHIP};
+	
 	
 	public static final double MAX_H_VALUE = 1.5*Univ.MJ;	// maximum health
 	public static final double MAX_E_VALUE = 2.0*Univ.MJ;	// maximum energy
 	
-	public static final double RECHARGE_RATE = 50*Univ.kW;
+	public static final double RECHARGE_RATE = 50*Univ.kW;	// solar panel power
 	
-	public static final double MOVEMENT_COST = 0.5*Univ.MJ;
-	public static final double LASER_ENERGY = 1.0*Univ.MJ;
+	public static final double MOVEMENT_COST = 0.5*Univ.MJ;	// minimum movement energy requirement
+	public static final double LASER_ENERGY = 1.0*Univ.MJ;	// minimum laser energy requirement
 	
 	
 	private boolean isBlue;	// whether it is blue or red
-	
 	protected byte id;		// an identifier for this particular ship
 	
-	protected ArrayList<double[]> health;
+	protected ArrayList<double[]> health;	// health and energy matrices
 	protected ArrayList<double[]> energy;
 	
-	protected double timeOfDeath;
+	protected double timeOfDeath;	// the time it stopped existing
 	
 	
 	
