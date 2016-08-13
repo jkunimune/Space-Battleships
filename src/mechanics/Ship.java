@@ -38,7 +38,7 @@ public abstract class Ship extends PhysicalBody {
 	public static final byte RADAR = 3;
 	public static final byte STEAMSHIP = 4;
 	
-	public static final byte[] ALL_TYPES = {CARRIER, BATTLESHIP, SCOUT, RADAR, STEAMSHIP};
+	public static final byte[] ALL_TYPES = { BATTLESHIP, SCOUT, RADAR, STEAMSHIP, CARRIER };
 	
 	
 	public static final double MAX_H_VALUE = 1.5*Univ.MJ;	// maximum health

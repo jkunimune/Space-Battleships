@@ -49,6 +49,8 @@ public class ShipPlacer extends Controller {
 		available = new boolean[Ship.ALL_TYPES.length];
 		for (int i = 0; i < available.length; i ++)
 			available[i] = true;	// start with all ships available
+		
+		setHeldShip(Ship.CARRIER);	// pick up the carrier, since everyone must have a carrier
 	}
 	
 	
@@ -71,6 +73,8 @@ public class ShipPlacer extends Controller {
 	
 	
 	public void replaceShip() {	// set the heldShip back to -1 and set this ship available again
+		if (heldShip == Ship.CARRIER)	return;	// you can't put down a carrier
+		
 		if (heldShip >= 0) {
 			available[type2typeIdx(heldShip)] = true;
 		}
