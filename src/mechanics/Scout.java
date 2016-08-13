@@ -29,6 +29,11 @@ package mechanics;
  */
 public class Scout extends Ship {
 
+	public static final double SPECIAL_SPEED = Univ.c/4;
+	public static final double SPECIAL_COST = 1*Univ.MJ;
+	
+	
+	
 	public Scout(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
 		super(newX, newY, time, pin, blue, space);
 	}
@@ -43,7 +48,7 @@ public class Scout extends Ship {
 	
 	@Override
 	public void special(double x, double y, double t) {
-		shoot(x, y, t);
+		move(x, y, t, SPECIAL_SPEED, SPECIAL_COST);
 	}
 
 }

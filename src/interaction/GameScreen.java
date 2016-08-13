@@ -181,8 +181,10 @@ public class GameScreen extends JPanel {
 		final int xc = icons.get("selection_basin").getWidth()/2;
 		int pos = SHIP_SPACING/2 + 6;
 		for (byte type: Ship.ALL_TYPES) {
-			final BufferedImage img = sprites.get(Ship.shipSprite(type));	// then draw each available ship
-			g.drawImage(img, xc - img.getWidth()/2, pos - img.getHeight()/2, null);
+			if (((ShipPlacer) listener).isAvailable(type)) {
+				final BufferedImage img = sprites.get(Ship.shipSprite(type));	// then draw each available ship
+				g.drawImage(img, xc - img.getWidth()/2, pos - img.getHeight()/2, null);
+			}
 			pos += SHIP_SPACING;
 		}
 		
@@ -205,18 +207,18 @@ public class GameScreen extends JPanel {
 			g.drawImage(icons.get("button0_of"), 0, 0, null);
 		
 		if (active == -3)
-			g.drawImage(icons.get("button1_lt"), 0, 400, null);
+			g.drawImage(icons.get("button1_lt"), 0, this.getHeight()-400, null);
 		else if (pos == -3)
-			g.drawImage(icons.get("button1_on"), 0, 400, null);
+			g.drawImage(icons.get("button1_on"), 0, this.getHeight()-400, null);
 		else
-			g.drawImage(icons.get("button1_of"), 0, 400, null);
+			g.drawImage(icons.get("button1_of"), 0, this.getHeight()-400, null);
 		
 		if (active == -4)
-			g.drawImage(icons.get("button2_lt"), 880, 400, null);
+			g.drawImage(icons.get("button2_lt"), this.getWidth()-200, this.getHeight()-400, null);
 		else if (pos == -4)
-			g.drawImage(icons.get("button2_on"), 880, 400, null);
+			g.drawImage(icons.get("button2_on"), this.getWidth()-200, this.getHeight()-400, null);
 		else
-			g.drawImage(icons.get("button2_of"), 880, 400, null);
+			g.drawImage(icons.get("button2_of"), this.getWidth()-200, this.getHeight()-400, null);
 		
 		if (activeShip == null)		return;	// if there's no selected ship, that's the end of it
 		try {								// otherwise, draw more HUD
@@ -390,25 +392,24 @@ public class GameScreen extends JPanel {
 	
 	public byte getMousePosPreGame(int x, int y) {	// decides which, if any, button/object the mouse is currently one
 		if (x > icons.get("selection_basin").getWidth())
-			return -1;	// empty space
-		final int i = y/SHIP_SPACING;
+			return -1;					// empty space
+		final int i = (y-6)/SHIP_SPACING;
 		if (i < Ship.ALL_TYPES.length)
-			return Ship.ALL_TYPES[i];
+			return Ship.ALL_TYPES[i];	// some kind of ship
 		else
-			return -1;
+			return -2;					// selection basin
 	}
 	
 	
 	public byte getMousePosInGame(int x, int y, double t) {	// decides which, if any, button/object the mouse is currently on
-		final int r2 = 190000;
-		if (Math.pow(x, 2)*3 + Math.pow(y, 2) < r2)				return -2;	// move button
-		if (Math.pow(x, 2)*3 + Math.pow(y-800, 2) < r2)			return -3;	// shoot button
-		if (Math.pow(x-1280, 2)*3 + Math.pow(y-800, 2) < r2)	return -4;	// special button
+		if (x < 200   && y < 400)	return -2;	// move button
+		if (x < 200   && y >= 400)	return -3;	// shoot button
+		if (x >= 1080 && y >= 400)	return -4;	// special button
 		for (Body b: game.getBodies())
 			if (b instanceof Ship)
 				if (((Ship) b).isBlue())
 				if (Math.hypot(x-screenXFspaceX(b.xValAt(t)),
-					           y-screenYFspaceY(b.yValAt(t))) < 15)
+					           y-screenYFspaceY(b.yValAt(t))) < 20)
 					return ((Ship) b).getID();	// a ship
 		return -1;	// empty space
 	}

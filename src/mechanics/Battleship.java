@@ -30,6 +30,10 @@ package mechanics;
  */
 public class Battleship extends Ship {
 
+	public static final double SPECIAL_ENERGY = 1.5*Univ.MJ;
+	
+	
+	
 	public Battleship(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
 		super(newX, newY, time, pin, blue, space);
 	}
@@ -43,8 +47,8 @@ public class Battleship extends Ship {
 	
 	
 	@Override
-	public void special(double x, double y, double t) {	// for its special attack, the Battleship shoots a superlaser
-		final double nrg = 1.5*Univ.MJ;
+	public void special(double x, double y, double t) {	// for its special attack, the Battleship shoots a super-laser
+		final double nrg = SPECIAL_ENERGY;
 		if (canExpend(nrg, t)) {
 			final double theta = Math.atan2(y-yValAt(t),x-xValAt(t));
 			

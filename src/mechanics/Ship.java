@@ -45,6 +45,7 @@ public abstract class Ship extends PhysicalBody {
 	public static final double MAX_E_VALUE = 2.0*Univ.MJ;	// maximum energy
 	
 	public static final double RECHARGE_RATE = 50*Univ.kW;	// solar panel power
+	public static final double MOVEMENT_SPEED = Univ.c/10;
 	
 	public static final double MOVEMENT_COST = 0.5*Univ.MJ;	// minimum movement energy requirement
 	public static final double LASER_ENERGY = 1.0*Univ.MJ;	// minimum laser energy requirement
@@ -105,14 +106,19 @@ public abstract class Ship extends PhysicalBody {
 	
 	
 	public void move(double x, double y, double t) {	// moves to the point x,y at a speed of c/10
-		if (canExpend(MOVEMENT_COST, t)) {
+		move(x, y, t, MOVEMENT_SPEED, MOVEMENT_COST);
+	}
+	
+	
+	public void move(double x, double y, double t, double v, double E) {	// moves to the point x,y at a speed of v
+		if (canExpend(E, t)) {
 			for (int i = pos.size()-1; i >= 0; i --) {	// first, clear any movement after this order
 				if (pos.get(i)[0] >= t)	pos.remove(i);
 				else					break;
 			}
 			final double x0 = xValAt(t);	// calculate the initial coordinates
 			final double y0 = yValAt(t);
-			final double delT = Math.hypot(x-x0, y-y0)/(Univ.c/10);	// the duration of the trip
+			final double delT = Math.hypot(x-x0, y-y0)/v;	// the duration of the trip
 			
 			double[] newPos = {t, x0, y0, (x-x0)/delT, (y-y0)/delT};	// add a segment for the motion
 			pos.add(newPos);

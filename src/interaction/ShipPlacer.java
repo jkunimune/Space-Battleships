@@ -35,8 +35,9 @@ import network.Protocol;
  */
 public class ShipPlacer extends Controller {
 
-	private byte heldShip;		// the type of ship we hold
-	private int numShips;		// the number of ships we have placed
+	private byte heldShip;			// the type of ship we hold
+	private int numShips;			// the number of ships we have placed
+	private boolean[] available;	// which ship classes are still available
 	
 	
 	
@@ -45,6 +46,9 @@ public class ShipPlacer extends Controller {
 		
 		heldShip = -1;
 		numShips = 0;
+		available = new boolean[Ship.ALL_TYPES.length];
+		for (int i = 0; i < available.length; i ++)
+			available[i] = true;	// start with all ships available
 	}
 	
 	
@@ -54,15 +58,51 @@ public class ShipPlacer extends Controller {
 	}
 	
 	
-	public void setHeldShip(byte newShip) {
-		heldShip = newShip;
+	public void setHeldShip(byte type) {	// set the held ship to a certain type
+		setHeldShip(type2typeIdx(type));
+	}
+	
+	
+	public void setHeldShip(int typeIdx) {	// set the held ship to the type at a certain index
+		if (available[typeIdx])
+			heldShip = Ship.ALL_TYPES[typeIdx];
+		available[typeIdx] = false;
+	}
+	
+	
+	public void replaceShip() {	// set the heldShip back to -1 and set this ship available again
+		if (heldShip >= 0) {
+			available[type2typeIdx(heldShip)] = true;
+		}
+		heldShip = -1;
+	}
+	
+	
+	public boolean isAvailable(byte type) {
+		return isAvailable(type2typeIdx(type));
+	}
+	
+	
+	public boolean isAvailable(int typeIdx) {	// has this type of ship been placed yet?
+		return available[typeIdx];
+	}
+	
+	
+	private int type2typeIdx(byte type) {	// perform a tiny search for this type in Ship.ALL_TYPES
+		for (int i = 0; i < Ship.ALL_TYPES.length; i ++) 
+			if (Ship.ALL_TYPES[i] == type)
+				return i;	//XXX: I'm thinking there's probably a better way to do this
+		return -1;	// if the type does not exist
 	}
 	
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		final byte mpos = view.getMousePos(x, y, System.currentTimeMillis());
-		if (mpos != -1) {
+		if (mpos < -1) {
+			replaceShip();
+		}
+		else if (mpos > -1) {
 			setHeldShip(mpos);
 		}
 		else if (heldShip != -1) {
@@ -83,17 +123,17 @@ public class ShipPlacer extends Controller {
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
-			heldShip = -1;
+			replaceShip();
 		else if (e.getKeyCode() == KeyEvent.VK_A)
-			heldShip = Ship.CARRIER;
+			setHeldShip(0);
 		else if (e.getKeyCode() == KeyEvent.VK_S)
-			heldShip = Ship.BATTLESHIP;
+			setHeldShip(1);
 		else if (e.getKeyCode() == KeyEvent.VK_D)
-			heldShip = Ship.SCOUT;
+			setHeldShip(2);
 		else if (e.getKeyCode() == KeyEvent.VK_F)
-			heldShip = Ship.RADAR;
+			setHeldShip(3);
 		else if (e.getKeyCode() == KeyEvent.VK_G)
-			heldShip = Ship.STEAMSHIP;
+			setHeldShip(4);
 	}
 
 }
