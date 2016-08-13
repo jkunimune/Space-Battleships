@@ -52,6 +52,7 @@ public class Connection implements Runnable {
 	protected Socket socket;
 	protected DataOutputStream out;
 	protected DataInputStream in;
+	protected double offset;
 	
 	protected ServerSocket ss;
 	
@@ -105,6 +106,19 @@ public class Connection implements Runnable {
 				
 				out = new DataOutputStream(socket.getOutputStream());	// then create out and in
 				in = new DataInputStream(socket.getInputStream());
+				
+				if (type == HOST) {							// finally, calculate offset
+					long start = System.currentTimeMillis();
+					out.writeLong(start);
+					long middle = in.readLong();
+					long end = System.currentTimeMillis();
+					offset = start/2.0 + end/2.0 - middle;
+				}
+				else if (type == CLIENT) {
+					in.readLong();
+					out.writeLong(System.currentTimeMillis());
+					offset = 0;
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -135,6 +149,12 @@ public class Connection implements Runnable {
 	public DataInputStream getInput() {
 		if (type == DUMMY)	return null;
 		return in;
+	}
+	
+	
+	public double getOffset() {
+		if (type == DUMMY)	return 0.0;
+		return offset;
 	}
 	
 	

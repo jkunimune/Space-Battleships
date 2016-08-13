@@ -127,8 +127,8 @@ public final class Protocol {
 	}
 	
 	
-	public static double getOT(String data) {	// when was the order given?
-		return Double.parseDouble(data.substring(45));
+	public static double getOT(String data, double offset) {	// when was the order given?
+		return Double.parseDouble(data.substring(45)) + offset;
 	}
 	
 	/* END ORDER-SPECIFIC METHODS */

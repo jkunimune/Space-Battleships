@@ -65,7 +65,7 @@ public class Application {
 	
 	
 	public void startGame(Connection c) {	// either join or host a game
-		Battlefield bf = new Battlefield(c.getOutput(), c.isHost());
+		Battlefield bf = new Battlefield(c.getOutput(), c.getOffset(), c.isHost());
 		lookAt(bf);
 		Client.startListening(c.getInput(), bf);
 	}

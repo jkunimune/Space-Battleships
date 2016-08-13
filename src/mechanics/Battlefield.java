@@ -45,13 +45,13 @@ public class Battlefield {
 	private DataOutputStream out;		// the stream to write all events to
 	
 	private double endGame;		// the time the game ended
-	
-	private byte[] blueIDs;				// the IDs of the ships we own
+	private byte[] blueIDs;		// the IDs of the ships we own
+	private double offset;		// the time offset for network conversions
 	
 	public String message;				// a public phrase for the GameScreen to print out
 	
 	
-	public Battlefield(DataOutputStream dos, boolean host) {
+	public Battlefield(DataOutputStream dos, double dt, boolean host) {
 		bodies = new ArrayList<PhysicalBody>();
 		out = dos;
 		endGame = Double.POSITIVE_INFINITY;
@@ -185,6 +185,11 @@ public class Battlefield {
 	
 	public byte[] getIDs() {
 		return blueIDs;
+	}
+	
+	
+	public double getOffset() {
+		return offset;
 	}
 
 }
