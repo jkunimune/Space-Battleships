@@ -68,8 +68,9 @@ public class Menu extends JPanel {
 	private BufferedImage inputImg;
 	private BufferedImage background;
 	
-	private Application application;
+	private Main application;
 	private MenuListener listener;
+	private Connection queuedGame;
 	
 	private Canvas canvs;
 	private BufferStrategy strat;
@@ -78,7 +79,7 @@ public class Menu extends JPanel {
 	
 	
 	
-	public Menu(int w, int h, String startMenu, Application a) {
+	public Menu(int w, int h, String startMenu, Main a) {
 		super();
 		canvs = new Canvas();
 		
@@ -99,13 +100,25 @@ public class Menu extends JPanel {
 		
 		menuPos = startMenu;
 		application = a;
+		queuedGame = null;
 		menuChanged = false;
 	}
 	
 	
 	
+	public void developStrategy() {	// some required stuff for graphics to not fail
+		canvs.createBufferStrategy(2);
+		strat = canvs.getBufferStrategy();
+	}
+	
+	
 	@Override
 	public void setVisible(boolean v) {	// display all buttons and GUI components
+		if (queuedGame != null) {	// if a game has started,
+			application.startGame(queuedGame);	// tell the application to display it
+			return;
+		}
+		
 		if (strat == null) {	// if strat isn't ready yet, just wait
 			super.setVisible(v);
 			return;
@@ -220,12 +233,6 @@ public class Menu extends JPanel {
 	}
 	
 	
-	public void developStrategy() {	// some required stuff for graphics to not fail
-		canvs.createBufferStrategy(2);
-		strat = canvs.getBufferStrategy();
-	}
-	
-	
 	public void addListener(MenuListener l) {
 		canvs.addMouseListener(l);
 		canvs.addMouseMotionListener(l);
@@ -302,11 +309,8 @@ public class Menu extends JPanel {
 	}
 	
 	
-	public void startGame(Connection c) {
-		if (getState().equals("seek") ||
-			getState().equals("wait") ||
-			getState().equals("test"))	// XXX: temporary fix; later it should just terminate the thread when it leaves these menus
-			application.startGame(c);
+	public void queueGame(Connection c) {	// prepare to start the game in the next loop iteration
+		queuedGame = c;
 	}
 	
 	

@@ -21,17 +21,97 @@
  */
 package interaction;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import mechanics.Battlefield;
+import network.Client;
+import network.Connection;
+
 /**
- * The driver class that runs the whole application.
+ * The driver class that handles user input, <code>JPanel</code> and <code>JFrame</code> objects, and all that jazz.
  * 
  * @author	jkunimune
- * @version 1.0
+ * @version	1.0
  */
 public class Main {
 
+	public static final byte MENU = 0;
+	public static final byte GAME = 0;
+	
+	
+	private JFrame frame;
+	private JPanel panel;
+	
+	private int width, height;
+	
+	
+	
+	public Main(int w, int h) {
+		frame = new JFrame("Space Battleships!");
+		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(w,h);
+		frame.setResizable(true);
+		frame.setFocusable(true);
+		
+		width = w;
+		height = h;
+		
+		goToMenu();
+	}
+	
+	
+	
+	public void startGame(Connection c) {	// either join or host a game
+		Battlefield bf = new Battlefield(c.getOutput(), c.getOffset(), c.isHost());
+		lookAt(bf);
+		Client.startListening(c.getInput(), bf);
+	}
+	
+	
+	public void goToMenu() {	// goes to the main menu
+		try {
+			frame.remove(panel);
+		} catch (NullPointerException e) {}
+		panel = new Menu(width, height, "main", this);
+		frame.setContentPane(panel);
+		frame.pack();
+		((Menu) panel).developStrategy();
+		frame.setVisible(true);
+	}
+	
+	
+	public void lookAt(Battlefield field) {	// sets the panel to a GameScreen focused on field
+		frame.remove(panel);
+		panel = new GameScreen(width, height, field, this);
+		frame.setContentPane(panel);
+		frame.pack();
+		((GameScreen) panel).developStrategy();
+		frame.setVisible(true);
+	}
+	
+	
+	public void display() {
+		panel.setVisible(true);
+	}
+	
+	
+	public String getState() {
+		try {
+			if (panel instanceof Menu)
+				return ((Menu) panel).getState();
+			return "Game";
+		} catch (NullPointerException e) {
+			return "ERROR";
+		}
+	}
+	
+	
+	
 	public static void main(String[] args) {
 	
-		Application mainWindow = new Application(1280, 800);	// open the main menu
+		Main mainWindow = new Main(1280, 800);	// open the main menu
 		
 		while (true) {								// and enter the main loop
 		

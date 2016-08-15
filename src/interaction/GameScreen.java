@@ -69,7 +69,7 @@ public class GameScreen extends JPanel {
 	private HashMap<String, BufferedImage> icons;
 	private HashMap<String, AudioClip> sounds;
 	
-	private Application main;
+	private Main application;
 	private Battlefield game;
 	private Controller listener;
 	private Ship activeShip;
@@ -80,14 +80,15 @@ public class GameScreen extends JPanel {
 	private int origX, origY;
 	private double scale;	// the variables that define the screen's position and zoom-level
 	
-	boolean gameStarted = false;	// whether we are in the game or the pregame
+	private boolean gameStarted;	// whether we are in the game or the pregame
 	
 	
 	
-	public GameScreen(int w, int h, Battlefield field, Application app) {
+	public GameScreen(int w, int h, Battlefield field, Main app) {
 		super();
+		
 		canvs = new Canvas();
-		main = app;
+		application = app;
 		game = field;
 		
 		super.add(canvs);
@@ -113,45 +114,51 @@ public class GameScreen extends JPanel {
 	
 	
 	
+	public void developStrategy() {	// some required stuff for graphics to not fail
+		canvs.createBufferStrategy(2);
+		strat = canvs.getBufferStrategy();
+		assert strat != null: "canvs.getBufferStrategy() returned null";
+	}
+	
+	
 	@Override
 	public void setVisible(boolean v) {	// draws all things and plays sounds and displays itself
-		if (strat == null) {	// if strat isn't ready yet, give it more time
-			super.setVisible(v);
-			return;
-		}
+		if (strat == null)	// if we haven't finished our initialization yet (something about needing a valid peer?)
+			return;			// skip ahead
+
 		
-		game.update();
-		if (!game.active()) {	// start by updating the game model
-			main.goToMenu();
+		game.update();			// start by updating the game model
+		if (!game.active()) {
+			application.goToMenu();
 			return;				// and quitting if the game is over
 		}
 		
-		final Graphics2D g = (Graphics2D)strat.getDrawGraphics();
+		final Graphics2D g = (Graphics2D)strat.getDrawGraphics();	// get some useful objects
 		final double t = (double)System.currentTimeMillis();
 		
-		g.drawImage(icons.get("space"), 0, 0, null);
+		g.drawImage(icons.get("space"), 0, 0, null);	// draw the background
 		
 		final List<PhysicalBody> bodies = game.getBodies();
-		for (int i = bodies.size()-1; i >= 0; i --) {
+		for (int i = bodies.size()-1; i >= 0; i --) {	// for each Body in reverse order
 			PhysicalBody b = bodies.get(i);
 			
 			if (b.existsAt(t))
-				draw(b, g, t);
+				draw(b, g, t);						// display its sprite
 			try {
-				sounds.get(b.soundName(t)).play();
-			} catch (NullPointerException e) {}
+				sounds.get(b.soundName(t)).play();	// and play its sound
+			} catch (NullPointerException e) {}		// if it has one
 		}
 		
 		if (gameStarted)
-			drawHUD(g, t);		// and the heads-up display
+			drawHUD(g, t);		// draw the heads-up display
 		else
 			drawPregame(g);		// or the pre-game HUD
 		
-		drawMessage(g, t);
+		drawMessage(g, t);		// display a message if there is one
 		
 		g.dispose();
 		strat.show();
-		super.setVisible(v);
+		super.setVisible(v);	// and finish up
 	}
 	
 	
@@ -325,15 +332,9 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	public void startGame() {	// exit pregame and begin the real battle
+	public void startGame() {	// exit pre-game and begin the real battle
 		gameStarted = true;
 		addListener(new Controller(this, game));
-	}
-	
-	
-	public void developStrategy() {	// some required stuff for graphics to not fail
-		canvs.createBufferStrategy(2);
-		strat = canvs.getBufferStrategy();
 	}
 	
 	

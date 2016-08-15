@@ -124,7 +124,7 @@ public class Connection implements Runnable {
 			}
 		}
 		
-		menu.startGame(this);
+		menu.queueGame(this);	// tell the menu to start the game
 		menu = null;
 	}
 	
