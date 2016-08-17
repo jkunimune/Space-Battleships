@@ -88,6 +88,21 @@ public class Laser extends PhysicalBody {
 	}
 	
 	
+	@Override
+	public double tprime(Body observer, double to) {	// lasers need a different algorithm for this,
+		final double c2 = Univ.c*Univ.c;				// because they travel at the speed of light
+		final double[] position = pos.get(0);
+		final double dt = position[0] - to;
+		final double dx = position[1] - observer.xValAt(to);
+		final double dy = position[2] - observer.yValAt(to);
+		final double vx = position[3];
+		final double vy = position[4];
+		final double ts = -(dx*dx + dy*dy - c2*dt*dt) / (2*vx*dx + 2*vy*dy - 2*c2*dt) + position[0];
+		if (ts < to)	return ts;
+		else			return Double.NaN;
+	}
+	
+	
 	public double EValAt(double t) {	// the energy
 		return E;
 	}

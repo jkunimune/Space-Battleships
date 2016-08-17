@@ -125,7 +125,6 @@ public class GameScreen extends JPanel {
 	public void setVisible(boolean v) {	// draws all things and plays sounds and displays itself
 		if (strat == null)	// if we haven't finished our initialization yet (something about needing a valid peer?)
 			return;			// skip ahead
-
 		
 		game.update();			// start by updating the game model
 		if (!game.active()) {
@@ -140,12 +139,15 @@ public class GameScreen extends JPanel {
 		
 		final List<PhysicalBody> bodies = game.getBodies();
 		for (int i = bodies.size()-1; i >= 0; i --) {	// for each Body in reverse order
-			PhysicalBody b = bodies.get(i);
+			final PhysicalBody b = bodies.get(i);
+			double tp;
+			if (gameStarted)	tp = game.observedTime(b, t);
+			else				tp = t;
 			
-			if (b.existsAt(t))
-				draw(b, g, t);						// display its sprite
+			if (b.existsAt(tp))
+				draw(b, g, tp);						// display its sprite
 			try {
-				sounds.get(b.soundName(t)).play();	// and play its sound
+				sounds.get(b.soundName(tp)).play();	// and play its sound
 			} catch (NullPointerException e) {}		// if it has one
 		}
 		

@@ -33,6 +33,8 @@ public interface Body {
 	public double xValAt(double t);
 
 	public double yValAt(double t);
+	
+	public double tprime(Body that, double t);
 
 	public Object soundName(double t);
 

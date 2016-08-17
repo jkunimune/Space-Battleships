@@ -95,6 +95,12 @@ public class Order extends PhysicalBody {
 	}
 	
 	
+	@Override
+	public double tprime(Body observer, double to) {	// orders are weird in that their position is different
+		return to - age(to)/2;							// from where they appear to be, so we can skip this method
+	}
+	
+	
 	private double rValAt(double t) {
 		return age(t)*Univ.c;
 	}

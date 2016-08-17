@@ -45,7 +45,7 @@ public abstract class PhysicalBody implements Body {
 	
 	
 	PhysicalBody(double x0, double y0, double vx0, double vy0, double t0, Battlefield field) {
-		double[] init = new double[5];	// each entry in pos must have five entries:
+		double[] init = new double[5];	// each array in pos must have five entries:
 		init[0] = t0;	// time
 		init[1] = x0;	// x position
 		init[2] = y0;	// y position
@@ -115,7 +115,37 @@ public abstract class PhysicalBody implements Body {
 	}
 	
 	
-	public final double dist(PhysicalBody that, double t) {	// calculates the distance to another body at a certain time
+	public double tprime(Body observer, double to) {	// calculates the time the observer sees this at
+		assert observer != null;
+		if (observer.equals(this))	return to;	// do I need this?
+		
+		final double c2 = Univ.c*Univ.c;
+		
+		double tg = to;	// guess
+		double[] position = null;
+		for (int i = pos.size()-1; i >= 0; i --) {	// iterate through pos to find the correct motion segment
+			position = pos.get(i);
+			if (position[0] <= tg)	// they should be sorted chronologically
+				break;	// calculate position based on this
+		}
+		
+		final double dt = position[0] - to;
+		final double dx = position[1] - observer.xValAt(to);
+		final double dy = position[2] - observer.yValAt(to);
+		final double vx = position[3];
+		final double vy = position[4];
+		final double vs2   = vx*vx + vy*vy - c2;
+		final double b = vx*dx + vy*dy - c2*dt;
+		final double ds2   = dx*dx + dy*dy - c2*dt*dt;
+		final double ts = (-b + Math.sqrt(b*b - vs2*ds2)) / vs2 + position[0];
+		
+		//TODO: if ts < position[0], pick a new tg
+		
+		return ts;
+	}
+	
+	
+	public final double dist(Body that, double t) {	// calculates the distance to another body at a certain time
 		return Math.hypot(this.xValAt(t)-that.xValAt(t), this.yValAt(t)-that.yValAt(t));
 	}
 	

@@ -132,19 +132,8 @@ public class Battlefield {
 	}
 	
 	
-	public void spawnShip(String info, boolean blue) {	// create a ship based on a placement string
-		final byte type = Protocol.getPType(info);
-		final double x = Protocol.getPX(info);
-		final double y = Protocol.getPY(info);
-		final byte id = Protocol.getPID(info);
-		final double t = System.currentTimeMillis();
-		Ship s = Ship.buildShip(type, x, y, t, id, blue, this);
-		
-		if (s instanceof Carrier) {
-			if (s.isBlue())	myCarrier = (Carrier) s;
-			else			yourCarrier = (Carrier) s;
-		}
-		spawn(s);
+	public double observedTime(Body b, double t) {
+		return b.tprime(myCarrier, t);
 	}
 	
 	
@@ -160,6 +149,22 @@ public class Battlefield {
 		default:
 			return "ERROR: Unrecognized error code "+condition;
 		}
+	}
+	
+	
+	public void spawnShip(String info, boolean blue) {	// create a ship based on a placement string
+		final byte type = Protocol.getPType(info);
+		final double x = Protocol.getPX(info);
+		final double y = Protocol.getPY(info);
+		final byte id = Protocol.getPID(info);
+		final double t = System.currentTimeMillis();
+		Ship s = Ship.buildShip(type, x, y, t, id, blue, this);
+		
+		if (s instanceof Carrier) {
+			if (s.isBlue())	myCarrier = (Carrier) s;
+			else			yourCarrier = (Carrier) s;
+		}
+		spawn(s);
 	}
 	
 	
