@@ -65,10 +65,6 @@ text%body%Q: ... no words ...
 butn%back%Back
 
 cred
-text%titl%This
-text%body%Shouldn't
-text%titl%be
-text%body%here
 text%titl%Credits
 text%body%Initial Concept     Justin Kunimune
 text%body%       Graphics     Justin Kunimune

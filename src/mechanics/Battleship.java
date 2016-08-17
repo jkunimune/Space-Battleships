@@ -49,7 +49,7 @@ public class Battleship extends Ship {
 	@Override
 	public void special(double x, double y, double t) {	// for its special attack, the Battleship shoots a super-laser
 		final double nrg = SPECIAL_ENERGY;
-		if (canExpend(nrg, t)) {
+		if (expend(nrg, t)) {
 			final double theta = Math.atan2(y-yValAt(t),x-xValAt(t));
 			
 			final double spawnDist = Laser.rValFor(nrg);	// make sure you spawn it in front of the ship so it doesn't shoot itself

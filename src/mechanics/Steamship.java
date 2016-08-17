@@ -44,7 +44,7 @@ public class Steamship extends Ship {
 	
 	@Override
 	public void special(double x, double y, double t) {
-		if (canExpend(1.5*Univ.MJ, t)) {
+		if (expend(1.5*Univ.MJ, t)) {
 			space.spawn(new GasCloud(xValAt(t), yValAt(t), vxValAt(t), vyValAt(t), t, space));
 			playSound("woosh",t);
 		}

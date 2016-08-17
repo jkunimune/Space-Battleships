@@ -116,30 +116,31 @@ public abstract class PhysicalBody implements Body {
 	
 	
 	public double tprime(Body observer, double to) {	// calculates the time the observer sees this at
-		assert observer != null;
-		if (observer.equals(this))	return to;	// do I need this?
+		if (observer.equals(this))	return to;	// no calculations necessary when you're observing yourself
+		
+		int i;
+		for (i = pos.size()-1; i > 0; i --)	// iterate through pos to find the correct motion segment
+			if (pos.get(i)[0] <= to)	// they should be sorted chronologically
+				break;	// calculate time based on this
 		
 		final double c2 = Univ.c*Univ.c;
 		
-		double tg = to;	// guess
-		double[] position = null;
-		for (int i = pos.size()-1; i >= 0; i --) {	// iterate through pos to find the correct motion segment
+		double[] position;
+		double ts;
+		do {
 			position = pos.get(i);
-			if (position[0] <= tg)	// they should be sorted chronologically
-				break;	// calculate position based on this
-		}
-		
-		final double dt = position[0] - to;
-		final double dx = position[1] - observer.xValAt(to);
-		final double dy = position[2] - observer.yValAt(to);
-		final double vx = position[3];
-		final double vy = position[4];
-		final double vs2   = vx*vx + vy*vy - c2;
-		final double b = vx*dx + vy*dy - c2*dt;
-		final double ds2   = dx*dx + dy*dy - c2*dt*dt;
-		final double ts = (-b + Math.sqrt(b*b - vs2*ds2)) / vs2 + position[0];
-		
-		//TODO: if ts < position[0], pick a new tg
+			final double dt = position[0] - to;
+			final double dx = position[1] - observer.xValAt(to);
+			final double dy = position[2] - observer.yValAt(to);
+			final double vx = position[3];
+			final double vy = position[4];
+			final double vs2   = vx*vx + vy*vy - c2;
+			final double b = vx*dx + vy*dy - c2*dt;
+			final double ds2   = dx*dx + dy*dy - c2*dt*dt;
+			ts = (-b + Math.sqrt(b*b - vs2*ds2))/vs2 + position[0];
+			
+			i --;
+		} while (i >= 0 && ts < position[0]);
 		
 		return ts;
 	}

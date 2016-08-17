@@ -44,7 +44,7 @@ public class Radar extends Ship {
 	
 	@Override
 	public void special(double x, double y, double t) {
-		canExpend(1.0*Univ.MJ, t);
+		expend(1.0*Univ.MJ, t);
 	}
 
 }

@@ -80,7 +80,9 @@ public class GameScreen extends JPanel {
 	private int origX, origY;
 	private double scale;	// the variables that define the screen's position and zoom-level
 	
-	private boolean gameStarted;	// whether we are in the game or the pregame
+	private HashMap<Ship, Point> shipLocations;	// the last drawn positions of the ships
+	
+	private boolean gameStarted;	// whether we are in the game or the pre-game
 	
 	
 	
@@ -109,6 +111,7 @@ public class GameScreen extends JPanel {
 		origX = w/2;
 		origY = h/2;
 		scale = 1.0;
+		shipLocations = new HashMap<Ship, Point>();
 		gameStarted = false;
 	}
 	
@@ -138,18 +141,8 @@ public class GameScreen extends JPanel {
 		g.drawImage(icons.get("space"), 0, 0, null);	// draw the background
 		
 		final List<PhysicalBody> bodies = game.getBodies();
-		for (int i = bodies.size()-1; i >= 0; i --) {	// for each Body in reverse order
-			final PhysicalBody b = bodies.get(i);
-			double tp;
-			if (gameStarted)	tp = game.observedTime(b, t);
-			else				tp = t;
-			
-			if (b.existsAt(tp))
-				draw(b, g, tp);						// display its sprite
-			try {
-				sounds.get(b.soundName(tp)).play();	// and play its sound
-			} catch (NullPointerException e) {}		// if it has one
-		}
+		for (int i = bodies.size()-1; i >= 0; i --)	// for each Body in reverse order
+			draw(bodies.get(i), g, t);				// display its sprite
 		
 		if (gameStarted)
 			drawHUD(g, t);		// draw the heads-up display
@@ -165,6 +158,11 @@ public class GameScreen extends JPanel {
 	
 	
 	private void draw(Body b, Graphics2D g, double t) {	// put a picture of b on g at time t
+		if (gameStarted)					// correct for information delay
+			t = game.observedTime(b, t);
+		if (!b.existsAt(t))					// and skip it if it does not exist
+			return;
+		
 		BufferedImage img;
 		if (gameStarted && b instanceof Ship && ((Ship) b).getID() == listener.getShip())
 			img = sprites.get(b.spriteName()+"i");	// active ships have a special sprite
@@ -179,9 +177,15 @@ public class GameScreen extends JPanel {
 		} catch (java.awt.image.ImagingOpException e) {
 			return;	// I don't know the difference between these two exceptions
 		}
-		double screenX = screenXFspaceX(b.xValAt(t));	// gets coordinates of b, 
-		double screenY = screenYFspaceY(b.yValAt(t));	// and offsets appropriately
-		g.drawImage(img, (int)screenX-img.getWidth()/2, (int)screenY-img.getHeight()/2, null);
+		int screenX = screenXFspaceX(b.xValAt(t));	// gets coordinates of b,
+		int screenY = screenYFspaceY(b.yValAt(t));	// and offsets appropriately
+		g.drawImage(img, screenX - img.getWidth()/2, screenY - img.getHeight()/2, null);
+		if (b instanceof Ship)
+			shipLocations.put((Ship) b, new Point((int)screenX, (int)screenY));
+		
+		try {
+			sounds.get(b.soundName(t)).play();	// finally, play its sound
+		} catch (NullPointerException e) {}		// if it has one
 	}
 	
 	
@@ -238,6 +242,9 @@ public class GameScreen extends JPanel {
 			AffineTransformOp op;
 			BufferedImage mask;
 			
+			if (gameStarted)	// adjust for information delay
+				t = game.observedTime(activeShip, t);
+			
 			final double hTheta = Math.PI/2 - activeShip.hValAt(t)/Ship.MAX_H_VALUE*Math.PI/2;
 			at = new AffineTransform();			// start with an AffineTransform
 			at.rotate(hTheta, 200, 200);		// set it to rotate based on health
@@ -251,7 +258,7 @@ public class GameScreen extends JPanel {
 			op = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 			mask = op.filter(icons.get("energy_mask"), null).getSubimage(0, 0, 200, 200);
 			g.drawImage(mask, hudPos.x, hudPos.y, null);
-		} catch (NullPointerException e) {}	// it might throw a NullPointerException if the controller modifies activeShip at the wrong moment
+		} catch (NullPointerException e) {}	// it might throw a NullPointerException if listener modifies activeShip at the wrong moment
 	}
 	
 	
@@ -408,12 +415,16 @@ public class GameScreen extends JPanel {
 		if (x < 200   && y < 400)	return -2;	// move button
 		if (x < 200   && y >= 400)	return -3;	// shoot button
 		if (x >= 1080 && y >= 400)	return -4;	// special button
-		for (Body b: game.getBodies())
-			if (b instanceof Ship)
-				if (((Ship) b).isBlue())
-				if (Math.hypot(x-screenXFspaceX(b.xValAt(t)),
-					           y-screenYFspaceY(b.yValAt(t))) < 20)
-					return ((Ship) b).getID();	// a ship
+		for (Body b: game.getBodies()) {
+			if (b instanceof Ship) {
+				if (((Ship) b).isBlue()) {
+					final Point p = shipLocations.get(b);
+					if (p != null)
+						if (Math.hypot(x - p.x, y - p.y) < 20)
+							return ((Ship) b).getID();	// a ship
+				}
+			}
+		}
 		return -1;	// empty space
 	}
 	

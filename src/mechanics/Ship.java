@@ -66,8 +66,8 @@ public abstract class Ship extends PhysicalBody {
 		id = pin;
 		isBlue = blue;
 		
-		double[] hInit = {t, 1.5*Univ.MJ};	// max health and energy at time of creation
-		double[] eInit = {t, 5*Univ.MJ};
+		double[] hInit = {t, MAX_H_VALUE};	// max health and energy at time of creation
+		double[] eInit = {t, MAX_E_VALUE};
 		health = new ArrayList<double[]>(1);
 		energy = new ArrayList<double[]>(1);
 		health.add(hInit);
@@ -88,20 +88,7 @@ public abstract class Ship extends PhysicalBody {
 	
 	@Override
 	public boolean existsAt(double t) {
-		return super.existsAt(t) && t < timeOfDeath;
-	}
-	
-	
-	public void shoot(double x, double y, double t) {	// shoots a 1 megajoule laser at time t
-		if (canExpend(LASER_ENERGY, t)) {
-			final double theta = Math.atan2(y-yValAt(t),x-xValAt(t));
-			final double spawnDist = Laser.rValFor(LASER_ENERGY) + 1*Univ.m;	// make sure you spawn it in front of the ship so it doesn't shoot itself
-			space.spawn(new Laser(xValAt(t) + spawnDist*Math.cos(theta),
-								  yValAt(t) + spawnDist*Math.sin(theta),
-								  theta, t, space, LASER_ENERGY));
-			
-			playSound("pew", t);	// play the pew pew sound
-		}
+		return t < timeOfDeath;
 	}
 	
 	
@@ -111,7 +98,7 @@ public abstract class Ship extends PhysicalBody {
 	
 	
 	public void move(double x, double y, double t, double v, double E) {	// moves to the point x,y at a speed of v
-		if (canExpend(E, t)) {
+		if (expend(E, t)) {
 			for (int i = pos.size()-1; i >= 0; i --) {	// first, clear any movement after this order
 				if (pos.get(i)[0] >= t)	pos.remove(i);
 				else					break;
@@ -128,6 +115,19 @@ public abstract class Ship extends PhysicalBody {
 			playSound("blast", t);			// then make it play the blast sound at the beginning and end
 			clearSoundsAfter(t);
 			playSound("blast", t+delT);
+		}
+	}
+	
+	
+	public void shoot(double x, double y, double t) {	// shoots a 1 megajoule laser at time t
+		if (expend(LASER_ENERGY, t)) {
+			final double theta = Math.atan2(y-yValAt(t),x-xValAt(t));
+			final double spawnDist = Laser.rValFor(LASER_ENERGY) + 1*Univ.m;	// make sure you spawn it in front of the ship so it doesn't shoot itself
+			space.spawn(new Laser(xValAt(t) + spawnDist*Math.cos(theta),
+								  yValAt(t) + spawnDist*Math.sin(theta),
+								  theta, t, space, LASER_ENERGY));
+			
+			playSound("pew", t);	// play the pew pew sound
 		}
 	}
 	
@@ -166,7 +166,7 @@ public abstract class Ship extends PhysicalBody {
 	}
 	
 	
-	public boolean canExpend(double amount, double t) {	// takes some out of your energy
+	public boolean expend(double amount, double t) {	// takes some out of your energy
 		double[] newEVal = {t, eValAt(t)-amount};
 		if (newEVal[1] >= 0) {
 			energy.add(newEVal);
