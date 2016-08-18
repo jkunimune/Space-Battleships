@@ -22,7 +22,7 @@
 package mechanics;
 
 /**
- * A signal that controls the behaviour of ships.
+ * A signal that controls the behaviour of <code>Ship</code> objects.
  * 
  * @author	jkunimune
  * @version	1.0

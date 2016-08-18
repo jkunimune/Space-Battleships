@@ -160,6 +160,11 @@ public class GameScreen extends JPanel {
 	private void draw(Body b, Graphics2D g, double t) {	// put a picture of b on g at time t
 		if (gameStarted)					// correct for information delay
 			t = game.observedTime(b, t);
+		
+		try {
+			sounds.get(b.soundName(t)).play();	// now, play its sound
+		} catch (NullPointerException e) {}		// if it has one
+		
 		if (!b.existsAt(t))					// and skip it if it does not exist
 			return;
 		
@@ -182,10 +187,6 @@ public class GameScreen extends JPanel {
 		g.drawImage(img, screenX - img.getWidth()/2, screenY - img.getHeight()/2, null);
 		if (b instanceof Ship)
 			shipLocations.put((Ship) b, new Point((int)screenX, (int)screenY));
-		
-		try {
-			sounds.get(b.soundName(t)).play();	// finally, play its sound
-		} catch (NullPointerException e) {}		// if it has one
 	}
 	
 	

@@ -22,37 +22,35 @@
 package mechanics;
 
 /**
- * A simple class to hold universal values and constants.
+ * A meaningless speck with random velocity that exists solely for aesthetic appeal
  * 
  * @author	jkunimune
  * @version	1.0
  */
-public class Univ {
+public class Debris extends PhysicalBody {
 
-	/*length*/
-	public static final double pix = 1.0;			// pixel (base unit)
-	public static final double m = 0.0000008;		// meter
-	public static final double km = 1000*m;			// kilometer
-	public static final double ft = 0.3048*m;		// foot
-	public static final double mi = 5280*ft;		// mile
-	/*time*/
-	public static final double ms = 1.0;			// millisecond (base unit)
-	public static final double s = 1000.0;			// second
-	/*speed*/
-	public static final double c = 299792458*m/s;	// speed of light
-	/*mass*/
-	public static final double kg = Math.pow(2,55);	// kilogram
-	/*energy*/
-	public static final double J = kg*m*m/(s*s);	// Joule
-	public static final double kJ = 1000*J;			// kiloJoule
-	public static final double MJ = 1000*kJ;		// Megajoule
-	/*power*/
-	public static final double W = J/s;				// Watt
-	public static final double kW = 1000*W;			// kiloWatt
-	public static final double MW = 1000000*W;		// Megawatt
-	/*volume*/
-	public static final double m3 = m*m*m;			// cubic meter
-	public static final double L = m3/1000;			// Litre
-	public static final double km3 = m3*1000000000;	// cubic kilometer
+	public static Debris debris(double x, double y, double th0, double t, Battlefield field) {
+		final double v0 = Univ.c/4;							// given the position, and the direction from which
+		final double vx0 = v0*Math.cos(th0);				// a ship was hit, generate some debris that could
+		final double vy0 = v0*Math.sin(th0);				// have been produced from the collision
+		final double th1 = (2*Math.PI)*Math.random();
+		final double v1 = (Univ.c/4)*Math.random();
+		final double vx1 = v1*Math.cos(th1);
+		final double vy1 = v1*Math.sin(th1);
+		return new Debris(x, y, vx0+vx1, vy0+vy1, t, field);
+	}
+	
+	
+	
+	public Debris(double x0, double y0, double vx0, double vy0, double t0, Battlefield field) {
+		super(x0, y0, vx0, vy0, t0, field);
+	}
+	
+	
+	
+	@Override
+	public String spriteName() {
+		return "debris";
+	}
 
 }

@@ -60,9 +60,11 @@ public class Laser extends PhysicalBody {
 	
 	
 	@Override
-	public void interactWith(PhysicalBody that, double t) {
+	public void interactWith(PhysicalBody that, double t) {	// lasers interact with ships by killing them
 		if (t < collidedTime && that instanceof Ship && this.dist(that,t) < r) {
 			((Ship) that).damaged(E, t);
+			for (int i = 0; i < E/(100*Univ.kJ); i ++)
+				space.spawn(Debris.debris(xValAt(t), yValAt(t), heading, t, space));
 			this.collide(t);
 		}
 	}
