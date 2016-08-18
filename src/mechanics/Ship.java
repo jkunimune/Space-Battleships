@@ -23,6 +23,12 @@ package mechanics;
 
 import java.util.ArrayList;
 
+import mechanics.ship_classes.Battleship;
+import mechanics.ship_classes.Carrier;
+import mechanics.ship_classes.Radar;
+import mechanics.ship_classes.Scout;
+import mechanics.ship_classes.Steamship;
+
 /**
  * An object that can move around and produce <code>Laser</code> objects on
  * command from the <code>Controller</code> or the <code>Client</code>.
@@ -39,6 +45,45 @@ public abstract class Ship extends PhysicalBody {
 	public static final byte STEAMSHIP = 4;
 	
 	public static final byte[] ALL_TYPES = { BATTLESHIP, SCOUT, RADAR, STEAMSHIP, CARRIER };
+	
+	
+	
+	public static Ship buildShip(byte type,	// build a new ship with type given by a string
+			double x, double y, double t, byte pin, boolean blue, Battlefield bf) {
+		switch (type) {
+		case CARRIER:
+			return new Carrier(x,y,t,pin,blue,bf);
+		case BATTLESHIP:
+			return new Battleship(x,y,t,pin,blue,bf);
+		case SCOUT:
+			return new Scout(x,y,t,pin,blue,bf);
+		case RADAR:
+			return new Radar(x,y,t,pin,blue,bf);
+		case STEAMSHIP:
+			return new Steamship(x,y,t,pin,blue,bf);
+		default:
+			return null;
+		}
+	}
+	
+	
+	public static String shipSprite(byte type) {	// return the sprite name for this type of ship
+		switch (type) {
+		case CARRIER:
+			return "ship_carrier_b";
+		case BATTLESHIP:
+			return "ship_battleship_b";
+		case SCOUT:
+			return "ship_scout_b";
+		case RADAR:
+			return "ship_radar_b";
+		case STEAMSHIP:
+			return "ship_steamship_b";
+		default:
+			return null;
+		}
+	}
+	
 	
 	
 	public static final double MAX_H_VALUE = 1.5*Univ.MJ;	// maximum health
@@ -193,44 +238,6 @@ public abstract class Ship extends PhysicalBody {
 	
 	public boolean isBlue() {
 		return isBlue;
-	}
-	
-	
-	
-	public static Ship buildShip(byte type,	// build a new ship with type given by a string
-			                     double x, double y, double t, byte pin, boolean blue, Battlefield bf) {
-		switch (type) {
-		case CARRIER:
-			return new Carrier(x,y,t,pin,blue,bf);
-		case BATTLESHIP:
-			return new Battleship(x,y,t,pin,blue,bf);
-		case SCOUT:
-			return new Scout(x,y,t,pin,blue,bf);
-		case RADAR:
-			return new Radar(x,y,t,pin,blue,bf);
-		case STEAMSHIP:
-			return new Steamship(x,y,t,pin,blue,bf);
-		default:
-			return null;
-		}
-	}
-	
-	
-	public static String shipSprite(byte type) {	// return the sprite name for this type of ship
-		switch (type) {
-		case CARRIER:
-			return "ship_carrier_b";
-		case BATTLESHIP:
-			return "ship_battleship_b";
-		case SCOUT:
-			return "ship_scout_b";
-		case RADAR:
-			return "ship_radar_b";
-		case STEAMSHIP:
-			return "ship_steamship_b";
-		default:
-			return null;
-		}
 	}
 
 }

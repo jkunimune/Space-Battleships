@@ -19,7 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package mechanics;
+package mechanics.ship_classes;
+
+import mechanics.Battlefield;
+import mechanics.Ship;
+import mechanics.Univ;
 
 /**
  * A ship with a powerful radar, capable of detecting ships anywhere on the map,

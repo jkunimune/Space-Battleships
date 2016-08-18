@@ -37,7 +37,7 @@ public class Order extends PhysicalBody {
 	private double receiptTime;	// the time this order met its target ship
 	
 	
-	Order(double x0, double y0, double t0, byte order, byte ship, double xr, double yr, Battlefield field) {
+	public Order(double x0, double y0, double t0, byte order, byte ship, double xr, double yr, Battlefield field) {
 		super(x0, y0, 0, 0, t0, field);
 		
 		orderType = order;

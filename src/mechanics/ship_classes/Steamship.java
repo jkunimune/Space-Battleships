@@ -19,38 +19,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package mechanics;
+package mechanics.ship_classes;
+
+import mechanics.Battlefield;
+import mechanics.GasCloud;
+import mechanics.Ship;
+import mechanics.Univ;
 
 /**
- * A meaningless speck with random velocity that exists solely for aesthetic appeal
+ * A ship that creates <code>GasCloud</code> objects, which confound
+ * <code>Laser</code> objects.
  * 
  * @author	jkunimune
  * @version	1.0
  */
-public class Debris extends PhysicalBody {
+public class Steamship extends Ship {
 
-	public static Debris debris(double x, double y, double th0, double t, Battlefield field) {
-		final double v0 = Univ.c/4;							// given the position, and the direction from which
-		final double vx0 = v0*Math.cos(th0);				// a ship was hit, generate some debris that could
-		final double vy0 = v0*Math.sin(th0);				// have been produced from the collision
-		final double th1 = (2*Math.PI)*Math.random();
-		final double v1 = (Univ.c/4)*Math.random();
-		final double vx1 = v1*Math.cos(th1);
-		final double vy1 = v1*Math.sin(th1);
-		return new Debris(x, y, vx0+vx1, vy0+vy1, t, field);
-	}
-	
-	
-	
-	private Debris(double x0, double y0, double vx0, double vy0, double t0, Battlefield field) {
-		super(x0, y0, vx0, vy0, t0, field);
+	public Steamship(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
+		super(newX, newY, time, pin, blue, space);
 	}
 	
 	
 	
 	@Override
 	public String spriteName() {
-		return "debris";
+		return "ship_steamship"+super.spriteName();
+	}
+	
+	
+	@Override
+	public void special(double x, double y, double t) {
+		if (expend(1.5*Univ.MJ, t)) {
+			space.spawn(new GasCloud(xValAt(t), yValAt(t), vxValAt(t), vyValAt(t), t, space));
+			playSound("woosh",t);
+		}
 	}
 
 }

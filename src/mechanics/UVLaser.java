@@ -30,12 +30,12 @@ package mechanics;
  */
 public class UVLaser extends Laser {
 
-	UVLaser(double x0, double y0, double tht, double time, Battlefield space) {
+	public UVLaser(double x0, double y0, double tht, double time, Battlefield space) {
 		super(x0, y0, tht, time, space);
 	}
 	
 	
-	UVLaser(double x0, double y0, double tht, double time, Battlefield space, double energy) {
+	public UVLaser(double x0, double y0, double tht, double time, Battlefield space, double energy) {
 		super(x0, y0, tht, time, space, energy);
 	}
 	

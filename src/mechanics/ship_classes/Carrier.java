@@ -19,8 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package mechanics;
+package mechanics.ship_classes;
 
+import mechanics.Battlefield;
+import mechanics.Order;
+import mechanics.Ship;
 import network.Protocol;
 
 /**

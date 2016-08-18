@@ -44,7 +44,7 @@ public abstract class PhysicalBody implements Body {
 	
 	
 	
-	PhysicalBody(double x0, double y0, double vx0, double vy0, double t0, Battlefield field) {
+	protected PhysicalBody(double x0, double y0, double vx0, double vy0, double t0, Battlefield field) {
 		double[] init = new double[5];	// each array in pos must have five entries:
 		init[0] = t0;	// time
 		init[1] = x0;	// x position

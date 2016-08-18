@@ -36,6 +36,20 @@ import network.Connection;
  */
 public class Main {
 
+	public static void main(String[] args) {
+		
+		Main mainWindow = new Main(1280, 800);	// open the main menu
+		
+		while (true) {								// and enter the main loop
+		
+			mainWindow.display();
+		
+		}
+	
+	}
+	
+	
+	
 	public static final byte MENU = 0;
 	public static final byte GAME = 0;
 	
@@ -105,20 +119,6 @@ public class Main {
 		} catch (NullPointerException e) {
 			return "ERROR";
 		}
-	}
-	
-	
-	
-	public static void main(String[] args) {
-	
-		Main mainWindow = new Main(1280, 800);	// open the main menu
-		
-		while (true) {								// and enter the main loop
-		
-			mainWindow.display();
-		
-		}
-	
 	}
 
 }

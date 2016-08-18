@@ -40,7 +40,7 @@ public class Laser extends PhysicalBody {
 	
 	
 	
-	Laser(double x0, double y0, double tht, double time, Battlefield space) {
+	public Laser(double x0, double y0, double tht, double time, Battlefield space) {
 		super(x0, y0, Univ.c*Math.cos(tht), Univ.c*Math.sin(tht), time, space);
 		heading = tht;
 		E = 1*Univ.MJ;
@@ -49,7 +49,7 @@ public class Laser extends PhysicalBody {
 	}
 	
 	
-	Laser(double x0, double y0, double tht, double time, Battlefield space, double energy) {
+	public Laser(double x0, double y0, double tht, double time, Battlefield space, double energy) {
 		super(x0, y0, Univ.c*Math.cos(tht), Univ.c*Math.sin(tht), time, space);
 		heading = tht;
 		E = energy;

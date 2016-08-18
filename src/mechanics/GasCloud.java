@@ -39,7 +39,7 @@ public class GasCloud extends PhysicalBody {
 	
 	
 	
-	GasCloud(double x0, double y0, double vx0, double vy0, double time, Battlefield space) {
+	public GasCloud(double x0, double y0, double vx0, double vy0, double time, Battlefield space) {
 		super(x0, y0, vx0, vy0, time, space);
 		
 		energy = new ArrayList<double[]>(1);

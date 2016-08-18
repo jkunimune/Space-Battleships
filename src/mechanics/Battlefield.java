@@ -25,6 +25,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import mechanics.ship_classes.Carrier;
 import network.Protocol;
 
 /**

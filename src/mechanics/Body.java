@@ -23,7 +23,7 @@ package mechanics;
 
 /**
  * An object with position and appearance.
- * Know subclasses: <code>PhysicalBody</code>, <code>AbstractBody</code>
+ * Know subclasses: <code>PhysicalBody</code>
  * 
  * @author	jkunimune
  * @version	1.0

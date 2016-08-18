@@ -34,28 +34,30 @@ import mechanics.Battlefield;
  */
 public class Client implements Runnable {
 
-	protected DataInputStream in;
+	public static Client startListening(DataInputStream input, Battlefield field) {	// opens a receiver and sets it listening
+		Client c = new Client(input, field);
+		new Thread(c).start();
+		return c;
+	}
 	
-	protected Battlefield field;
+	
+	
+	private DataInputStream in;
+	private Battlefield field;
 	
 	
 	
-	public Client(DataInputStream dis, Battlefield bf) {
+	private Client(DataInputStream dis, Battlefield bf) {
 		in = dis;
 		field = bf;
 	}
 	
 	
-	public Client() {	// for testing only! Clients instantiated like this will be non-functional
+	private Client() {	// for testing only! Clients instantiated like this will be non-functional
 		in = null;
 		field = null;
 	}
 	
-	
-	
-	public void setField(Battlefield bf) {	// assigns it a new battlefield
-		field = bf;
-	}
 	
 	
 	@Override
@@ -77,14 +79,6 @@ public class Client implements Runnable {
 				return;
 			}
 		}
-	}
-	
-	
-	
-	public static Client startListening(DataInputStream input, Battlefield field) {	// opens a receiver and sets it listening
-		Client c = new Client(input, field);
-		new Thread(c).start();
-		return c;
 	}
 
 }

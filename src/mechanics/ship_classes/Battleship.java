@@ -19,22 +19,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package mechanics;
+package mechanics.ship_classes;
+
+import mechanics.Battlefield;
+import mechanics.Laser;
+import mechanics.Ship;
+import mechanics.UVLaser;
+import mechanics.Univ;
 
 /**
- * A small and quick ship capable of withstanding considerable damage.
+ * A ship with powerful guns, long range, and a special ultraviolet laser that
+ * bypasses gas clouds.
  * 
  * @author	jkunimune
  * @version	1.0
  */
-public class Scout extends Ship {
+public class Battleship extends Ship {
 
-	public static final double SPECIAL_SPEED = Univ.c/4;
-	public static final double SPECIAL_COST = 1*Univ.MJ;
+	public static final double SPECIAL_ENERGY = 1.5*Univ.MJ;
 	
 	
 	
-	public Scout(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
+	public Battleship(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
 		super(newX, newY, time, pin, blue, space);
 	}
 	
@@ -42,13 +48,23 @@ public class Scout extends Ship {
 	
 	@Override
 	public String spriteName() {
-		return "ship_scout"+super.spriteName();
+		return "ship_battleship"+super.spriteName();
 	}
 	
 	
 	@Override
-	public void special(double x, double y, double t) {
-		move(x, y, t, SPECIAL_SPEED, SPECIAL_COST);
+	public void special(double x, double y, double t) {	// for its special attack, the Battleship shoots a super-laser
+		final double nrg = SPECIAL_ENERGY;
+		if (expend(nrg, t)) {
+			final double theta = Math.atan2(y-yValAt(t),x-xValAt(t));
+			
+			final double spawnDist = Laser.rValFor(nrg);	// make sure you spawn it in front of the ship so it doesn't shoot itself
+			space.spawn(new UVLaser(xValAt(t) + spawnDist*Math.cos(theta),
+									yValAt(t) + spawnDist*Math.sin(theta),
+									theta, t, space, nrg));
+			
+			playSound("pew", t);	// play the pew pew sound
+		}
 	}
 
 }

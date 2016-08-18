@@ -19,18 +19,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package mechanics;
+package mechanics.ship_classes;
+
+import mechanics.Battlefield;
+import mechanics.Ship;
+import mechanics.Univ;
 
 /**
- * A ship that creates <code>GasCloud</code> objects, which confound
- * <code>Laser</code> objects.
+ * A small and quick ship capable of withstanding considerable damage.
  * 
  * @author	jkunimune
  * @version	1.0
  */
-public class Steamship extends Ship {
+public class Scout extends Ship {
 
-	public Steamship(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
+	public static final double SPECIAL_SPEED = Univ.c/4;
+	public static final double SPECIAL_COST = 1*Univ.MJ;
+	
+	
+	
+	public Scout(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
 		super(newX, newY, time, pin, blue, space);
 	}
 	
@@ -38,16 +46,13 @@ public class Steamship extends Ship {
 	
 	@Override
 	public String spriteName() {
-		return "ship_steamship"+super.spriteName();
+		return "ship_scout"+super.spriteName();
 	}
 	
 	
 	@Override
 	public void special(double x, double y, double t) {
-		if (expend(1.5*Univ.MJ, t)) {
-			space.spawn(new GasCloud(xValAt(t), yValAt(t), vxValAt(t), vyValAt(t), t, space));
-			playSound("woosh",t);
-		}
+		move(x, y, t, SPECIAL_SPEED, SPECIAL_COST);
 	}
 
 }

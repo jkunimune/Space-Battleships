@@ -39,10 +39,35 @@ import interaction.Menu;
  */
 public class Connection implements Runnable {
 
+	public static final int PORT_NUM = 62832;
+	
+	
+	
+	public static Connection makeDummyConnection(Menu m) {	// for testing purposes only!
+		Connection c = new Connection(m);	// this Connection is non-functional
+		new Thread(c).start();
+		return c;
+	}
+	
+	
+	public static Connection hostConnection(Menu m) {	// opens a Connection as a client
+		Connection c = new Connection(PORT_NUM, m);
+		new Thread(c).start();
+		return c;
+	}
+	
+	
+	public static Connection joinConnection(Menu m, String name) {	// opens a Connection as a host
+		Connection c = new Connection(name, PORT_NUM, m);
+		new Thread(c).start();
+		return c;
+	}
+	
+	
+	
 	private static final int DUMMY = 0;
 	private static final int HOST = 1;
 	private static final int CLIENT = 2;
-	public static final int PORT_NUM = 62832;
 	
 	
 	protected byte type;
@@ -180,28 +205,6 @@ public class Connection implements Runnable {
 		return  "Socket: " + socket + "\n" +
 				"Output: " + out + "\n" +
 				"Input:  " + in;
-	}
-	
-	
-	
-	public static Connection makeDummyConnection(Menu m) {	// for testing purposes only!
-		Connection c = new Connection(m);	// this Connection is non-functional
-		new Thread(c).start();
-		return c;
-	}
-	
-	
-	public static Connection hostConnection(Menu m) {	// opens a Connection as a client
-		Connection c = new Connection(PORT_NUM, m);
-		new Thread(c).start();
-		return c;
-	}
-	
-	
-	public static Connection joinConnection(Menu m, String name) {	// opens a Connection as a host
-		Connection c = new Connection(name, PORT_NUM, m);
-		new Thread(c).start();
-		return c;
 	}
 
 }
