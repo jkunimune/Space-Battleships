@@ -133,8 +133,17 @@ public class Battlefield {
 	}
 	
 	
-	public double observedTime(Body b, double t) {
-		return b.tprime(myCarrier, t);
+	public double observedTime(Body b, double t) {	// the time at which you see this object
+		final double I = b.luminosityAt(t)/(4*Math.PI*Math.pow(dist(myCarrier, b, t), 2));
+		if (I >= Ship.VISIBILITY)	// if b is in scanner range
+			return b.tprime(myCarrier, t);
+		
+		return Double.NaN;		// return
+	}
+	
+	
+	public final double dist(Body b1, Body b2, double t) {	// calculates between two bodies
+		return Math.hypot(b1.xValAt(t)-b2.xValAt(t), b1.yValAt(t)-b2.yValAt(t));
 	}
 	
 	

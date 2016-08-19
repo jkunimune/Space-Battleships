@@ -90,10 +90,12 @@ public abstract class Ship extends PhysicalBody {
 	public static final double MAX_E_VALUE = 2.0*Univ.MJ;	// maximum energy
 	
 	public static final double RECHARGE_RATE = 50*Univ.kW;	// solar panel power
-	public static final double MOVEMENT_SPEED = Univ.c/10;
+	public static final double MOVEMENT_SPEED = Univ.c/10;	// speed of movement
 	
 	public static final double MOVEMENT_COST = 0.5*Univ.MJ;	// minimum movement energy requirement
 	public static final double LASER_ENERGY = 1.0*Univ.MJ;	// minimum laser energy requirement
+	
+	public static final double VISIBILITY = 2*Univ.fW/Univ.m2;	// minimum intensity visible
 	
 	
 	private boolean isBlue;	// whether it is blue or red
@@ -132,7 +134,14 @@ public abstract class Ship extends PhysicalBody {
 	
 	
 	@Override
-	public boolean existsAt(double t) {
+	public double luminosityAt(double t) {	// blue ships are always visible
+		if (isBlue)	return Double.POSITIVE_INFINITY;
+		else		return super.luminosityAt(t);
+	}
+	
+	
+	@Override
+	public boolean existsAt(double t) {	// unlike most things, ships existed before they were spawned
 		return t < timeOfDeath;
 	}
 	

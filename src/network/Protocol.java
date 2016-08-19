@@ -40,17 +40,17 @@ public final class Protocol {
 		return String.valueOf(PLACE) +
 				String.format("%02x", id) +
 				String.format("%02x", type) +
-				String.format("%1$20s", Double.toHexString(x)) +
-				String.format("%1$20s", Double.toHexString(y));
+				String.format("%1$21s", Double.toHexString(x)) +
+				String.format("%1$21s", Double.toHexString(y));
 	}
 	
 	
 	public static String composeOrder(byte order, byte ship, double x, double y, double t) {	// create an order String to send over the Socket
 		return String.valueOf(ORDER) +
 				String.format("%02x", order+128) + String.format("%02x", ship) +
-				String.format("%1$20s", Double.toHexString(x)) +
-				String.format("%1$20s", Double.toHexString(y)) +
-				String.format("%1$20s", Double.toHexString(t));
+				String.format("%1$21s", Double.toHexString(x)) +
+				String.format("%1$21s", Double.toHexString(y)) +
+				String.format("%1$21s", Double.toHexString(t));
 	}
 	
 	
@@ -91,12 +91,12 @@ public final class Protocol {
 	
 	
 	public static double getPX(String data) {	// where was it placed (x)?
-		return Double.parseDouble(data.substring(5, 25));
+		return Double.parseDouble(data.substring(5, 26));
 	}
 	
 	
 	public static double getPY(String data) {	// where was it placed (y)?
-		return Double.parseDouble(data.substring(25, 45));
+		return Double.parseDouble(data.substring(26, 47));
 	}
 	
 	/* END PLACEMENT-SPECIFIC METHODS */
@@ -118,17 +118,17 @@ public final class Protocol {
 	
 	
 	public static double getOX(String data) {	// where is it aimed (x)?
-		return Double.parseDouble(data.substring(5, 25));
+		return Double.parseDouble(data.substring(5, 26));
 	}
 	
 	
 	public static double getOY(String data) {	// where is it aimed (y)?
-		return Double.parseDouble(data.substring(25, 45));
+		return Double.parseDouble(data.substring(26, 47));
 	}
 	
 	
 	public static double getOT(String data, double offset) {	// when was the order given?
-		return Double.parseDouble(data.substring(45)) + offset;
+		return Double.parseDouble(data.substring(47)) + offset;
 	}
 	
 	/* END ORDER-SPECIFIC METHODS */
@@ -147,7 +147,7 @@ public final class Protocol {
 	/* METHODS THAT ONLY WORK WITH VICTORY-TYPE DATA STRINGS */
 	
 	public static byte getVCondition(String data) {	// what caused the end of the game?
-		return Byte.parseByte(data.substring(1,3), 16);
+		return Byte.parseByte(data.substring(1), 16);
 	}
 	
 	/* END VICTORY-SPECIFIC METHODS */

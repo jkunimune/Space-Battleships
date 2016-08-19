@@ -45,11 +45,16 @@ public class Univ {
 	/*energy*/
 	public static final double J = kg*m*m/(s*s);	// Joule
 	public static final double kJ = 1000*J;			// kiloJoule
-	public static final double MJ = 1000*kJ;		// Megajoule
+	public static final double MJ = 1000*kJ;		// MegaJoule
 	/*power*/
 	public static final double W = J/s;				// Watt
 	public static final double kW = 1000*W;			// kiloWatt
-	public static final double MW = 1000000*W;		// Megawatt
+	public static final double MW = 1000*kW;		// MegaWatt
+	public static final double uW = W/1000000;		// microWatt
+	public static final double fW = uW/1000000000;	// femptoWatt
+	/*area*/
+	public static final double m2 = m*m;			// square meter
+	public static final double ac = 4047*m2;		// acre
 	/*volume*/
 	public static final double m3 = m*m*m;			// cubic meter
 	public static final double L = m3/1000;			// Litre

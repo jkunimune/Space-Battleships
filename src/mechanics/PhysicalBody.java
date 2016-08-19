@@ -32,7 +32,8 @@ import java.util.ArrayList;
  */
 public abstract class PhysicalBody implements Body {
 
-	private static final double[] DEFAULT_TRANSFORM = {0.0, 1.0, 1.0};	// the default transformation (zero rotation and scale of 1)
+	private final static double[] DEFAULT_TRANSFORM = {0.0, 1.0, 1.0};	// the default transformation (zero rotation and scale of 1)
+	private final static double LUMINOSITY = 1*Univ.kW;		// the default luminosity
 	
 	protected ArrayList<double[]> pos;	// the set of positions that define the movement of this body over the course of the map
 	
@@ -146,8 +147,8 @@ public abstract class PhysicalBody implements Body {
 	}
 	
 	
-	public final double dist(Body that, double t) {	// calculates the distance to another body at a certain time
-		return Math.hypot(this.xValAt(t)-that.xValAt(t), this.yValAt(t)-that.yValAt(t));
+	public double luminosityAt(double t) {	// how bright is this object?
+		return LUMINOSITY;
 	}
 	
 	

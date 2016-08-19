@@ -66,7 +66,7 @@ public class GasCloud extends PhysicalBody {
 	
 	@Override
 	public void interactWith(PhysicalBody that, double t) {	// GasClouds interact with lasers by absorbing them
-		if (that instanceof Laser && !(that instanceof UVLaser) && this.dist(that, t) < rValAt(t)) {
+		if (that instanceof Laser && !(that instanceof UVLaser) && space.dist(this, that, t) < rValAt(t)) {
 			((Laser) that).collide(t);	// absorb the laser
 
 			final double[] newE = {t, EValAt(t)+((Laser) that).EValAt(t), EsValAt(t)};	// and deal with 

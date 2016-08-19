@@ -126,7 +126,7 @@ public class GameScreen extends JPanel {
 	
 	@Override
 	public void setVisible(boolean v) {	// draws all things and plays sounds and displays itself
-		if (strat == null)	// if we haven't finished our initialization yet (something about needing a valid peer?)
+		if (strat == null)	// if we haven't finished our initialization yet (something about a valid peer?)
 			return;			// skip ahead
 		
 		game.update();			// start by updating the game model
@@ -160,12 +160,14 @@ public class GameScreen extends JPanel {
 	private void draw(Body b, Graphics2D g, double t) {	// put a picture of b on g at time t
 		if (gameStarted)					// correct for information delay
 			t = game.observedTime(b, t);
+		if (Double.isNaN(t))				// if the thing is not visible,
+			return;							// skip it
 		
 		try {
 			sounds.get(b.soundName(t)).play();	// now, play its sound
 		} catch (NullPointerException e) {}		// if it has one
 		
-		if (!b.existsAt(t))					// and skip it if it does not exist
+		if (!b.existsAt(t))					// and skip drawing it if it does not exist
 			return;
 		
 		BufferedImage img;

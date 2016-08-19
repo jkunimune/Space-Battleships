@@ -44,7 +44,7 @@ public class Planet extends PhysicalBody {
 	
 	@Override
 	public void interactWith(PhysicalBody that, double t) {
-		if (this.dist(that, t) < radius) {
+		if (space.dist(this, that, t) < radius) {
 			if (that instanceof Ship)
 				((Ship) that).damaged(((Ship) that).hValAt(t), t);
 			else if (that instanceof Laser)
@@ -56,6 +56,12 @@ public class Planet extends PhysicalBody {
 	@Override
 	public String spriteName() {
 		return name;
+	}
+	
+	
+	@Override
+	public double luminosityAt(double t) {	// chances are, you already know where the planet is
+		return Double.POSITIVE_INFINITY;
 	}
 
 }

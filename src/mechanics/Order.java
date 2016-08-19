@@ -51,7 +51,7 @@ public class Order extends PhysicalBody {
 	
 	@Override
 	public void interactWith(PhysicalBody that, double t) {
-		if (that instanceof Ship && this.dist(that,t) < this.rValAt(t)) {
+		if (that instanceof Ship && space.dist(this,that,t) < this.rValAt(t)) {
 			if (((Ship) that).getID() == this.targetShip) {
 				switch (orderType) {
 				case -2:
