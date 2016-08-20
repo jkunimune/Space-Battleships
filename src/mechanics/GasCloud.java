@@ -31,9 +31,12 @@ import java.util.ArrayList;
  */
 public class GasCloud extends PhysicalBody {
 
+	public static final double SPEED = Univ.c/30;		// a speed related to the inital rate of expansion
+	public static final double LIFETIME = 30*Univ.s;	// a time related to the total lifetime of a cloud
+	
 	public static final double HALF_LIFE = 5*Univ.s;	// the half-life of energy in this cloud
 	public static final double LASER_ENERGY = 0.1*Univ.MJ;	// the energy required to form a laser
-	/* WARNING: laserEnergy must always be an even factor of ship-fired laser energies lest there be bugs */
+	
 	
 	protected ArrayList<double[]> energy;	// an ArrayList that keeps track of the ever-changing energy value
 	
@@ -69,8 +72,8 @@ public class GasCloud extends PhysicalBody {
 		if (that instanceof Laser && !(that instanceof UVLaser) && space.dist(this, that, t) < rValAt(t)) {
 			((Laser) that).collide(t);	// absorb the laser
 
-			final double[] newE = {t, EValAt(t)+((Laser) that).EValAt(t), EsValAt(t)};	// and deal with 
-			energy.add(newE);
+			final double[] newE = {t, this.EValAt(t)+((Laser) that).EVal(), this.EsValAt(t)};
+			energy.add(newE);	// and increase your energy
 		}
 	}
 	
@@ -89,12 +92,12 @@ public class GasCloud extends PhysicalBody {
 	}
 	
 	
-	public double rValAt(double t) {
-		return Math.sqrt(age(t)*1*Univ.s)*Univ.c/20;
-	}
+	public double rValAt(double t) {	// this equation is the result of assuming a density that decays
+		return Math.max(0, -SPEED*age(t)*Math.log(age(t)/LIFETIME));	// exponentially with distance and gas
+	}											// particles that do not interact with each other
 	
 	
-	public double EValAt(double t) {
+	public double EValAt(double t) {	// the energy stored in the gas cloud
 		for (int i = energy.size()-1; i >= 0; i --) {
 			if (energy.get(i)[0] <= t)
 				return energy.get(i)[1];
@@ -103,11 +106,11 @@ public class GasCloud extends PhysicalBody {
 	}
 	
 	
-	public double EsValAt(double t) {
+	public double EsValAt(double t) {	// the integral of the energy stored in the gas coud
 		for (int i = energy.size()-1; i >= 0; i --) {
 			final double[] state = energy.get(i);
 			if (state[0] <= t)
-				return state[2] + state[1]*(t-state[0])/HALF_LIFE;
+				return Math.max(0, state[2] + state[1]*(t-state[0])/HALF_LIFE);
 		}
 		return 0;
 	}

@@ -38,6 +38,8 @@ public class Univ {
 	/*time*/
 	public static final double ms = 1.0;			// millisecond (base unit)
 	public static final double s = 1000.0;			// second
+	public static final double min = 60*s;			// minute
+	public static final double hr = 60*min;			// hour
 	/*speed*/
 	public static final double c = 299792458*m/s;	// speed of light
 	/*mass*/

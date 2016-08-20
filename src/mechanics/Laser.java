@@ -30,7 +30,8 @@ package mechanics;
  */
 public class Laser extends PhysicalBody {
 
-	public static final double ENERGY_DENS = Math.pow(10,-13)*Univ.MJ/Univ.km3;
+	public static final double ENERGY_DENS = Math.pow(10,-13)*Univ.MJ/Univ.km3;	// a pretty absurd value, but eh
+	public static final double HALF_LIFE = 10*Univ.s;	// not really a half-life
 	
 	private double heading;	// the direction
 	protected double E;		// the energy
@@ -105,7 +106,13 @@ public class Laser extends PhysicalBody {
 	}
 	
 	
-	public double EValAt(double t) {	// the energy
+	@Override
+	public double luminosityAt(double t) {	// lasers are extremely bright
+		return E/HALF_LIFE;	// (for gameplay reasons, not scientific ones)
+	}
+	
+	
+	public double EVal() {	// the energy value
 		return E;
 	}
 	
