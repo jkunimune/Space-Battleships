@@ -422,14 +422,12 @@ public class GameScreen extends JPanel {
 		if (x < 200   && y < 400)	return -2;	// move button
 		if (x < 200   && y >= 400)	return -3;	// shoot button
 		if (x >= 1080 && y >= 400)	return -4;	// special button
-		for (Body b: game.getBodies()) {
-			if (b instanceof Ship) {
-				if (((Ship) b).isBlue()) {
-					final Point p = shipLocations.get(b);
-					if (p != null)
-						if (Math.hypot(x - p.x, y - p.y) < 20)
-							return ((Ship) b).getID();	// a ship
-				}
+		for (Ship s: game.getShips()) {
+			if (s.isBlue()) {
+				final Point p = shipLocations.get(s);
+				if (p != null)
+					if (Math.hypot(x - p.x, y - p.y) < 20)
+						return s.getID();	// a ship
 			}
 		}
 		return -1;	// empty space

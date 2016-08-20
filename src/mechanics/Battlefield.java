@@ -24,7 +24,6 @@ package mechanics;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import mechanics.ship_classes.Carrier;
 import network.Protocol;
 
@@ -41,6 +40,7 @@ public class Battlefield {
 	
 	
 	private ArrayList<PhysicalBody> bodies;	// the list of game elements
+	private ArrayList<Ship> myShips;		// the list of blue ships
 	private Carrier myCarrier;		// the main carrier
 	private Carrier yourCarrier;		// the opponent carrier
 	private DataOutputStream out;		// the stream to write all events to
@@ -54,6 +54,7 @@ public class Battlefield {
 	
 	public Battlefield(DataOutputStream dos, double dt, boolean host) {
 		bodies = new ArrayList<PhysicalBody>();
+		myShips = new ArrayList<Ship>();
 		out = dos;
 		endGame = Double.POSITIVE_INFINITY;
 		message = "";
@@ -135,11 +136,19 @@ public class Battlefield {
 	
 	
 	public double observedTime(Body b, double t) {	// the time at which you see this object
-		final double I = b.luminosityAt(t)/(4*Math.PI*Math.pow(dist(myCarrier, b, t), 2));
-		if (I >= Ship.VISIBILITY)	// if b is in scanner range
-			return b.tprime(myCarrier, t);
+		final double L4pi = b.luminosityAt(t)/(4*Math.PI);	// start calculating intensity
 		
-		return Double.NaN;		// return
+		double to = Double.NaN;
+		for (Ship s: myShips) {		// check each ship
+			final double ts = b.tprime(s, s.tprime(myCarrier, t));	// when would you see that ship see b?
+			if ((Double.isNaN(to) && !Double.isNaN(ts)) || ts > to) {	// if that ship has the best observation time (and is not NaN)
+				final double r = dist(s, b, ts);
+				if (L4pi/(r*r) >= Ship.VISIBILITY)	// check that the Body's intensity is high enough
+					to = ts;		// and then choose that time
+			}
+		}
+		
+		return to;		// return the best time
 	}
 	
 	
@@ -171,11 +180,22 @@ public class Battlefield {
 		final double t = System.currentTimeMillis();
 		Ship s = Ship.buildShip(type, x, y, t, id, blue, this);
 		
-		if (s instanceof Carrier) {
-			if (s.isBlue())	myCarrier = (Carrier) s;
-			else			yourCarrier = (Carrier) s;
+		if (s.isBlue()) {
+			myShips.add(s);
+			if (s instanceof Carrier)
+				myCarrier = (Carrier) s;
+		}
+		else {
+			if (s instanceof Carrier)
+				yourCarrier = (Carrier) s;
 		}
 		spawn(s);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public ArrayList<Ship> getShips() {	// returns a List of blue Ships
+		return (ArrayList<Ship>) myShips.clone();
 	}
 	
 	
@@ -191,10 +211,9 @@ public class Battlefield {
 	
 	
 	public Ship getShipByID(byte id) {	// searches for the ship that has the matching id
-		for (Body b: bodies)	// TODO: make this faster (maybe)
-			if (b instanceof Ship)
-				if (((Ship) b).getID() == id)
-					return (Ship) b;
+		for (Ship s: myShips)
+			if (s.getID() == id)
+				return s;
 		return null;
 	}
 	

@@ -117,7 +117,9 @@ public abstract class PhysicalBody implements Body {
 	
 	
 	public double tprime(Body observer, double to) {	// calculates the time the observer sees this at
-		if (observer.equals(this))	return to;	// no calculations necessary when you're observing yourself
+		if (this.equals(observer) ||
+				(observer.xValAt(to) == this.xValAt(to) && observer.yValAt(to) == this.yValAt(to)))
+			return to;	// no calculations necessary when you're observing yourself
 		
 		int i;
 		for (i = pos.size()-1; i > 0; i --)	// iterate through pos to find the correct motion segment
