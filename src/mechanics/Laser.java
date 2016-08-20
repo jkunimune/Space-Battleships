@@ -80,7 +80,7 @@ public class Laser extends PhysicalBody {
 	@Override
 	public double[] spriteTransform(double t) {
 		final double scale = Math.pow(E/(1*Univ.MJ), 1/3.0);
-		final double[] res = {heading, scale, scale};
+		final double[] res = {heading, scale, scale, 1.0};
 		return res;
 	}
 	

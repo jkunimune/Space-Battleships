@@ -53,6 +53,12 @@ public class GasCloud extends PhysicalBody {
 	
 	
 	@Override
+	public boolean existsAt(double t) {	// the gas cloud ceases to exist once it disperses enough
+		return super.existsAt(t) && age(t) < LIFETIME;
+	}
+	
+	
+	@Override
 	public void update(double t) {	// a GasCloud with energy will gradually release lasers
 		while (EsValAt(t) >= LASER_ENERGY) {
 			double tht = 2*Math.PI*Math.random();	// pick a random direction
@@ -87,7 +93,8 @@ public class GasCloud extends PhysicalBody {
 	@Override
 	public double[] spriteTransform(double t) {
 		final double r = rValAt(t);
-		final double[] res = {0,r/100.0,r/100.0};	// 150 is the sprite radius, so dividing by 100 draws it a little bigger
+		final double a = Math.max(0, 1 - Math.pow(age(t)/LIFETIME, 2));
+		final double[] res = {0, r/100.0,r/100.0, a};	// 150 is the sprite radius, so dividing by 100 draws it a little bigger
 		return res;
 	}
 	

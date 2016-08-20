@@ -32,7 +32,7 @@ import java.util.ArrayList;
  */
 public abstract class PhysicalBody implements Body {
 
-	private static final double[] DEFAULT_TRANSFORM = {0.0, 1.0, 1.0};	// the default transformation (zero rotation and scale of 1)
+	private static final double[] DEFAULT_TRANSFORM = {0.0, 1.0, 1.0, 1.0};	// the default transformation (zero rotation, scale of 1, 100% opacity)
 	private static final double DEFAULT_LUMINOSITY = 1*Univ.kW;		// the default luminosity
 	
 	protected ArrayList<double[]> pos;	// the set of positions that define the movement of this body over the course of the map

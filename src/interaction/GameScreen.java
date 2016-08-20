@@ -23,6 +23,7 @@ package interaction;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
+import java.awt.AlphaComposite;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -177,13 +178,13 @@ public class GameScreen extends JPanel {
 			img = sprites.get(b.spriteName());	// finds the correct sprite
 		if (img == null)
 			throw new NullPointerException("Image "+b.spriteName()+".png not found!");
+		
 		try {
-			img = executeTransformation(img, b.spriteTransform(t), b.doesScale());	// does any necessary transformations
-		} catch (java.awt.image.RasterFormatException e) {
-			return;	// if there's a problem with the transformation (probably roundoff), just skip it
-		} catch (java.awt.image.ImagingOpException e) {
-			return;	// I don't know the difference between these two exceptions
+			img = executeTransformation(g, img, b.spriteTransform(t), b.doesScale());	// does any necessary transformations
 		}
+		catch (java.awt.image.RasterFormatException e) { return; }	// if there's a problem with the transformation (probably roundoff), just skip it
+		catch (java.awt.image.ImagingOpException e) { return; }	// I don't know the difference between these two exceptions
+		
 		int screenX = screenXFspaceX(b.xValAt(t));	// gets coordinates of b,
 		int screenY = screenYFspaceY(b.yValAt(t));	// and offsets appropriately
 		g.drawImage(img, screenX - img.getWidth()/2, screenY - img.getHeight()/2, null);
@@ -281,7 +282,8 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	private BufferedImage executeTransformation(BufferedImage img, double[] params, boolean zoomScale) {	// rotozooms img based on params
+	private BufferedImage executeTransformation(Graphics2D g, BufferedImage img,
+											double[] params, boolean zoomScale) {	// rotozooms img based on params
 		double zoominess;
 		if (zoomScale)		zoominess = scale;	// the scale might affect the AffineTransform
 		else				zoominess = 1.0;
@@ -292,6 +294,8 @@ public class GameScreen extends JPanel {
 		
 		if (params[0] != 0.0)
 			at.rotate(params[0], img.getWidth()/2, img.getHeight()/2);		// rotates (if necessary)
+		
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) params[3]));	// fades
 		
 		AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 		Point size = new Point((int) (img.getWidth()*params[1]/zoominess),	// this is how big it would be if it didn't pad with zeros

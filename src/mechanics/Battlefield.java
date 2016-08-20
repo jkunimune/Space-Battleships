@@ -59,7 +59,7 @@ public class Battlefield {
 		message = "";
 		
 		double time = (double)System.currentTimeMillis();	// the current time
-		bodies.add(new Planet(0*Univ.km,0*Univ.km,43441*Univ.mi,"Jupiter",time,this));
+		bodies.add(new Planet(0, 0, 43441*Univ.mi, "Jupiter", time, this));
 		
 		if (host) {
 			byte[] temp = {0, 1, 2, 3, 4};
@@ -124,7 +124,8 @@ public class Battlefield {
 		}
 		
 		for (int i = bodies.size()-1; i >= 0; i --)
-			bodies.get(i).update(t);
+			if (bodies.get(i).existsAt(t))
+				bodies.get(i).update(t);
 	}
 	
 	

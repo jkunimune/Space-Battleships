@@ -80,7 +80,7 @@ public class Order extends PhysicalBody {
 	@Override
 	public double[] spriteTransform(double t) {
 		final double r = rValAt(t);
-		double[] res = {0,r/500.0,r/500.0};	// 250 is the sprite radius, so dividing by 250 yields the scale factor
+		double[] res = {0,r/500.0,r/500.0,1.0};	// 250 is the sprite radius, so dividing by 250 yields the scale factor
 		if (res[1] < 2)
 			return res;	// once it gets a certain size, terminate the sprite for heap space's sake
 		res[1] = 0;
