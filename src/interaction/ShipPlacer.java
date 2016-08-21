@@ -46,7 +46,7 @@ public class ShipPlacer extends Controller {
 		
 		heldShip = -1;
 		numShips = 0;
-		available = new boolean[Ship.ALL_TYPES.length];
+		available = new boolean[max(Ship.ALL_TYPES)+1];
 		for (int i = 0; i < available.length; i ++)
 			available[i] = true;	// start with all ships available
 		
@@ -60,61 +60,38 @@ public class ShipPlacer extends Controller {
 	}
 	
 	
-	public void setHeldShip(byte type) {	// set the held ship to a certain type
-		setHeldShip(type2typeIdx(type));
-	}
-	
-	
-	public void setHeldShip(int typeIdx) {	// set the held ship to the type at a certain index
-		if (available[typeIdx])
-			heldShip = Ship.ALL_TYPES[typeIdx];
-		available[typeIdx] = false;
-	}
-	
-	
-	public void replaceShip() {	// set the heldShip back to -1 and set this ship available again
+	public void setHeldShip(byte type) {	// set the held ship to the type at a certain index
 		if (heldShip == Ship.CARRIER)	return;	// you can't put down a carrier
 		
-		if (heldShip >= 0) {
-			available[type2typeIdx(heldShip)] = true;
-		}
-		heldShip = -1;
+		if (heldShip != -1)
+			available[heldShip] = true;	// put back the current ship
+		
+		if (type == -1 || available[type])
+			heldShip = type;	// and take the new one
+		if (type != -1)
+			available[type] = false;	// remove the selected ship
 	}
 	
 	
 	public boolean isAvailable(byte type) {
-		return isAvailable(type2typeIdx(type));
-	}
-	
-	
-	public boolean isAvailable(int typeIdx) {	// has this type of ship been placed yet?
-		return available[typeIdx];
-	}
-	
-	
-	private int type2typeIdx(byte type) {	// perform a tiny search for this type in Ship.ALL_TYPES
-		for (int i = 0; i < Ship.ALL_TYPES.length; i ++) 
-			if (Ship.ALL_TYPES[i] == type)
-				return i;	//XXX: I'm thinking there's probably a better way to do this
-		return -1;	// if the type does not exist
+		return available[type];
 	}
 	
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		final byte mpos = view.getMousePos(x, y, System.currentTimeMillis());
-		if (mpos < -1) {
-			replaceShip();
+		if (mpos != -2) {		// if you clicked anywhere but empty space
+			if (heldShip == mpos)	// if you clicked on the place where you picked up this one
+				setHeldShip((byte) -1);
+			else
+				setHeldShip(mpos);	// pick up a ship
 		}
-		else if (mpos > -1) {
-			setHeldShip(mpos);
-		}
-		else if (heldShip != -1) {
-			final double sx = view.spaceXFscreenX(x);
-			final double sy = view.spaceYFscreenY(y);
-			final byte id = game.getIDs()[numShips];
-			
-			game.receive(Protocol.writePlacement(id, getHeldShip(), sx, sy));
+		else if (heldShip >= 0) {	// if you clicked on empty space and are holding a ship
+			game.receive(Protocol.writePlacement(game.getIDs()[numShips],
+												 heldShip,
+												 view.spaceXFscreenX(x),
+												 view.spaceYFscreenY(y)));	// place it
 			heldShip = -1;
 			numShips ++;
 			
@@ -127,17 +104,27 @@ public class ShipPlacer extends Controller {
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
-			replaceShip();
+			setHeldShip((byte) -1);
 		else if (e.getKeyCode() == KeyEvent.VK_A)
-			setHeldShip(0);
+			setHeldShip(Ship.ALL_TYPES[0]);
 		else if (e.getKeyCode() == KeyEvent.VK_S)
-			setHeldShip(1);
+			setHeldShip(Ship.ALL_TYPES[1]);
 		else if (e.getKeyCode() == KeyEvent.VK_D)
-			setHeldShip(2);
+			setHeldShip(Ship.ALL_TYPES[2]);
 		else if (e.getKeyCode() == KeyEvent.VK_F)
-			setHeldShip(3);
+			setHeldShip(Ship.ALL_TYPES[3]);
 		else if (e.getKeyCode() == KeyEvent.VK_G)
-			setHeldShip(4);
+			setHeldShip(Ship.ALL_TYPES[4]);
+	}
+	
+	
+	
+	private final static byte max(byte[] arr) {
+		byte max = Byte.MIN_VALUE;
+		for (byte b: arr)
+			if (b > max)
+				max = b;
+		return max;
 	}
 
 }

@@ -409,12 +409,12 @@ public class GameScreen extends JPanel {
 	
 	public byte getMousePosPreGame(int x, int y) {	// decides which, if any, button/object the mouse is currently one
 		if (x > icons.get("selection_basin").getWidth())
-			return -1;					// empty space
+			return -2;					// empty space
 		final int i = (y-6)/SHIP_SPACING;
 		if (i < Ship.ALL_TYPES.length)
 			return Ship.ALL_TYPES[i];	// some kind of ship
 		else
-			return -2;					// selection basin
+			return -1;					// selection basin
 	}
 	
 	

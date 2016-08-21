@@ -48,7 +48,7 @@ public class Carrier extends Ship {
 	
 	
 	@Override
-	public void special(double x, double y, double t) {}
+	public void special(double x, double y, double t) {}	// Carriers have no special
 	
 	
 	@Override

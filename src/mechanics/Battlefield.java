@@ -140,11 +140,13 @@ public class Battlefield {
 		
 		double to = Double.NaN;
 		for (Ship s: myShips) {		// check each ship
-			final double ts = b.tprime(s, s.tprime(myCarrier, t));	// when would you see that ship see b?
-			if ((Double.isNaN(to) && !Double.isNaN(ts)) || ts > to) {	// if that ship has the best observation time (and is not NaN)
-				final double r = dist(s, b, ts);
-				if (L4pi/(r*r) >= Ship.VISIBILITY)	// check that the Body's intensity is high enough
-					to = ts;		// and then choose that time
+			if (s.existsAt(s.tprime(myCarrier, t))) {
+				final double ts = b.tprime(s, s.tprime(myCarrier, t));	// when would you see that ship see b?
+				if ((Double.isNaN(to) && !Double.isNaN(ts)) || ts > to) {	// if that ship has the best observation time (and is not NaN)
+					final double r = dist(s, b, ts);
+					if (L4pi/(r*r) >= Ship.VISIBILITY)	// check that the Body's intensity is high enough
+						to = ts;		// and then choose that time
+				}
 			}
 		}
 		
