@@ -92,7 +92,7 @@ public class Laser extends PhysicalBody {
 	
 	
 	@Override
-	public double tprime(Body observer, double to) {	// lasers need a different algorithm for this,
+	public double seenBy(Body observer, double to) {	// lasers need a different algorithm for this,
 		final double c2 = Univ.c*Univ.c;				// because they travel at the speed of light
 		final double[] position = pos.get(0);
 		final double dt = position[0] - to;

@@ -22,58 +22,30 @@
 package mechanics;
 
 /**
- * A signal that controls the behaviour of <code>Ship</code> objects.
+ * A signal that illuminates objects briefly
  * 
  * @author	jkunimune
  * @version	1.0
  */
-public class Order extends PhysicalBody {
+public class Ping extends PhysicalBody {
 
-	private byte orderType;		// the type of order
-	private byte targetShip;	// the ship being ordered
-	private double xTarg;		// the x value this order refers to
-	private double yTarg;		// the y value this order refers to
-	
-	private double receiptTime;	// the time this order met its target ship
+	public static final double FLUX = Math.pow(10, 11)*Univ.MW*Univ.km*Univ.km;	// how strong it is
+	public static final double DURATION = 10*Univ.s;
 	
 	
-	public Order(double x0, double y0, double t0, byte order, byte ship, double xr, double yr, Battlefield field) {
-		super(x0, y0, 0, 0, t0, field);
-		
-		orderType = order;
-		targetShip = ship;
-		xTarg = xr;
-		yTarg = yr;
-		
-		receiptTime = Double.POSITIVE_INFINITY;
+	private double lastUpdateRadius;	// the radius the last time update() was called
+	
+	
+	
+	public Ping(double x, double y, double t, Battlefield field) {
+		super(x, y, 0, 0, t, field);
 	}
 	
-	
-	@Override
-	public void interactWith(PhysicalBody that, double t) {
-		if (that instanceof Ship && space.dist(this,that,t) < this.rValAt(t)) {
-			if (((Ship) that).getID() == this.targetShip) {
-				switch (orderType) {
-				case -2:
-					((Ship) that).move(xTarg, yTarg, t);
-					break;
-				case -3:
-					((Ship) that).shoot(xTarg, yTarg, t);
-					break;
-				case -4:
-					((Ship) that).special(xTarg, yTarg, t);
-					break;
-				}
-				
-				receiptTime = t;
-			}
-		}
-	}
 	
 	
 	@Override
 	public String spriteName() {
-		return "order"+orderType;
+		return "ping";
 	}
 	
 	
@@ -81,19 +53,31 @@ public class Order extends PhysicalBody {
 	public double[] spriteTransform(double t) {
 		final double r = rValAt(t);
 		double[] res = {0,r/500.0,r/500.0,1.0};	// 250 is the sprite radius, so dividing by 250 yields the scale factor
-		return res;
+		if (res[1] < 2)
+			return res;	// once it gets a certain size,
+		res[1] = 0;
+		res[2] = 0;
+		return res;		// terminate the sprite for the heap's sake
+	}
+	
+	
+	@Override
+	public void update(double t) {	// save the last update time
+		lastUpdateRadius = rValAt(t);
+	}
+	
+	
+	@Override
+	public void interactWith(PhysicalBody b, double t) {
+		final double r = space.dist(this, b, t);
+		if (r <= rValAt(t) && r > lastUpdateRadius)		// if we just hit this object
+			b.illuminate(FLUX/(r*r), DURATION, t);	// light it up
 	}
 	
 	
 	@Override
 	public boolean existsAt(double t) {
-		return super.existsAt(t) && t < receiptTime;
-	}
-	
-	
-	@Override
-	public double seenBy(Body observer, double to) {	// orders are weird in that their position is different
-		return to - age(to)/2;							// from where they appear to be, so we can skip this method
+		return super.existsAt(t);//rValAt(t) <
 	}
 	
 	

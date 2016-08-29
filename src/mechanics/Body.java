@@ -36,7 +36,7 @@ public interface Body {
 
 	public double luminosityAt(double t);
 	
-	public double tprime(Body that, double t);
+	public double seenBy(Body that, double t);
 
 	public Object soundName(double t);
 

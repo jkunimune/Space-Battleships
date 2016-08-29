@@ -136,17 +136,13 @@ public class Battlefield {
 	
 	
 	public double observedTime(Body b, double t) {	// the time at which you see this object
-		final double L4pi = b.luminosityAt(t)/(4*Math.PI);	// start calculating intensity
-		
 		double to = Double.NaN;
 		for (Ship s: myShips) {		// check each ship
-			if (s.existsAt(s.tprime(myCarrier, t))) {
-				final double ts = b.tprime(s, s.tprime(myCarrier, t));	// when would you see that ship see b?
-				if ((Double.isNaN(to) && !Double.isNaN(ts)) || ts > to) {	// if that ship has the best observation time (and is not NaN)
-					final double r = dist(s, b, ts);
-					if (L4pi/(r*r) >= Ship.VISIBILITY)	// check that the Body's intensity is high enough
-						to = ts;		// and then choose that time
-				}
+			final double tc = s.seenBy(myCarrier, t);
+			if (s.existsAt(tc)) {
+				final double ts = b.seenBy(s, tc);	// when would you see that ship see b?
+				if ((Double.isNaN(to) && !Double.isNaN(ts)) || ts > to)	// if that ship has the best observation time (and is not NaN)
+					to = ts;		// and then choose that time
 			}
 		}
 		

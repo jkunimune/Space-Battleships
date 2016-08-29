@@ -36,6 +36,7 @@ public abstract class PhysicalBody implements Body {
 	private static final double DEFAULT_LUMINOSITY = 1*Univ.kW;		// the default luminosity
 	
 	protected ArrayList<double[]> pos;	// the set of positions that define the movement of this body over the course of the map
+	protected ArrayList<double[]> lum;	// the set of luminosity spikes this object has encountered
 	
 	private ArrayList<Double> soundt;	// when it want to play sounds
 	private ArrayList<String> sound;	// the sounds it wants to play
@@ -54,6 +55,7 @@ public abstract class PhysicalBody implements Body {
 		init[4] = vy0;	// y velocity
 		pos = new ArrayList<double[]>(1);
 		pos.add(init);
+		lum = new ArrayList<double[]>();
 		space = field;
 		soundt = new ArrayList<Double>();
 		sound = new ArrayList<String>();
@@ -116,7 +118,7 @@ public abstract class PhysicalBody implements Body {
 	}
 	
 	
-	public double tprime(Body observer, double to) {	// calculates the time the observer sees this at
+	public double seenBy(Body observer, double to) {	// calculates the time the observer sees this at
 		if (this.equals(observer) ||
 				(observer.xValAt(to) == this.xValAt(to) && observer.yValAt(to) == this.yValAt(to)))
 			return to;	// no calculations necessary when you're observing yourself
@@ -145,12 +147,29 @@ public abstract class PhysicalBody implements Body {
 			i --;
 		} while (i >= 0 && ts < position[0]);
 		
-		return ts;
+		final double r = space.dist(observer, this, ts);
+		final double I = luminosityAt(ts)/(4*Math.PI*r*r);
+		if (I >= Ship.VISIBILITY)
+			return ts;
+		else
+			return Double.NaN;
 	}
 	
 	
 	public double luminosityAt(double t) {	// how bright is this object?
-		return DEFAULT_LUMINOSITY;
+		double output = DEFAULT_LUMINOSITY;
+		for (int i = lum.size() - 1; i >= 0; i --) {
+			final double[] tld = lum.get(i);
+			if (t-tld[0] >= 0 && t-tld[0] < tld[2])
+				output += tld[1]*(1 - (t-tld[0])/tld[2]);
+		}
+		return output;
+	}
+	
+	
+	public void illuminate(double amount, double duration, double t) {
+		final double[] newLum = {t, amount, duration};
+		lum.add(newLum);
 	}
 	
 	

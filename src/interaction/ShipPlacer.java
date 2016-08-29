@@ -81,13 +81,13 @@ public class ShipPlacer extends Controller {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		final byte mpos = view.getMousePos(x, y, System.currentTimeMillis());
-		if (mpos != -2) {		// if you clicked anywhere but empty space
+		if (mpos > -2) {		// if you clicked anywhere but empty space
 			if (heldShip == mpos)	// if you clicked on the place where you picked up this one
 				setHeldShip((byte) -1);
 			else
 				setHeldShip(mpos);	// pick up a ship
 		}
-		else if (heldShip >= 0) {	// if you clicked on empty space and are holding a ship
+		else if (heldShip >= 0) {	// if you clicked on valid empty space and are holding a ship
 			game.receive(Protocol.writePlacement(game.getIDs()[numShips],
 												 heldShip,
 												 view.spaceXFscreenX(x),

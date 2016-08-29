@@ -22,6 +22,7 @@
 package mechanics.ship_classes;
 
 import mechanics.Battlefield;
+import mechanics.Ping;
 import mechanics.Ship;
 import mechanics.Univ;
 
@@ -48,7 +49,8 @@ public class Radar extends Ship {
 	
 	@Override
 	public void special(double x, double y, double t) {
-		expend(1.0*Univ.MJ, t);
+		if (expend(1*Univ.MJ, t))
+		space.spawn(new Ping(xValAt(t), yValAt(t), t, space));
 	}
 
 }

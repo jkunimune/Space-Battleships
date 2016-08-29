@@ -144,8 +144,8 @@ public class Connection implements Runnable {
 					out.writeLong(System.currentTimeMillis());
 					offset = 0;
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (IOException e) {	// will only trip if someone tries to host on this computer twice
+				return;
 			}
 		}
 		
