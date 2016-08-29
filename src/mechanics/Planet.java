@@ -27,7 +27,7 @@ package mechanics;
  * @author	jkunimune
  * @version	1.0
  */
-public class Planet extends PhysicalBody {
+public class Planet extends Body {
 
 	private String name;
 	private double radius;
@@ -43,7 +43,7 @@ public class Planet extends PhysicalBody {
 	
 	
 	@Override
-	public void interactWith(PhysicalBody that, double t) {
+	public void interactWith(Body that, double t) {
 		if (space.dist(this, that, t) < radius) {
 			if (that instanceof Ship)
 				((Ship) that).damaged(((Ship) that).hValAt(t), t);

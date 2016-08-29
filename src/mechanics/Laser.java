@@ -28,7 +28,7 @@ package mechanics;
  * @author	jkunimune
  * @version	1.0
  */
-public class Laser extends PhysicalBody {
+public class Laser extends Body {
 
 	public static final double ENERGY_DENS = Math.pow(10,-13)*Univ.MJ/Univ.km3;	// a pretty absurd value, but eh
 	public static final double HALF_LIFE = 10*Univ.s;	// not really a half-life
@@ -61,7 +61,7 @@ public class Laser extends PhysicalBody {
 	
 	
 	@Override
-	public void interactWith(PhysicalBody that, double t) {	// lasers interact with ships by killing them
+	public void interactWith(Body that, double t) {	// lasers interact with ships by killing them
 		if (t < collidedTime && that instanceof Ship && space.dist(this,that,t) < r) {
 			((Ship) that).damaged(E, t);
 			for (int i = 0; i < E/(100*Univ.kJ); i ++)
@@ -102,7 +102,7 @@ public class Laser extends PhysicalBody {
 		final double vy = position[4];
 		final double ts = -(dx*dx + dy*dy - c2*dt*dt) / (2*vx*dx + 2*vy*dy - 2*c2*dt) + position[0];
 		if (ts < to)	return ts;
-		else			return Double.NaN;
+		else			return Double.NEGATIVE_INFINITY;	// if you're seeing it in the future, something's wrong
 	}
 	
 	

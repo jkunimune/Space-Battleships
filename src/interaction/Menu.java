@@ -349,7 +349,7 @@ public class Menu extends JPanel {
 					totHeight += g.getFontMetrics(BODY_FONT).getHeight();
 			}
 			else if (gui[i][0].equals("inpt")) {
-				totHeight += g.getFontMetrics(MONO_FONT).getHeight();
+				totHeight += inputImg.getHeight();
 			}
 			heights[i] = (top + totHeight)/2;
 		}

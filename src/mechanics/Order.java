@@ -27,7 +27,7 @@ package mechanics;
  * @author	jkunimune
  * @version	1.0
  */
-public class Order extends PhysicalBody {
+public class Order extends Body {
 
 	private byte orderType;		// the type of order
 	private byte targetShip;	// the ship being ordered
@@ -50,7 +50,7 @@ public class Order extends PhysicalBody {
 	
 	
 	@Override
-	public void interactWith(PhysicalBody that, double t) {
+	public void interactWith(Body that, double t) {
 		if (that instanceof Ship && space.dist(this,that,t) < this.rValAt(t)) {
 			if (((Ship) that).getID() == this.targetShip) {
 				switch (orderType) {

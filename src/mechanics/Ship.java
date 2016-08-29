@@ -36,7 +36,7 @@ import mechanics.ship_classes.Steamship;
  * @author	jkunimune
  * @version	1.0
  */
-public abstract class Ship extends PhysicalBody {
+public abstract class Ship extends Body {
 
 	public static final byte CARRIER = 0;		// ship class constants
 	public static final byte BATTLESHIP = 1;
@@ -187,6 +187,21 @@ public abstract class Ship extends PhysicalBody {
 	
 	
 	public abstract void special(double x, double y, double t);	// executes a special attack
+	
+	
+	public double sees(Body object, double to) {	// calculates the time this sees the observer at
+		if (!this.existsAt(to) && !(this instanceof Carrier))	// dead ships can't see things
+			return Double.NaN;		// unless they are a Carrier
+		
+		double ts = object.seenBy(this, to);	// call object's side of the method, which does the math
+		
+		final double r = space.dist(this, object, to, ts);
+		final double I = object.luminosityAt(ts)/(4*Math.PI*r*r);	// calculate intensity
+		if (I < VISIBILITY)		// if the intensity is too low,
+			return Double.NaN;	// we can't see it
+		else
+			return ts;
+	}
 	
 	
 	public double hValAt(double t) {	// returns the health at time t

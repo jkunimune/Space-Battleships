@@ -44,7 +44,6 @@ import javax.swing.JPanel;
 
 import mechanics.Battlefield;
 import mechanics.Body;
-import mechanics.PhysicalBody;
 import mechanics.Ship;
 
 /**
@@ -141,7 +140,7 @@ public class GameScreen extends JPanel {
 		
 		g.drawImage(icons.get("space"), 0, 0, null);	// draw the background
 		
-		final List<PhysicalBody> bodies = game.getBodies();
+		final List<Body> bodies = game.getBodies();
 		for (int i = bodies.size()-1; i >= 0; i --)	// for each Body in reverse order
 			draw(bodies.get(i), g, t);				// display its sprite
 		

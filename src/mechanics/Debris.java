@@ -27,7 +27,7 @@ package mechanics;
  * @author	jkunimune
  * @version	1.0
  */
-public class Debris extends PhysicalBody {
+public class Debris extends Body {
 
 	public static Debris debris(double x, double y, double th0, double t, Battlefield field) {
 		final double v0 = Univ.c/4;							// given the position, and the direction from which

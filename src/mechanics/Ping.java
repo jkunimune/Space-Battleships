@@ -27,7 +27,7 @@ package mechanics;
  * @author	jkunimune
  * @version	1.0
  */
-public class Ping extends PhysicalBody {
+public class Ping extends Body {
 
 	public static final double FLUX = Math.pow(10, 11)*Univ.MW*Univ.km*Univ.km;	// how strong it is
 	public static final double DURATION = 10*Univ.s;
@@ -68,7 +68,7 @@ public class Ping extends PhysicalBody {
 	
 	
 	@Override
-	public void interactWith(PhysicalBody b, double t) {
+	public void interactWith(Body b, double t) {
 		final double r = space.dist(this, b, t);
 		if (r <= rValAt(t) && r > lastUpdateRadius)		// if we just hit this object
 			b.illuminate(FLUX/(r*r), DURATION, t);	// light it up

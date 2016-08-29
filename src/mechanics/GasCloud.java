@@ -29,7 +29,7 @@ import java.util.ArrayList;
  * @author	jkunimune
  * @version	1.0
  */
-public class GasCloud extends PhysicalBody {
+public class GasCloud extends Body {
 
 	public static final double SPEED = Univ.c/30;		// a speed related to the inital rate of expansion
 	public static final double LIFETIME = 30*Univ.s;	// a time related to the total lifetime of a cloud
@@ -74,7 +74,7 @@ public class GasCloud extends PhysicalBody {
 	
 	
 	@Override
-	public void interactWith(PhysicalBody that, double t) {	// GasClouds interact with lasers by absorbing them
+	public void interactWith(Body that, double t) {	// GasClouds interact with lasers by absorbing them
 		if (that instanceof Laser && !(that instanceof UVLaser) && space.dist(this, that, t) < rValAt(t)) {
 			((Laser) that).collide(t);	// absorb the laser
 

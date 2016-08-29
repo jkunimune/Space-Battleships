@@ -39,7 +39,7 @@ public class Battlefield {
 	private static final double VICTORY_DELAY = 5*Univ.s;	// the time between game end and return to menu
 	
 	
-	private ArrayList<PhysicalBody> bodies;	// the list of game elements
+	private ArrayList<Body> bodies;	// the list of game elements
 	private ArrayList<Ship> myShips;		// the list of blue ships
 	private Carrier myCarrier;		// the main carrier
 	private Carrier yourCarrier;		// the opponent carrier
@@ -53,7 +53,7 @@ public class Battlefield {
 	
 	
 	public Battlefield(DataOutputStream dos, double dt, boolean host) {
-		bodies = new ArrayList<PhysicalBody>();
+		bodies = new ArrayList<Body>();
 		myShips = new ArrayList<Ship>();
 		out = dos;
 		endGame = Double.POSITIVE_INFINITY;
@@ -112,10 +112,10 @@ public class Battlefield {
 		double t = (double)System.currentTimeMillis();
 		
 		for (int i = bodies.size()-1; i > 0; i --) {
-			final PhysicalBody b1 = bodies.get(i);
+			final Body b1 = bodies.get(i);
 			if (b1.existsAt(t)) {
 				for (int j = 0; j < i; j ++) {
-					final PhysicalBody b2 = bodies.get(j);
+					final Body b2 = bodies.get(j);
 					if (b2.existsAt(t)) {
 						b1.interactWith(b2, t);
 						b2.interactWith(b1, t);
@@ -138,20 +138,22 @@ public class Battlefield {
 	public double observedTime(Body b, double t) {	// the time at which you see this object
 		double to = Double.NaN;
 		for (Ship s: myShips) {		// check each ship
-			final double tc = s.seenBy(myCarrier, t);
-			if (s.existsAt(tc)) {
-				final double ts = b.seenBy(s, tc);	// when would you see that ship see b?
-				if ((Double.isNaN(to) && !Double.isNaN(ts)) || ts > to)	// if that ship has the best observation time (and is not NaN)
-					to = ts;		// and then choose that time
-			}
+			final double ts = s.sees(b, myCarrier.sees(s, t));	// when would you see that ship see b?
+			if ((Double.isNaN(to) && !Double.isNaN(ts)) || ts > to)	// if that ship has the best observation time (and is not NaN)
+				to = ts;		// then choose that time
 		}
 		
 		return to;		// return the best time
 	}
 	
 	
-	public final double dist(Body b1, Body b2, double t) {	// calculates between two bodies
-		return Math.hypot(b1.xValAt(t)-b2.xValAt(t), b1.yValAt(t)-b2.yValAt(t));
+	public final double dist(Body b1, Body b2, double t) {
+		return dist(b1, b2, t, t);
+	}
+	
+	
+	public final double dist(Body b1, Body b2, double t1, double t2) {	// calculates distance between two bodies
+		return Math.hypot(b1.xValAt(t1)-b2.xValAt(t2), b1.yValAt(t1)-b2.yValAt(t2));
 	}
 	
 	
@@ -197,14 +199,14 @@ public class Battlefield {
 	}
 	
 	
-	public void spawn(PhysicalBody b) {	// adds a new body to the battlefield
+	public void spawn(Body b) {	// adds a new body to the battlefield
 		bodies.add(b);
 	}
 	
 	
 	@SuppressWarnings("unchecked")
-	public ArrayList<PhysicalBody> getBodies() {
-		return (ArrayList<PhysicalBody>) bodies.clone();
+	public ArrayList<Body> getBodies() {
+		return (ArrayList<Body>) bodies.clone();
 	}
 	
 	
@@ -216,7 +218,7 @@ public class Battlefield {
 	}
 	
 	
-	public byte[] getIDs() {
+	public byte[] getIDs() {	// TODO: set blueIDs[x] to -1 when ship x dies
 		return blueIDs;
 	}
 	
