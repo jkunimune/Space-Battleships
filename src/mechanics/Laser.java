@@ -107,7 +107,7 @@ public class Laser extends Body {
 	
 	
 	@Override
-	public double luminosityAt(double t) {	// lasers are extremely bright
+	public double luminosityAt(int band, double t) {	// lasers are extremely bright
 		return E/HALF_LIFE;	// (for gameplay reasons, not scientific ones)
 	}
 	

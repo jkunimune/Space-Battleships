@@ -60,7 +60,7 @@ public class Planet extends Body {
 	
 	
 	@Override
-	public double luminosityAt(double t) {	// chances are, you already know where the planet is
+	public double luminosityAt(int band, double t) {	// chances are, you already know where the planet is
 		return Double.POSITIVE_INFINITY;
 	}
 

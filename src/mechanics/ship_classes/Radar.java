@@ -35,8 +35,14 @@ import mechanics.Univ;
  */
 public class Radar extends Ship {
 
+	public static final double RADAR_FLUX = Math.pow(10, 11)*Univ.MW*Univ.km*Univ.km;	// how strong it is
+	public static final double PING_DURATION = 10*Univ.s;
+	
+	
+	
 	public Radar(double newX, double newY, double time, byte pin, boolean blue, Battlefield space) {
 		super(newX, newY, time, pin, blue, space);
+		visibilityBand = 1;
 	}
 	
 	
@@ -49,8 +55,17 @@ public class Radar extends Ship {
 	
 	@Override
 	public void special(double x, double y, double t) {
-		if (expend(1*Univ.MJ, t))
-		space.spawn(new Ping(xValAt(t), yValAt(t), t, space));
+		if (expend(1*Univ.MJ, t)) {
+			if (this.isBlue())	// the Ping is only visible when your own radar is scanning
+				space.spawn(new Ping(xValAt(t), yValAt(t), t, RADAR_FLUX, PING_DURATION, space));
+			else {				// for the other team, it makes your Radar visible
+				this.illuminate(Double.POSITIVE_INFINITY, PING_DURATION, 0, t);
+				this.illuminate(Double.POSITIVE_INFINITY, PING_DURATION, 1, t);
+			}
+		}
 	}
+	
+	
+	
 
 }

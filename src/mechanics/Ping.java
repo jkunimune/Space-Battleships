@@ -29,16 +29,17 @@ package mechanics;
  */
 public class Ping extends Body {
 
-	public static final double FLUX = Math.pow(10, 11)*Univ.MW*Univ.km*Univ.km;	// how strong it is
-	public static final double DURATION = 10*Univ.s;
-	
+	private double flux;
+	private double duration;
 	
 	private double lastUpdateRadius;	// the radius the last time update() was called
 	
 	
 	
-	public Ping(double x, double y, double t, Battlefield field) {
+	public Ping(double x, double y, double t, double Phi, double T, Battlefield field) {
 		super(x, y, 0, 0, t, field);
+		flux = Phi;
+		duration = T;
 	}
 	
 	
@@ -71,13 +72,30 @@ public class Ping extends Body {
 	public void interactWith(Body b, double t) {
 		final double r = space.dist(this, b, t);
 		if (r <= rValAt(t) && r > lastUpdateRadius)		// if we just hit this object
-			b.illuminate(FLUX/(r*r), DURATION, t);	// light it up
+			b.illuminate(flux/(r*r), duration, 1, t);	// light it up in the radio band
 	}
 	
 	
 	@Override
 	public boolean existsAt(double t) {
 		return super.existsAt(t);//rValAt(t) <
+	}
+	
+	
+	@Override
+	public double seenBy(Body observer, double to) {	// pings are weird in that their position is different
+		return to - age(to)/2;							// from where they appear to be, so we can skip this method
+	}
+	
+	
+	@Override
+	public double luminosityAt(int band, double t) {
+		if (band == 0)
+			return 0;
+		else if (band == 1)
+			return super.luminosityAt(band, t);
+		else
+			return 0;
 	}
 	
 	

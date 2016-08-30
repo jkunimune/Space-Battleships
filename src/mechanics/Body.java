@@ -22,6 +22,7 @@
 package mechanics;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An object with mass, position, velocity, appearance, and ability to collide
@@ -35,8 +36,8 @@ public abstract class Body {
 	private static final double[] DEFAULT_TRANSFORM = {0.0, 1.0, 1.0, 1.0};	// the default transformation (zero rotation, scale of 1, 100% opacity)
 	private static final double DEFAULT_LUMINOSITY = 1*Univ.kW;		// the default luminosity
 	
-	protected ArrayList<double[]> pos;	// the set of positions that define the movement of this body over the course of the map
-	protected ArrayList<double[]> lum;	// the set of luminosity spikes this object has encountered
+	protected List<double[]> pos;	// the set of positions that define the movement of this body over the course of the map
+	protected List<List<double[]>> lum;	// the set of luminosity spikes this object has encountered
 	
 	private ArrayList<Double> soundt;	// when it want to play sounds
 	private ArrayList<String> sound;	// the sounds it wants to play
@@ -55,7 +56,11 @@ public abstract class Body {
 		init[4] = vy0;	// y velocity
 		pos = new ArrayList<double[]>(1);
 		pos.add(init);
-		lum = new ArrayList<double[]>();
+		
+		lum = new ArrayList<List<double[]>>(2);
+		for (int i = 0; i < 2; i ++)
+			lum.add(new ArrayList<double[]>());	// there is one inner list for each band
+		
 		space = field;
 		soundt = new ArrayList<Double>();
 		sound = new ArrayList<String>();
@@ -150,10 +155,10 @@ public abstract class Body {
 	}
 	
 	
-	public double luminosityAt(double t) {	// how bright is this object?
+	public double luminosityAt(int band, double t) {	// how bright is this object in this frequency band?
 		double output = DEFAULT_LUMINOSITY;
-		for (int i = lum.size() - 1; i >= 0; i --) {
-			final double[] tld = lum.get(i);
+		for (int i = lum.get(band).size() - 1; i >= 0; i --) {
+			final double[] tld = lum.get(band).get(i);
 			if (t-tld[0] >= 0 && t-tld[0] < tld[2])
 				output += tld[1]*(1 - (t-tld[0])/tld[2]);
 		}
@@ -161,9 +166,9 @@ public abstract class Body {
 	}
 	
 	
-	public void illuminate(double amount, double duration, double t) {
-		final double[] newLum = {t, amount, duration};
-		lum.add(newLum);
+	public void illuminate(double amount, double duration, int band, double t) {
+		final double[] newLum = {t, amount, duration};	// get light shined on it in the given frequency band
+		lum.get(band).add(newLum);
 	}
 	
 	

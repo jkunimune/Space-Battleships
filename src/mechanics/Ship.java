@@ -100,6 +100,7 @@ public abstract class Ship extends Body {
 	
 	private boolean isBlue;	// whether it is blue or red
 	protected byte id;		// an identifier for this particular ship
+	protected int visibilityBand;	// the frequency band it sees in
 	
 	protected ArrayList<double[]> health;	// health and energy matrices
 	protected ArrayList<double[]> energy;
@@ -112,6 +113,7 @@ public abstract class Ship extends Body {
 		super(x, y, 0, 0, t, bf);
 		id = pin;
 		isBlue = blue;
+		visibilityBand = 0;
 		
 		double[] hInit = {t, MAX_H_VALUE};	// max health and energy at time of creation
 		double[] eInit = {t, MAX_E_VALUE};
@@ -134,9 +136,9 @@ public abstract class Ship extends Body {
 	
 	
 	@Override
-	public double luminosityAt(double t) {	// blue ships are always visible
+	public double luminosityAt(int band, double t) {	// blue ships are always visible
 		if (isBlue)	return Double.POSITIVE_INFINITY;
-		else		return super.luminosityAt(t);
+		else		return super.luminosityAt(band, t);
 	}
 	
 	
@@ -196,7 +198,7 @@ public abstract class Ship extends Body {
 		double ts = object.seenBy(this, to);	// call object's side of the method, which does the math
 		
 		final double r = space.dist(this, object, to, ts);
-		final double I = object.luminosityAt(ts)/(4*Math.PI*r*r);	// calculate intensity
+		final double I = object.luminosityAt(visibilityBand, ts)/(4*Math.PI*r*r);	// calculate intensity
 		if (I < VISIBILITY)		// if the intensity is too low,
 			return Double.NaN;	// we can't see it
 		else
