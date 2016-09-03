@@ -43,8 +43,6 @@ public abstract class Body {
 	private ArrayList<String> sound;	// the sounds it wants to play
 	protected Battlefield space;
 	
-	protected boolean scales;	// whether the icon scales when you zoom in and out
-	
 	
 	
 	protected Body(double x0, double y0, double vx0, double vy0, double t0, Battlefield field) {
@@ -64,8 +62,6 @@ public abstract class Body {
 		space = field;
 		soundt = new ArrayList<Double>();
 		sound = new ArrayList<String>();
-		
-		scales = true;	// scales is true by default
 	}
 	
 	
@@ -218,11 +214,6 @@ public abstract class Body {
 	
 	public final double age(double t) {	// returns the number of milliseconds since this has been created
 		return t-pos.get(0)[0];
-	}
-	
-	
-	public boolean doesScale() {
-		return scales;
 	}
 
 }

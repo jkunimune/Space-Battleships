@@ -122,8 +122,6 @@ public abstract class Ship extends Body {
 		health.add(hInit);
 		energy.add(eInit);
 		timeOfDeath = Double.POSITIVE_INFINITY;	// I'm gonna live forever!
-		
-		scales = false;	// ships don't scale because they're sprites are icons
 	}
 	
 	

@@ -39,8 +39,9 @@ public class Battlefield {
 	private static final double VICTORY_DELAY = 5*Univ.s;	// the time between game end and return to menu
 	
 	
-	private ArrayList<Body> bodies;	// the list of game elements
-	private ArrayList<Ship> myShips;		// the list of blue ships
+	private ArrayList<Body> bodies;		// the list of game elements
+	private ArrayList<Ship> myShips;	// the list of blue ships
+	private ArrayList<Order> orders;	// the list of orders in effect
 	private Carrier myCarrier;		// the main carrier
 	private Carrier yourCarrier;		// the opponent carrier
 	private DataOutputStream out;		// the stream to write all events to
@@ -55,6 +56,7 @@ public class Battlefield {
 	public Battlefield(DataOutputStream dos, double dt, boolean host) {
 		bodies = new ArrayList<Body>();
 		myShips = new ArrayList<Ship>();
+		orders = new ArrayList<Order>();
 		out = dos;
 		endGame = Double.POSITIVE_INFINITY;
 		message = "";
@@ -85,9 +87,9 @@ public class Battlefield {
 		}
 		else if (Protocol.isOrder(data)) {		// if it was an order
 			if (transmit)
-				myCarrier.issueOrder(data);	// execute it
+				orders.add(myCarrier.issueOrder(data));	// execute it
 			else
-				yourCarrier.issueOrder(data);
+				orders.add(yourCarrier.issueOrder(data));
 		}
 		else if (Protocol.isCollision(data)) {	// if it was a collision
 			System.err.println("I haven't programmed that yet.");
@@ -137,7 +139,7 @@ public class Battlefield {
 	
 	public double observedTime(Body b, double t) {	// the time at which you see this object
 		double to = Double.NaN;
-		for (Ship s: myShips) {		// check each ship
+		for (Ship s: getShips()) {		// check each ship
 			final double ts = s.sees(b, myCarrier.sees(s, t));	// when would you see that ship see b?
 			if ((Double.isNaN(to) && !Double.isNaN(ts)) || ts > to)	// if that ship has the best observation time (and is not NaN)
 				to = ts;		// then choose that time
@@ -207,6 +209,12 @@ public class Battlefield {
 	@SuppressWarnings("unchecked")
 	public ArrayList<Body> getBodies() {
 		return (ArrayList<Body>) bodies.clone();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public ArrayList<Order> getOrders() {
+		return (ArrayList<Order>) orders.clone();
 	}
 	
 	

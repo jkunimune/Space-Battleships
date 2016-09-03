@@ -44,6 +44,7 @@ import javax.swing.JPanel;
 
 import mechanics.Battlefield;
 import mechanics.Body;
+import mechanics.Order;
 import mechanics.Ship;
 
 /**
@@ -129,6 +130,9 @@ public class GameScreen extends JPanel {
 		if (strat == null)	// if we haven't finished our initialization yet (something about a valid peer?)
 			return;			// skip ahead
 		
+		if (gameStarted && listener instanceof ShipPlacer)	// start the game if you haven't yet
+			addListener(new Controller(this, game));
+		
 		game.update();			// start by updating the game model
 		if (!game.active()) {
 			application.goToMenu();
@@ -143,6 +147,7 @@ public class GameScreen extends JPanel {
 		final List<Body> bodies = game.getBodies();
 		for (int i = bodies.size()-1; i >= 0; i --)	// for each Body in reverse order
 			draw(bodies.get(i), g, t);				// display its sprite
+		drawIcons(g, t);
 		
 		if (gameStarted)
 			drawHUD(g, t);		// draw the heads-up display
@@ -158,28 +163,22 @@ public class GameScreen extends JPanel {
 	
 	
 	private void draw(Body b, Graphics2D g, double t) {	// put a picture of b on g at time t
-		if (gameStarted)					// correct for information delay
-			t = game.observedTime(b, t);
-		if (Double.isNaN(t))				// if the thing is not visible,
-			return;							// skip it
+		t = game.observedTime(b, t);	// correct for information delay
 		
 		try {
 			sounds.get(b.soundName(t)).play();	// now, play its sound
 		} catch (NullPointerException e) {}		// if it has one
 		
-		if (!b.existsAt(t))					// and skip drawing it if it does not exist
+		if ((b instanceof Ship && ((Ship) b).isBlue())|| !b.existsAt(t))	// and skip drawing it if it does not exist or is a Ship
 			return;
 		
 		BufferedImage img;
-		if (gameStarted && b instanceof Ship && ((Ship) b).getID() == listener.getShip())
-			img = sprites.get(b.spriteName()+"i");	// active ships have a special sprite
-		else
-			img = sprites.get(b.spriteName());	// finds the correct sprite
+		img = sprites.get(b.spriteName());	// finds the correct sprite
 		if (img == null)
-			throw new NullPointerException("Image "+b.spriteName()+".png not found!");
+			img = sprites.get("null");
 		
 		try {
-			img = executeTransformation(g, img, b.spriteTransform(t), b.doesScale());	// does any necessary transformations
+			img = executeTransformation(g, img, b.spriteTransform(t));	// does any necessary transformations
 		}
 		catch (java.awt.image.RasterFormatException e) { return; }	// if there's a problem with the transformation (probably roundoff), just skip it
 		catch (java.awt.image.ImagingOpException e) { return; }	// I don't know the difference between these two exceptions
@@ -187,8 +186,53 @@ public class GameScreen extends JPanel {
 		int screenX = screenXFspaceX(b.xValAt(t));	// gets coordinates of b,
 		int screenY = screenYFspaceY(b.yValAt(t));	// and offsets appropriately
 		g.drawImage(img, screenX - img.getWidth()/2, screenY - img.getHeight()/2, null);
-		if (b instanceof Ship)
-			shipLocations.put((Ship) b, new Point((int)screenX, (int)screenY));
+	}
+	
+	
+	private void drawIcons(Graphics2D g, final double t0) {	// draw the ships and orders
+		final List<Ship> ships = game.getShips();
+		
+		for (Ship s: ships) {
+			final double ts = game.observedTime(s, t0);	// get the observed time
+			if (!s.existsAt(ts))	continue;
+			int screenX = screenXFspaceX(s.xValAt(ts));	// gets coordinates of b,
+			int screenY = screenYFspaceY(s.yValAt(ts));	// and offsets appropriately
+			shipLocations.put(s, new Point((int)screenX, (int)screenY));
+			
+			for (Order o: game.getOrders()) {	// draws orders
+				final double to = game.observedTime(o, t0);
+				if (o.existsAt(to) && o.getShip() == s.getID()) {
+					final double r = game.dist(s, o, ts, to) - o.rValAt(to);
+					BufferedImage ord = sprites.get("order"+o.getType());
+					try {
+						BufferedImage mod = ord.getSubimage(0, 0,
+								ord.getWidth()/2+(int)(r/scale), ord.getHeight());
+						AffineTransform at = new AffineTransform();
+						at.rotate(Math.atan2(o.yValAt(to)-s.yValAt(ts), o.xValAt(to)-s.xValAt(ts)),
+								ord.getWidth()/2, ord.getHeight()/2);
+						mod = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
+							.filter(mod, null);
+						g.drawImage(mod, screenX - ord.getWidth()/2, screenY - ord.getHeight()/2, null);
+					} catch(java.awt.image.RasterFormatException e) {}
+				}
+			}
+		}
+		
+		for (Ship s: ships) {
+			if (!s.existsAt(game.observedTime(s, t0)))	continue;			// and skip dead ships
+			
+			BufferedImage img;
+			if (gameStarted && s.getID() == listener.getShip())
+				img = sprites.get(s.spriteName()+"i");	// active ships have a special sprite
+			else
+				img = sprites.get(s.spriteName());	// finds the correct sprite
+			if (img == null)
+				img = sprites.get("null");
+			
+			
+			Point screenPos = shipLocations.get(s);
+			g.drawImage(img, screenPos.x - img.getWidth()/2, screenPos.y - img.getHeight()/2, null);
+		}
 	}
 	
 	
@@ -282,14 +326,10 @@ public class GameScreen extends JPanel {
 	
 	
 	private BufferedImage executeTransformation(Graphics2D g, BufferedImage img,
-											double[] params, boolean zoomScale) {	// rotozooms img based on params
-		double zoominess;
-		if (zoomScale)		zoominess = scale;	// the scale might affect the AffineTransform
-		else				zoominess = 1.0;
-		
+											double[] params) {	// rotozooms img based on params		
 		AffineTransform at = new AffineTransform();
 		
-		at.scale(params[1]/zoominess, params[2]/zoominess);					// scales (if necessary)
+		at.scale(params[1]/scale, params[2]/scale);					// scales (if necessary)
 		
 		if (params[0] != 0.0)
 			at.rotate(params[0], img.getWidth()/2, img.getHeight()/2);		// rotates (if necessary)
@@ -297,8 +337,8 @@ public class GameScreen extends JPanel {
 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) params[3]));	// fades
 		
 		AffineTransformOp op = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-		Point size = new Point((int) (img.getWidth()*params[1]/zoominess),	// this is how big it would be if it didn't pad with zeros
-				(int) (img.getHeight()*params[2]/zoominess));
+		Point size = new Point((int) (img.getWidth()*params[1]/scale),	// this is how big it would be if it didn't pad with zeros
+				(int) (img.getHeight()*params[2]/scale));
 		return op.filter(img, null).getSubimage(0, 0, size.x, size.y);	// executes affine transformation, crops, and returns
 	}
 	
@@ -349,7 +389,6 @@ public class GameScreen extends JPanel {
 	
 	public void startGame() {	// exit pre-game and begin the real battle
 		gameStarted = true;
-		addListener(new Controller(this, game));
 	}
 	
 	

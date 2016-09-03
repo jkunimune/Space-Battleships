@@ -73,15 +73,7 @@ public class Order extends Body {
 	
 	@Override
 	public String spriteName() {
-		return "order"+orderType;
-	}
-	
-	
-	@Override
-	public double[] spriteTransform(double t) {
-		final double r = rValAt(t);
-		double[] res = {0,r/500.0,r/500.0,1.0};	// 250 is the sprite radius, so dividing by 250 yields the scale factor
-		return res;
+		return "_";
 	}
 	
 	
@@ -97,8 +89,18 @@ public class Order extends Body {
 	}
 	
 	
-	private double rValAt(double t) {
+	public double rValAt(double t) {
 		return age(t)*Univ.c;
+	}
+	
+	
+	public byte getType() {
+		return orderType;
+	}
+	
+	
+	public byte getShip() {
+		return targetShip;
 	}
 
 }
