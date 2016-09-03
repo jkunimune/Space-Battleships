@@ -70,6 +70,7 @@ text%body%Initial Concept     Justin Kunimune
 text%body%       Graphics     Justin Kunimune
 text%body%     Programmer     Justin Kunimune
 text%body%  Sound Effects     soundbible.com
+text%body%                    Corsica
 text%body%                    Marianne Gagnon
 text%body%                    Mark DiAngelo
 text%body%                    Mike Koenig

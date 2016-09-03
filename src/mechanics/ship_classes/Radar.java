@@ -62,6 +62,7 @@ public class Radar extends Ship {
 				this.illuminate(Double.POSITIVE_INFINITY, PING_DURATION, 0, t);
 				this.illuminate(Double.POSITIVE_INFINITY, PING_DURATION, 1, t);
 			}
+			playSound("ping", t);
 		}
 	}
 	

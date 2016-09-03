@@ -79,7 +79,7 @@ public class Main {
 	
 	public void startGame(Connection c) {	// either join or host a game
 		Battlefield bf = new Battlefield(c.getOutput(), c.getOffset(), c.isHost());
-		lookAt(bf);
+		lookAt(bf, c.isHost());
 		Client.startListening(c.getInput(), bf);
 	}
 	
@@ -96,9 +96,9 @@ public class Main {
 	}
 	
 	
-	public void lookAt(Battlefield field) {	// sets the panel to a GameScreen focused on field
+	public void lookAt(Battlefield field, boolean host) {	// sets the panel to a GameScreen focused on field
 		frame.remove(panel);
-		panel = new GameScreen(width, height, field, this);
+		panel = new GameScreen(width, height, field, this, host);
 		frame.setContentPane(panel);
 		frame.pack();
 		((GameScreen) panel).developStrategy();

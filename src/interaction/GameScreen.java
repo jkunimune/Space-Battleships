@@ -80,6 +80,7 @@ public class GameScreen extends JPanel {
 	
 	private int origX, origY;
 	private double scale;	// the variables that define the screen's position and zoom-level
+	private byte flip;		// either 1 or negative 1, gets multiplied to all space positions and rotations
 	
 	private HashMap<Ship, Point> shipLocations;	// the last drawn positions of the ships
 	
@@ -87,7 +88,7 @@ public class GameScreen extends JPanel {
 	
 	
 	
-	public GameScreen(int w, int h, Battlefield field, Main app) {
+	public GameScreen(int w, int h, Battlefield field, Main app, boolean host) {
 		super();
 		
 		canvs = new Canvas();
@@ -114,6 +115,8 @@ public class GameScreen extends JPanel {
 		scale = 1.0;
 		shipLocations = new HashMap<Ship, Point>();
 		gameStarted = false;
+		if (host)	flip = 1;
+		else		flip = -1;
 	}
 	
 	
@@ -208,7 +211,7 @@ public class GameScreen extends JPanel {
 						BufferedImage mod = ord.getSubimage(0, 0,
 								ord.getWidth()/2+(int)(r/scale), ord.getHeight());
 						AffineTransform at = new AffineTransform();
-						at.rotate(Math.atan2(o.yValAt(to)-s.yValAt(ts), o.xValAt(to)-s.xValAt(ts)),
+						at.rotate(Math.atan2(flip*(o.yValAt(to)-s.yValAt(ts)), flip*(o.xValAt(to)-s.xValAt(ts))),
 								ord.getWidth()/2, ord.getHeight()/2);
 						mod = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
 							.filter(mod, null);
@@ -331,8 +334,12 @@ public class GameScreen extends JPanel {
 		
 		at.scale(params[1]/scale, params[2]/scale);					// scales (if necessary)
 		
-		if (params[0] != 0.0)
-			at.rotate(params[0], img.getWidth()/2, img.getHeight()/2);		// rotates (if necessary)
+		if (params[0] != 0.0) {
+			if (flip > 0)
+				at.rotate(params[0], img.getWidth()/2, img.getHeight()/2);		// rotates (if necessary)
+			else
+				at.rotate(params[0]+Math.PI, img.getWidth()/2, img.getHeight()/2);
+		}
 		
 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) params[3]));	// fades
 		
@@ -473,23 +480,23 @@ public class GameScreen extends JPanel {
 	
 	
 	public final double spaceXFscreenX(int sx) {	// converts an x on screen to an x in space
-		return (sx-origX)*scale;
+		return flip*(sx-origX)*scale;
 		
 	}
 	
 	
 	public final double spaceYFscreenY(int sy) {	// converts a y on screen to a y in space
-		return (sy-origY)*scale;
+		return flip*(sy-origY)*scale;
 	}
 	
 	
 	public final int screenXFspaceX(double sx) {	// converts an x in space to an x on screen
-		return (int)(sx/scale) + origX;
+		return (int)(flip*sx/scale) + origX;
 	}
 	
 	
 	public final int screenYFspaceY(double sy) {	// converts a y in space to a y on screen
-		return (int)(sy/scale) + origY;
+		return (int)(flip*sy/scale) + origY;
 	}
 	
 	
