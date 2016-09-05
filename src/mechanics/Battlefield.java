@@ -44,6 +44,7 @@ public class Battlefield {
 	private ArrayList<Order> orders;	// the list of orders in effect
 	private Carrier myCarrier;		// the main carrier
 	private Carrier yourCarrier;		// the opponent carrier
+	private PlacementRegion validRegion;	// where we can place ships
 	private DataOutputStream out;		// the stream to write all events to
 	
 	private double endGame;		// the time the game ended
@@ -62,6 +63,7 @@ public class Battlefield {
 		message = "";
 		
 		double time = (double)System.currentTimeMillis();	// the current time
+		validRegion = PlacementRegion.placementRegion(time, this, host);
 		bodies.add(new Planet(0, 0, 43441*Univ.mi, "Jupiter", time, this));
 		
 		if (host) {
@@ -163,7 +165,7 @@ public class Battlefield {
 		switch (condition) {
 		case 0:
 			if (myCarrier.existsAt(endGame))
-				return "You're Winner !";
+				return "You're Winner :D";
 			else
 				return "You're Loser :(";
 		case 1:
@@ -233,6 +235,16 @@ public class Battlefield {
 	
 	public double getOffset() {
 		return offset;
+	}
+	
+	
+	public PlacementRegion getRegion() {
+		return validRegion;
+	}
+	
+	
+	public boolean isValid(double x, double y) {
+		return validRegion.contains(x, y);
 	}
 
 }

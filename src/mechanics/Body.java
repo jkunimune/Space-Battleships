@@ -33,8 +33,8 @@ import java.util.List;
  */
 public abstract class Body {
 
-	private static final double[] DEFAULT_TRANSFORM = {0.0, 1.0, 1.0, 1.0};	// the default transformation (zero rotation, scale of 1, 100% opacity)
-	private static final double DEFAULT_LUMINOSITY = 1*Univ.kW;		// the default luminosity
+	public static final double[] DEFAULT_TRANSFORM = {0.0, 1.0, 1.0, 1.0};	// the default transformation (zero rotation, scale of 1, 100% opacity)
+	public static final double DEFAULT_LUMINOSITY = 1*Univ.kW;		// the default luminosity
 	
 	protected List<double[]> pos;	// the set of positions that define the movement of this body over the course of the map
 	protected List<List<double[]>> lum;	// the set of luminosity spikes this object has encountered

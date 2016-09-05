@@ -148,7 +148,7 @@ public class GameScreen extends JPanel {
 		g.drawImage(icons.get("space"), 0, 0, null);	// draw the background
 		
 		final List<Body> bodies = game.getBodies();
-		for (int i = bodies.size()-1; i >= 0; i --)	// for each Body in reverse order
+		for (int i = 0; i < bodies.size(); i ++)	// for each Body
 			draw(bodies.get(i), g, t);				// display its sprite
 		drawIcons(g, t);
 		
@@ -172,13 +172,10 @@ public class GameScreen extends JPanel {
 			sounds.get(b.soundName(t)).play();	// now, play its sound
 		} catch (NullPointerException e) {}		// if it has one
 		
-		if ((b instanceof Ship && ((Ship) b).isBlue())|| !b.existsAt(t))	// and skip drawing it if it does not exist or is a Ship
+		if ((b instanceof Ship && ((Ship) b).isBlue()) || !b.existsAt(t))	// and skip drawing it if it does not exist or is a Ship
 			return;
 		
-		BufferedImage img;
-		img = sprites.get(b.spriteName());	// finds the correct sprite
-		if (img == null)
-			img = sprites.get("null");
+		BufferedImage img = getSprite(b.spriteName());	// finds the correct sprite
 		
 		try {
 			img = executeTransformation(g, img, b.spriteTransform(t));	// does any necessary transformations
@@ -195,6 +192,14 @@ public class GameScreen extends JPanel {
 	private void drawIcons(Graphics2D g, final double t0) {	// draw the ships and orders
 		final List<Ship> ships = game.getShips();
 		
+		if (!gameStarted) {	// draw the placement region first
+			BufferedImage reg = getSprite(game.getRegion().spriteName());	// finds the correct sprite
+			reg = executeTransformation(g, reg, null);	// does any necessary transformations
+			int screenX = screenXFspaceX(game.getRegion().xValAt(0));	// gets coordinates of b,
+			int screenY = screenYFspaceY(game.getRegion().yValAt(0));	// and offsets appropriately
+			g.drawImage(reg, screenX - reg.getWidth()/2, screenY - reg.getHeight()/2, null);
+		}
+		
 		for (Ship s: ships) {
 			final double ts = game.observedTime(s, t0);	// get the observed time
 			if (!s.existsAt(ts))	continue;
@@ -206,7 +211,7 @@ public class GameScreen extends JPanel {
 				final double to = game.observedTime(o, t0);
 				if (o.existsAt(to) && o.getShip() == s.getID()) {
 					final double r = game.dist(s, o, ts, to) - o.rValAt(to);
-					BufferedImage ord = sprites.get("order"+o.getType());
+					BufferedImage ord = getSprite("order"+o.getType());
 					try {
 						BufferedImage mod = ord.getSubimage(0, 0,
 								ord.getWidth()/2+(int)(r/scale), ord.getHeight());
@@ -226,11 +231,9 @@ public class GameScreen extends JPanel {
 			
 			BufferedImage img;
 			if (gameStarted && s.getID() == listener.getShip())
-				img = sprites.get(s.spriteName()+"i");	// active ships have a special sprite
+				img = getSprite(s.spriteName()+"i");	// active ships have a special sprite
 			else
-				img = sprites.get(s.spriteName());	// finds the correct sprite
-			if (img == null)
-				img = sprites.get("null");
+				img = getSprite(s.spriteName());	// finds the correct sprite
 			
 			
 			Point screenPos = shipLocations.get(s);
@@ -245,14 +248,14 @@ public class GameScreen extends JPanel {
 		int pos = SHIP_SPACING/2 + 6;
 		for (byte type: Ship.ALL_TYPES) {
 			if (((ShipPlacer) listener).isAvailable(type)) {
-				final BufferedImage img = sprites.get(Ship.shipSprite(type));	// then draw each available ship
+				final BufferedImage img = getSprite(Ship.shipSprite(type));	// then draw each available ship
 				g.drawImage(img, xc - img.getWidth()/2, pos - img.getHeight()/2, null);
 			}
 			pos += SHIP_SPACING;
 		}
 		
 		if (((ShipPlacer) listener).getHeldShip() != -1) {	// then draw the ship in the user's hand
-			final BufferedImage img = sprites.get(Ship.shipSprite(((ShipPlacer) listener).getHeldShip()));
+			final BufferedImage img = getSprite(Ship.shipSprite(((ShipPlacer) listener).getHeldShip()));
 			g.drawImage(img, listener.getX()-img.getWidth()/2, listener.getY()-img.getHeight()/2, null);
 		}
 	}
@@ -331,6 +334,7 @@ public class GameScreen extends JPanel {
 	private BufferedImage executeTransformation(Graphics2D g, BufferedImage img,
 											double[] params) {	// rotozooms img based on params		
 		AffineTransform at = new AffineTransform();
+		if (params == null)		params = Body.DEFAULT_TRANSFORM;
 		
 		at.scale(params[1]/scale, params[2]/scale);					// scales (if necessary)
 		
@@ -453,8 +457,12 @@ public class GameScreen extends JPanel {
 	
 	
 	public byte getMousePosPreGame(int x, int y) {	// decides which, if any, button/object the mouse is currently one
-		if (x > icons.get("selection_basin").getWidth())
-			return -2;					// empty space
+		if (x > icons.get("selection_basin").getWidth()) {
+			if (!game.getRegion().contains(spaceXFscreenX(x), spaceYFscreenY(y)))
+				return -3;				// invalid space
+			else
+				return -2;				// valid space
+		}
 		final int i = (y-6)/SHIP_SPACING;
 		if (i < Ship.ALL_TYPES.length)
 			return Ship.ALL_TYPES[i];	// some kind of ship
@@ -476,6 +484,14 @@ public class GameScreen extends JPanel {
 			}
 		}
 		return -1;	// empty space
+	}
+	
+	
+	public BufferedImage getSprite(String name) {
+		if (sprites.containsKey(name))
+			return sprites.get(name);
+		else
+			return sprites.get("null");
 	}
 	
 	

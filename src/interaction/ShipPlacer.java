@@ -81,6 +81,8 @@ public class ShipPlacer extends Controller {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		final byte mpos = view.getMousePos(x, y, System.currentTimeMillis());
+		if (mpos == -3)		// if you clicked on invalid space
+			return;
 		if (mpos > -2) {		// if you clicked anywhere but empty space
 			if (heldShip == mpos)	// if you clicked on the place where you picked up this one
 				setHeldShip((byte) -1);
