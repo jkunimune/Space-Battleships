@@ -35,6 +35,9 @@ import network.Protocol;
  */
 public class ShipPlacer extends Controller {
 
+	private byte mpos;			// the last calculation of mpos
+	private byte draggedFrom;	// the place where we started dragging
+	
 	private byte heldShip;			// the type of ship we hold
 	private int numShips;			// the number of ships we have placed
 	private boolean[] available;	// which ship classes are still available
@@ -73,33 +76,64 @@ public class ShipPlacer extends Controller {
 	}
 	
 	
+	public void placeShip() {
+		game.receive(Protocol.writePlacement(game.getIDs()[numShips], heldShip,
+					 view.spaceXFscreenX(x), view.spaceYFscreenY(y)));	// place it
+		heldShip = -1;
+		numShips ++;
+		if (numShips >= 5)	// start the game when you have 5 ships XXX:but you should probably wait for the other person
+			view.startGame();
+	}
+	
+	
 	public boolean isAvailable(byte type) {
 		return available[type];
 	}
 	
 	
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		final byte mpos = view.getMousePos(x, y, System.currentTimeMillis());
-		if (mpos == -3)		// if you clicked on invalid space
-			return;
-		if (mpos > -2) {		// if you clicked anywhere but empty space
-			if (heldShip == mpos)	// if you clicked on the place where you picked up this one
-				setHeldShip((byte) -1);
-			else
-				setHeldShip(mpos);	// pick up a ship
+	public void mouseMoved(MouseEvent e) {
+		super.mouseMoved(e);
+		mpos = view.getMousePos(e.getX(), e.getY());
+	}
+	
+	
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		if (draggedFrom == Byte.MIN_VALUE) {	// if we just started dragging
+			draggedFrom = mpos;					// record the start of the drag
+			if (heldShip < 0 && mpos >= 0)		// and maybe pick up a ship
+				setHeldShip(mpos);
 		}
-		else if (heldShip >= 0) {	// if you clicked on valid empty space and are holding a ship
-			game.receive(Protocol.writePlacement(game.getIDs()[numShips],
-												 heldShip,
-												 view.spaceXFscreenX(x),
-												 view.spaceYFscreenY(y)));	// place it
-			heldShip = -1;
-			numShips ++;
-			
-			if (numShips == 5)
-				view.startGame();
+		if (draggedFrom >= -1)		// if we are dragging from the selection basin
+			super.mouseMoved(e);	// do not pan
+		else
+			super.mouseDragged(e);
+		mpos = view.getMousePos(e.getX(), e.getY());
+	}
+	
+	
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (heldShip >= 0) {
+			if (mpos > -2)	// somewhere in the basin
+				setHeldShip(mpos);	// if heldship == mpos drop it?
 		}
+	}
+	
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (heldShip >= 0 && mpos == -2) {	// if you have a ship and are in valid space
+			if (draggedFrom != -3 && draggedFrom != -2)	// assuming you weren't panning
+				placeShip();
+		}
+		else if (mpos >= 0 && draggedFrom == Byte.MIN_VALUE)	// if you are over a ship and have not dragged
+			setHeldShip(mpos);
+		else if (heldShip >= 0 && draggedFrom != Byte.MIN_VALUE)	// if you have a ship and have dragged
+			setHeldShip((byte) -1);
+		
+		draggedFrom = Byte.MIN_VALUE;	// reset the drag
 	}
 	
 	
