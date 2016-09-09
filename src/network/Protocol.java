@@ -30,6 +30,7 @@ package network;
 public final class Protocol {
 
 	private static final char PLACE = 'p';		// placing a ship
+	private static final char READY = 'r';		// finishing placing ships
 	private static final char ORDER = 'o';		// giving an order
 	private static final char COLLISION = 'c';	// two bodies colliding
 	private static final char VICTORY = 'v';
@@ -42,6 +43,11 @@ public final class Protocol {
 				String.format("%02x", type) +
 				String.format("%1$21s", Double.toHexString(x)) +
 				String.format("%1$21s", Double.toHexString(y));
+	}
+	
+	
+	public static String announceReadiness() {	// tell people that this player is ready
+		return String.valueOf(READY);
 	}
 	
 	
@@ -62,6 +68,7 @@ public final class Protocol {
 	public static String denoteVictory(int condition) {
 		return denoteVictory((byte) condition);
 	}
+	
 	
 	public static String denoteVictory(byte condition) {	// create a victory String to send over the Socket
 		return String.valueOf(VICTORY) +
@@ -100,6 +107,13 @@ public final class Protocol {
 	}
 	
 	/* END PLACEMENT-SPECIFIC METHODS */
+	
+	public static boolean isReadiness(String data) {	// is this a readiness?
+		return data.charAt(0) == READY;
+	}
+	
+	/* METHODS THAT WORK ONLY FOR READY-TYPE DATA STRINGS */
+	/* END READY-SPECIFIC METHODS */
 	
 	public static boolean isOrder(String data) {	// is this an order?
 		return data.charAt(0) == ORDER; 

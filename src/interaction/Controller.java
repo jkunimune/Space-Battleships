@@ -79,8 +79,10 @@ public class Controller implements MouseWheelListener, MouseMotionListener, Mous
 	
 	
 	private void setShip(byte s) {
-		activeShip = s;
-		view.setShip(s);
+		if (view.setShip(s))
+			activeShip = s;
+		else
+			activeShip = -1;
 	}
 	
 	

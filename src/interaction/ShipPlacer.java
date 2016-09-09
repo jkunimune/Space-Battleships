@@ -66,11 +66,11 @@ public class ShipPlacer extends Controller {
 	public void setHeldShip(byte type) {	// set the held ship to the type at a certain index
 		if (heldShip == Ship.CARRIER)	return;	// you can't put down a carrier
 		
-		if (heldShip != -1)
-			available[heldShip] = true;	// put back the current ship
-		
-		if (type == -1 || available[type])
+		if (type == -1 || available[type]) {	// if this ship is available
+			if (heldShip != -1)
+				available[heldShip] = true;	// put back the current ship
 			heldShip = type;	// and take the new one
+		}
 		if (type != -1)
 			available[type] = false;	// remove the selected ship
 	}
@@ -81,8 +81,8 @@ public class ShipPlacer extends Controller {
 					 view.spaceXFscreenX(x), view.spaceYFscreenY(y)));	// place it
 		heldShip = -1;
 		numShips ++;
-		if (numShips >= 5)	// start the game when you have 5 ships XXX:but you should probably wait for the other person
-			view.startGame();
+		if (numShips >= 5)	// start the game when you have 5 ships
+			view.beReady();
 	}
 	
 	

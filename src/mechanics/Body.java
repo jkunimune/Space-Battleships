@@ -139,7 +139,7 @@ public abstract class Body {
 			final double dy = position[2] - observer.yValAt(to);
 			final double vx = position[3];
 			final double vy = position[4];
-			final double vs2   = vx*vx + vy*vy - c2;	// XXX: can this be simplified?
+			final double vs2   = vx*vx + vy*vy - c2;
 			final double b = vx*dx + vy*dy - c2*dt;
 			final double ds2   = dx*dx + dy*dy - c2*dt*dt;
 			ts = (-b + Math.sqrt(b*b - vs2*ds2))/vs2 + position[0];

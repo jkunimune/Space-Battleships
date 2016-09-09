@@ -51,6 +51,9 @@ public class Battlefield {
 	private byte[] blueIDs;		// the IDs of the ships we own
 	private double offset;		// the time offset for network conversions
 	
+	private boolean opponentReady;
+	private boolean usReady;
+	public boolean started;		// whether both players are ready
 	public String message;				// a public phrase for the GameScreen to print out
 	
 	
@@ -60,6 +63,10 @@ public class Battlefield {
 		orders = new ArrayList<Order>();
 		out = dos;
 		endGame = Double.POSITIVE_INFINITY;
+		
+		opponentReady = false;
+		usReady = false;
+		started = false;
 		message = "";
 		
 		double time = (double)System.currentTimeMillis();	// the current time
@@ -84,7 +91,12 @@ public class Battlefield {
 	
 	
 	public void receive(String data, boolean transmit) {		// receives and interprets some data
-		if (Protocol.isPlacement(data)) {	// if a ship got placed
+		if (Protocol.isReadiness(data)) {	// if someone is ready
+			if (transmit)	usReady = true;
+			else			opponentReady = true;	// keep track of who is ready to play
+			started = (usReady && opponentReady);
+		}
+		else if (Protocol.isPlacement(data)) {	// if a ship got placed
 			spawnShip(data, transmit);
 		}
 		else if (Protocol.isOrder(data)) {		// if it was an order
@@ -223,12 +235,13 @@ public class Battlefield {
 	public Ship getShipByID(byte id) {	// searches for the ship that has the matching id
 		for (Ship s: myShips)
 			if (s.getID() == id)
-				return s;
+				if (s.existsAt(myCarrier.sees(s, System.currentTimeMillis())))
+					return s;
 		return null;
 	}
 	
 	
-	public byte[] getIDs() {	// TODO: set blueIDs[x] to -1 when ship x dies
+	public byte[] getIDs() {
 		return blueIDs;
 	}
 	

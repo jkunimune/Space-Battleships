@@ -71,6 +71,7 @@ public class Menu extends JPanel {
 	private Main application;
 	private MenuListener listener;
 	private Connection queuedGame;
+	private Thread currentProcess;
 	
 	private Canvas canvs;
 	private BufferStrategy strat;
@@ -101,6 +102,7 @@ public class Menu extends JPanel {
 		menuPos = startMenu;
 		application = a;
 		queuedGame = null;
+		currentProcess = null;
 		menuChanged = false;
 	}
 	
@@ -295,11 +297,13 @@ public class Menu extends JPanel {
 		else if (command.equals("main"))
 			menuPos = "main";
 		else if (command.equals("host"))
-			Connection.hostConnection(this);
+			currentProcess = Connection.hostConnection(this);
 		else if (command.equals("join"))
-			Connection.joinConnection(this, listener.getInput());
+			currentProcess = Connection.joinConnection(this, listener.getInput());
 		else if (command.equals("fake"))
-			Connection.makeDummyConnection(this);
+			currentProcess = Connection.makeDummyConnection(this);
+		else if (command.equals("nope"))
+			abort();
 		
 		else if (menu_structure.containsKey(command))	// if it is a menu
 			goToMenu(menuPos+"/"+command);
@@ -314,9 +318,17 @@ public class Menu extends JPanel {
 	}
 	
 	
-	public void abortJoin() {	// go back to the menu screen 
-		if (getState().equals("seek"))	// XXX: also a temporary fix
-			goToMenu(menuPos+"/fail");
+	public void abort() {	// abort the current process
+		if (currentProcess != null) {
+			currentProcess.interrupt();
+		}
+		interpCommand("back");
+	}
+	
+	
+	public void joinFailed() {	// report an error
+		abort();
+		goToMenu(menuPos+"/fail");
 	}
 	
 	

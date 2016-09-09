@@ -46,6 +46,7 @@ import mechanics.Battlefield;
 import mechanics.Body;
 import mechanics.Order;
 import mechanics.Ship;
+import network.Protocol;
 
 /**
  * The JPanel that displays the gameplay objects and HUD during a match.
@@ -84,8 +85,6 @@ public class GameScreen extends JPanel {
 	
 	private HashMap<Ship, Point> shipLocations;	// the last drawn positions of the ships
 	
-	private boolean gameStarted;	// whether we are in the game or the pre-game
-	
 	
 	
 	public GameScreen(int w, int h, Battlefield field, Main app, boolean host) {
@@ -114,7 +113,6 @@ public class GameScreen extends JPanel {
 		origY = h/2;
 		scale = 1.0;
 		shipLocations = new HashMap<Ship, Point>();
-		gameStarted = false;
 		if (host)	flip = 1;
 		else		flip = -1;
 	}
@@ -133,8 +131,10 @@ public class GameScreen extends JPanel {
 		if (strat == null)	// if we haven't finished our initialization yet (something about a valid peer?)
 			return;			// skip ahead
 		
-		if (gameStarted && listener instanceof ShipPlacer)	// start the game if you haven't yet
+		if (game.started && listener instanceof ShipPlacer) {	// start the game if you haven't yet
 			addListener(new Controller(this, game));
+			game.message = "";
+		}
 		
 		game.update();			// start by updating the game model
 		if (!game.active()) {
@@ -152,7 +152,7 @@ public class GameScreen extends JPanel {
 			draw(bodies.get(i), g, t);				// display its sprite
 		drawIcons(g, t);
 		
-		if (gameStarted)
+		if (game.started)
 			drawHUD(g, t);		// draw the heads-up display
 		else
 			drawPregame(g);		// or the pre-game HUD
@@ -192,7 +192,7 @@ public class GameScreen extends JPanel {
 	private void drawIcons(Graphics2D g, final double t0) {	// draw the ships and orders
 		final List<Ship> ships = game.getShips();
 		
-		if (!gameStarted) {	// draw the placement region first
+		if (!game.started) {	// draw the placement region first
 			BufferedImage reg = getSprite(game.getRegion().spriteName());	// finds the correct sprite
 			reg = executeTransformation(g, reg, null);	// does any necessary transformations
 			int screenX = screenXFspaceX(game.getRegion().xValAt(0));	// gets coordinates of b,
@@ -230,7 +230,7 @@ public class GameScreen extends JPanel {
 			if (!s.existsAt(game.observedTime(s, t0)))	continue;			// and skip dead ships
 			
 			BufferedImage img;
-			if (gameStarted && s.getID() == listener.getShip())
+			if (game.started && s.getID() == listener.getShip())
 				img = getSprite(s.spriteName()+"i");	// active ships have a special sprite
 			else
 				img = getSprite(s.spriteName());	// finds the correct sprite
@@ -288,15 +288,16 @@ public class GameScreen extends JPanel {
 		
 		if (activeShip == null)		return;	// if there's no selected ship, that's the end of it
 		try {								// otherwise, draw more HUD
+			if (game.started)	// adjust for information delay
+				t = game.observedTime(activeShip, t);
+			if (!activeShip.existsAt(t))	return;	// if the ship is dead, don't show the HUD
+			
 			final Point hudPos = new Point(1050, 30);
 			g.drawImage(icons.get("bars"), hudPos.x, hudPos.y, null);	// draw more HUD stuff
 			
 			AffineTransform at;		// these classes help with the HP/PP bars
 			AffineTransformOp op;
 			BufferedImage mask;
-			
-			if (gameStarted)	// adjust for information delay
-				t = game.observedTime(activeShip, t);
 			
 			final double hTheta = Math.PI/2 - activeShip.hValAt(t)/Ship.MAX_H_VALUE*Math.PI/2;
 			at = new AffineTransform();			// start with an AffineTransform
@@ -398,8 +399,9 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	public void startGame() {	// exit pre-game and begin the real battle
-		gameStarted = true;
+	public void beReady() {	// exit pre-game and prepare for the real battle
+		game.receive(Protocol.announceReadiness());
+		game.message = "Waiting for players...";
 	}
 	
 	
@@ -451,7 +453,7 @@ public class GameScreen extends JPanel {
 	
 	
 	public byte getMousePos(int x, int y, double t) {	// decides which, if any, button/object the mouse is currently on
-		if (gameStarted)	return getMousePosInGame(x, y, t);
+		if (game.started)	return getMousePosInGame(x, y, t);
 		else				return getMousePosPreGame(x, y);
 	}
 	
@@ -475,7 +477,9 @@ public class GameScreen extends JPanel {
 		if (x < 200   && y < 400)	return -2;	// move button
 		if (x < 200   && y >= 400)	return -3;	// shoot button
 		if (x >= 1080 && y >= 400)	return -4;	// special button
-		for (Ship s: game.getShips()) {
+		final List<Ship> ships = game.getShips();
+		for (int i = ships.size()-1; i >= 0; i --) {
+			final Ship s = ships.get(i);
 			if (s.isBlue()) {
 				final Point p = shipLocations.get(s);
 				if (p != null)
@@ -516,8 +520,9 @@ public class GameScreen extends JPanel {
 	}
 	
 	
-	public void setShip(byte id) {			// sets the activeShip field to the one with the matching id
+	public boolean setShip(byte id) {			// sets the activeShip field to the one with the matching id
 		activeShip = game.getShipByID(id);
+		return activeShip != null;	// returns whether that ship exists
 	}
 
 }

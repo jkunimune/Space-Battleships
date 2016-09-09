@@ -8,13 +8,12 @@ butn%exit%Exit
 play
 butn%wait%Host Game
 butn%name%Join Game
-butn%test%Single-Player
 butn%back%Back
 
 wait
 auto%host
 text%body%Waiting for others to connect...
-butn%back%Cancel
+butn%nope%Cancel
 
 name
 text%body%Enter the name of the computer to which you wish to connect%
@@ -25,7 +24,7 @@ butn%back%Back
 seek
 auto%join
 text%body%Connecting to server...
-butn%back%Cancel
+butn%nope%Cancel
 
 fail
 text%body%Host not found! Make sure you spelled it correctly.

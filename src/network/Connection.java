@@ -43,24 +43,24 @@ public class Connection implements Runnable {
 	
 	
 	
-	public static Connection makeDummyConnection(Menu m) {	// for testing purposes only!
-		Connection c = new Connection(m);	// this Connection is non-functional
-		new Thread(c).start();
-		return c;
+	public static Thread makeDummyConnection(Menu m) {	// for testing purposes only!
+		Thread t = new Thread(new Connection(m));	// this Connection is non-functional
+		t.start();
+		return t;
 	}
 	
 	
-	public static Connection hostConnection(Menu m) {	// opens a Connection as a client
-		Connection c = new Connection(PORT_NUM, m);
-		new Thread(c).start();
-		return c;
+	public static Thread hostConnection(Menu m) {	// opens a Connection as a client
+		Thread t = new Thread(new Connection(PORT_NUM, m));
+		t.start();
+		return t;
 	}
 	
 	
-	public static Connection joinConnection(Menu m, String name) {	// opens a Connection as a host
-		Connection c = new Connection(name, PORT_NUM, m);
-		new Thread(c).start();
-		return c;
+	public static Thread joinConnection(Menu m, String name) {	// opens a Connection as a host
+		Thread t = new Thread(new Connection(name, PORT_NUM, m));
+		t.start();
+		return t;
 	}
 	
 	
@@ -117,17 +117,20 @@ public class Connection implements Runnable {
 				}
 				else if (type == CLIENT) {						// if you are a client
 					while (socket == null) {
+						if (Thread.interrupted())	return;
 						try {
 							socket = new Socket(name, port);	// reach out to the server
 						}
 						catch (ConnectException e) {}			// and keep trying until it works
 						catch (UnknownHostException e) {
-							menu.abortJoin();
+							menu.joinFailed();
 							menu = null;
 							return;
 						}
 					}
 				}
+				
+				if (Thread.interrupted())	return;
 				
 				out = new DataOutputStream(socket.getOutputStream());	// then create out and in
 				in = new DataInputStream(socket.getInputStream());
