@@ -16,7 +16,7 @@ text%body%Waiting for others to connect...
 butn%nope%Cancel
 
 name
-text%body%Enter the name of the computer to which you wish to connect%
+text%body%Enter the IP address of the computer to which you wish to connect%
 inpt%seek% 
 butn%seek%Go
 butn%back%Back
@@ -46,7 +46,7 @@ butn%back%Back
 faqs
 text%body%Q: How can those lasers be bigger than the earth?
 text%body%A: They're not - it seems that way because auto-targeting.
-text%body%A: Why don't you account for relativity?
+text%body%A: Why don't you account for special relativity?
 text%body%Q: It's negligible. Also, the last time I made a game that accounted for relativity, it was hell.
 text%body%Q: Where do the ships get their energy?
 text%body%A: Solar power.
@@ -60,7 +60,7 @@ text%body%Q: Aren't they on some hi-tech futuristic ships? It really isn't that 
 text%body%A: It isn't if you ignore relativity and consider time as a linear progression from cause to effect.
 text%body%Q: ?
 text%body%A: Actually, from a non-linear, non-subjective viewpoint, it's more like a big ball of wibbly-wobbly, timey-wimey, stuff.
-text%body%Q: ... no words ...
+text%body%Q: ...
 butn%back%Back
 
 cred
@@ -137,7 +137,7 @@ butn%back%Back
 butn%main%Main Menu
 
 h010
-text%body%Ships also have Health goes down when they get hit by lasers. Health, unlike Energy, does not recharge.
+text%body%Ships also have health. Health goes down when they get hit by lasers. Health, unlike Energy, does not recharge.
 butn%h011%Next
 butn%back%Back
 butn%main%Main Menu
